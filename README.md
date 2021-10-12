@@ -15,5 +15,3 @@ October 12, 2021: The next updates to this project will be:
 
 Ideally these updates will be ready by the end of November.  If you want to try this out with your own data, send me a message and I'll help you get started!
 
-~~October 8 2020: This project is not currently being developed, but I intend to add documentation and ports of the more broadly-applicable code to Python and Julia.
-Please send me a message if you are interested in this project!~~
