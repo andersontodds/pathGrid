@@ -16,3 +16,17 @@ March 30, 2022: The next updates to this project will be:
 
 Ideally these updates will be ready by the end of November.  If you want to try this out with your own data, send me a message and I'll help you get started!
 
+## Current pathGrid workflow
+1. ensure working directory contains daily APfiles for flare days, as well as all scripts mentioned in this procedure.
+2. edit ```getPathsFromAP.m``` to point to day or days relevant to analysis: ```startnum```, ```stopnum```, ```starttime```, and ```stoptime``` need to be edited.
+3. run ```getPathsFromAP.m``` to generate stroke-station path files
+4. run ```pathGrid_fullstats_10m.m``` to generate statistics on grid crossings
+5. run ```pathgGrid_video.m``` to generate .mp4 video of grid crossings statistics over time range
+
+Desired workflow:
+1. ensure working directory contains all relevant files
+2. specify input parameters: date range, ...
+3. check for existence of stroke-station path files; if they exist for time range, skip to next step; else, generate with ```getPathsFromAP.m```
+4. check for existence of ```grid_cell*.mat``` and/or ```grid_crossings*.mat``` files in time range; if detected, ask user to confirm they should be used
+5. run ```pathGrid_fullstats_10m.m``` or similar to generate statistics on grid crossings
+6. run ```pathGrid_figures.m``` or similar to generate figures and animations
