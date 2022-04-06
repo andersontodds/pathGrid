@@ -42,3 +42,17 @@ x_ind = find(class_char == 'X');
 m_ind = find(class_char == 'M');
 c_ind = find(class_char == 'C');
 
+%% get YYYYMMDD date strings by flare class
+
+x_ds = datestr(time_dn(x_ind), "YYYYmmDD");
+x_dsu = string(unique(x_ds,'rows'));
+
+m_ds = datestr(time_dn(m_ind), "YYYYmmDD");
+m_dsu = unique(m_ds,'rows');
+
+x_AEname = compose("AE%s.mat",x_dsu);
+m_AEname = compose("AE%s.mat",m_dsu);
+
+x_filepath = compose("/flash5/wd2/AEfiles/%s",x_AEname);
+m_filepath = compose("/flash5/wd2/AEfiles/%s",m_AEname);
+
