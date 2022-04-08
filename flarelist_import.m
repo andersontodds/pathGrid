@@ -50,9 +50,37 @@ x_dsu = string(unique(x_ds,'rows'));
 m_ds = datestr(time_dn(m_ind), "YYYYmmDD");
 m_dsu = unique(m_ds,'rows');
 
-x_AEname = compose("AE%s.mat",x_dsu);
-m_AEname = compose("AE%s.mat",m_dsu);
+x_APname = compose("AP%s.mat",x_dsu);
+m_APname = compose("AP%s.mat",m_dsu);
 
-x_filepath = compose("/flash5/wd2/AEfiles/%s",x_AEname);
-m_filepath = compose("/flash5/wd2/AEfiles/%s",m_AEname);
+x_cu = char(x_dsu);
+x_year = string(x_cu(:,1:4));
+
+m_cu = char(m_dsu);
+m_year = string(m_cu(:,1:4));
+
+x_filepath = strings(size(x_APname));
+for i = 1:length(x_APname)
+    switch x_year(i)
+        case {'2017','2018','2019'}
+            x_filepath(i) = compose("/flash5/wd2/APfiles/%s/%s",x_year(i),x_APname(i));
+        case {'2020','2021','2022'}
+            x_filepath(i) = compose("/flash5/wd2/APfiles/%s",x_APname(i));
+    end
+end
+
+m_filepath = strings(size(m_APname));
+for i = 1:length(m_APname)
+    switch m_year(i)
+        case {'2017','2018','2019'}
+            m_filepath(i) = compose("/flash5/wd2/APfiles/%s/%s",m_year(i),m_APname(i));
+        case {'2020','2021','2022'}
+            m_filepath(i) = compose("/flash5/wd2/APfiles/%s",m_APname(i));
+    end
+end
+
+unique_x_days = ~ismember(x_filepath, m_filepath);
+xm_filepath = sort(cat(1,m_filepath,x_filepath(unique_x_days)));
+
+save('flarelist_APfilenames_20170101-20220331.mat', "x_filepath", "m_filepath", "xm_filepath");
 
