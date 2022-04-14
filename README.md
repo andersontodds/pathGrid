@@ -25,8 +25,9 @@ This code is fast enough to run in "near-real-time"; that is, it takes less than
 4. run ```pathGrid_fullstats_10m.m``` to generate statistics on grid crossings
 5. run ```pathgGrid_video.m``` to generate .mp4 video of grid crossings statistics over time range
 
-Remote workflow (APfiles on flash5, processing on flashlight)
-0. find dates of interest with ```flare_import.m```
+Remote workflow (APfiles on flash5, processing on flashlight):
+
+0. find dates of interest with ```flare_import.m``` (optional, if you already know what time range you're interested in)
 1. for each date, get pathlist files with ```getpaths.m```
 2. for each date, get ```grid_crossings```, ```mm_gridcross```, ```d_gridcross``` with ```pathgrid.m```
 3. run ```pathGrid_video.m``` as above
