@@ -46,9 +46,11 @@ c_ind = find(class_char == 'C');
 
 x_ds = datestr(time_dn(x_ind), "YYYYmmDD");
 x_dsu = string(unique(x_ds,'rows'));
+x_day = str2double(x_dsu);
 
 m_ds = datestr(time_dn(m_ind), "YYYYmmDD");
 m_dsu = unique(m_ds,'rows');
+m_day = str2double(m_dsu);
 
 x_APname = compose("AP%s.mat",x_dsu);
 m_APname = compose("AP%s.mat",m_dsu);
@@ -83,4 +85,5 @@ unique_x_days = ~ismember(x_filepath, m_filepath);
 xm_filepath = sort(cat(1,m_filepath,x_filepath(unique_x_days)));
 
 save('flarelist_APfilenames_20170101-20220331.mat', "x_filepath", "m_filepath", "xm_filepath");
+save('flarelist_days_20170101-20220331.mat', "x_day", "m_day");
 
