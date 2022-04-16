@@ -49,7 +49,7 @@ x_dsu = string(unique(x_ds,'rows'));
 x_day = str2double(x_dsu);
 
 m_ds = datestr(time_dn(m_ind), "YYYYmmDD");
-m_dsu = unique(m_ds,'rows');
+m_dsu = string(unique(m_ds,'rows'));
 m_day = str2double(m_dsu);
 
 x_APname = compose("AP%s.mat",x_dsu);

@@ -113,7 +113,7 @@ for t = 1:frames
     cb = colorbar('southoutside');
     label = cb.Label;
     label.String = ['Attenuation of stroke-station path crossings (dB) ',datestr(time_10m(t))];
-    label.FontSize = 16;
+    label.FontSize = 10;
     caxis([-10 10]);
     
     % for log colorbars:
@@ -129,12 +129,5 @@ for t = 1:frames
 end
 
 close(v);
-
-
-
-
-
-
-
 
 end
