@@ -36,5 +36,7 @@ Run ```run_pathgrid.m```, which does the following:
 
 ## TO DO (April 15, 2022):
 1. Trim the fat! Functions in remote workflow include ugly comment blocks and are not memory-efficient; e.g., should not need to both pass entire ```pathlist_lite``` to ```pathgrid``` and load 10-minute pathlist files.
-2. enable control of ```animate_pg``` statistics and plotting options with optional arguments.
-3. get proper benchmarks working: started running x_days only on April 15 at about 17:50 PDT.
+2. Add subsolar contour analysis back in to ```animate_pg```, and save contour radius time series.
+3. Add option to save matrix of frames plotted with ```animate_pg```, so single frames can be plotted later.
+4. Enable control of ```animate_pg``` statistics and plotting options with optional arguments.
+5. Get proper benchmarks working: started running x_days only on April 15 at about 17:50 PDT.
