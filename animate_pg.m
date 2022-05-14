@@ -54,11 +54,7 @@ K(frames) = struct('cdata',[],'colormap',[]);
 
 %% Plot frames
 
-grid_crossings_add001 = grid_crossings + 0.001;
-dB_gridcross = 10*log10(grid_crossings_add001./gridcross_mm); % can use gridcross_mmed as well if available
-
-dB_gc_inf = (dB_gridcross(:,:,73) == -Inf | dB_gridcross(:,:,73) == Inf);
-dB_gridcross(dB_gc_inf) = NaN;
+dB_gridcross = pg_dbcross(grid_crossings, gridcross_mm);
 
 % find pixels with 0 s-s path crossings large trailing mean/median; set to
 % minimum (e.g. -20 dB)

@@ -1,4 +1,4 @@
-function out = pathgrid(pathlist)
+function pathgrid(pathlist)
 % pathgrid.m
 % Todd Anderson
 % April 13, 2022
@@ -186,11 +186,12 @@ for m = 1:frames
 end
 
 %% diffcross, f_gridcross, attenuation contours
-[d_gridcross, mm_gridcross] = pg_diffcross(grid_crossings, 6);
+[~, mm_gridcross] = pg_diffcross(grid_crossings, 6); %if desired, "~" --> "d_gridcross"
+
 
 %f_gridcross = grid_crossings./mm_gridcross;
 
-%[latc,lonc,maxrad] = pg_attencontour(f_gridcross,ss_lat,ss_lon,cspec);
+%[latc,lonc,maxrad] = pg_attencontour(dB_gridcross,ss_lat,ss_lon,cspec);
 
 %% save everything
 daystr = datestr(starttime, 'yyyymmdd');
@@ -198,8 +199,8 @@ daystr = datestr(starttime, 'yyyymmdd');
 savefile_gc = sprintf('grid_crossings_10m_%s.mat',daystr);
 save(savefile_gc,'grid_crossings');
 
-savefile_d = sprintf('d_gridcross_10m_%s.mat',daystr);
-save(savefile_d,'d_gridcross');
+%savefile_d = sprintf('d_gridcross_10m_%s.mat',daystr);
+%save(savefile_d,'d_gridcross');
 
 savefile_mm = sprintf('mm_gridcross_10m_%s.mat',daystr);
 save(savefile_mm,'mm_gridcross');
