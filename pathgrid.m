@@ -3,6 +3,7 @@ function pathgrid(pathlist)
 % Todd Anderson
 % April 13, 2022
 %
+%
 % Function version of pathGrid_10m.m, pathGrid_fullstats_10m, etc.
 %
 % Takes 10-minute stroke-station pair files as input and calculates
