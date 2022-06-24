@@ -22,7 +22,7 @@ run_end = datenum(2022, 03, 31);
 run_days = run_start:run_end;
 run_days = run_days';
 
-% check format of run_days, get daystring for filename check.
+% the entire year of 2021
 
 for i = 1:length(run_days)
     % check to see if day has been run already
