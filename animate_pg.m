@@ -30,8 +30,8 @@ end
 starttime = daynum;
 stoptime = daynum + 1;
 
-grid_crossings = importdata(sprintf('grid_crossings_10m_%s.mat', daystr));
-gridcross_mm = importdata(sprintf('mm_gridcross_10m_%s.mat',daystr));
+grid_crossings = importdata(sprintf('gridstats/grid_crossings_10m_%s.mat', daystr));
+gridcross_mm = importdata(sprintf('gridstats/mm_gridcross_10m_%s.mat',daystr));
 frames = size(grid_crossings, 3);
 time_10m = linspace(starttime,stoptime,frames+1);
 
@@ -43,7 +43,7 @@ coastlat = coastlines.coastlat;
 coastlon = coastlines.coastlon;
 geoidrefvec = [1,90,-180];
 
-filename = sprintf('%s_10m_dB_gc_add001_mm_smed10_surf',daystr);
+filename = sprintf('animations/%s_10m_dB_gc_add001_mm_smed10_surf',daystr);
 
 v = VideoWriter([filename '.avi'],'Motion JPEG AVI');
 v.Quality = 100;

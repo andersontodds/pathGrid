@@ -197,13 +197,13 @@ end
 %% save everything
 daystr = datestr(starttime, 'yyyymmdd');
 
-savefile_gc = sprintf('grid_crossings_10m_%s.mat',daystr);
+savefile_gc = sprintf('gridstats/grid_crossings_10m_%s.mat',daystr);
 save(savefile_gc,'grid_crossings');
 
 %savefile_d = sprintf('d_gridcross_10m_%s.mat',daystr);
 %save(savefile_d,'d_gridcross');
 
-savefile_mm = sprintf('mm_gridcross_10m_%s.mat',daystr);
+savefile_mm = sprintf('gridstats/mm_gridcross_10m_%s.mat',daystr);
 save(savefile_mm,'mm_gridcross');
 
 %save('20201129_attencont_lat.mat','latc');
