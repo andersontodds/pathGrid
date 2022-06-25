@@ -19,6 +19,10 @@ All X-class flares between Jan 1, 2017, and March 30, 2022, have been processed,
 
 This code is fast enough to run in "near-real-time"; that is, it takes less than an hour to run a full day of WWLLN data, and theoretically could run on 10-minute files with less than 10 minutes of runtime per file.  However, I'm not sure it's worth developing a real-time version of this analysis until there is a better science case for using this analysis on non-flare days, **and** I have reduced runtime enough to make analysis of many years of WWLLN data feasible.  If you disagree, and want to see a real-time version of this project, let me know!
 
+Here's an example of the stroke-to-station path distribution detected by WWLLN.  This is a plot of the whole day of March 30, 2022, averaged over a 10-minute window.
+
+![stroke-to-station paths in an average 10-minute window on March 30, 2022](https://github.com/andersontodds/pathGrid/blob/master/average_paths_20220330.jpg?raw=true)
+
 ## Current full pathGrid workflow
 1. ensure working directory contains daily APfiles for flare days, as well as all scripts mentioned in this procedure.
 2. edit ```getPathsFromAP.m``` to point to day or days relevant to analysis: ```startnum```, ```stopnum```, ```starttime```, and ```stoptime``` need to be edited.
