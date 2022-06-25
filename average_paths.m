@@ -69,33 +69,48 @@ geoidrefvec = [1,90,-180];
 
 figure(1)
 hold off
-subplot(1,2,1)
+t = tiledlayout(2,2, "TileSpacing","compact");
+
+nexttile([1,2])
+worldmap("World")
+geoshow(day_avg, geoidrefvec, "DisplayType","texturemap");
+hold on
+geoshow(coastlat, coastlon, "Color","black");
+set(gca,'ColorScale','log');
+crameri('-hawaii');%,'pivot',1); % requires "crameri" colormap toolbox
+
+nexttile
 %worldmap("World");
 worldmap([60 90],[-180 180])
-geoshow(log10(day_avg), geoidrefvec, "DisplayType","texturemap");
+geoshow(day_avg, geoidrefvec, "DisplayType","texturemap");
 hold on
 geoshow(coastlat, coastlon, "Color","black");
 
 xlabel("Latitude");
 ylabel("Longitude");
+title("");
 
-crameri('bam','pivot',0); % requires "crameri" colormap toolbox
-cb = colorbar('southoutside');
-label = cb.Label;
-label.String = ['Average number of stroke-to-station paths in 10 minute window, ' daystr];
-label.FontSize = 10;
+set(gca,'ColorScale','log');
+crameri('-hawaii');%,'pivot',1); % requires "crameri" colormap toolbox
 
-subplot(1,2,2)
+
+nexttile
 worldmap([-90 -60],[-180 180])
-geoshow(log10(day_avg), geoidrefvec, "DisplayType","texturemap");
+geoshow(day_avg, geoidrefvec, "DisplayType","texturemap");
 hold on
 geoshow(coastlat, coastlon, "Color","black");
 
 xlabel("Latitude");
 ylabel("Longitude");
+title("");
 
-crameri('bam','pivot',0); % requires "crameri" colormap toolbox
-cb = colorbar('southoutside');
-label = cb.Label;
-label.String = ['Average number of stroke-to-station paths in 10 minute window, ' daystr];
-label.FontSize = 10;
+set(gca,'ColorScale','log');
+crameri('-hawaii');%,'pivot',1); % requires "crameri" colormap toolbox
+cb = colorbar;
+cb.Layout.Tile = 'east';
+caxis([0.01 1000]);
+
+
+
+
+title(t, "Average number of WWLLN stroke-to-station path crossings in a 10 minute period, March 30, 2022");
