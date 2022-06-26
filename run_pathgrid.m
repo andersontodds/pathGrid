@@ -35,9 +35,9 @@ for i = 1:length(run_days)
     switch class(run_days(i))
         case 'double'
             if run_days(i) > 7e5 && run_days(i) < 8e5
-                daystring = datestr(run_days(i),'YYYYmmDD');
+                daystring = string(datestr(run_days(i),'YYYYmmDD'));
             elseif run_days(i) > 19900000 && run_days(i) < 21000000
-                daystring = num2str(run_days(i), '%d');
+                daystring = string(num2str(run_days(i), '%d'));
             else
                 error('Cannot identify day format!')
             end
@@ -55,5 +55,5 @@ for i = 1:length(run_days)
         pathgrid(pathlist);
         %animate_pg(run_days(i));
     end
-    fprintf('Done with day %s \n',daystring(i));
+    fprintf('Done with day %s \n',daystring);
 end

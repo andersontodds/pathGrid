@@ -1,4 +1,4 @@
-function [grid_cell] = pg_gridcell(strokefile)
+function [grid_cell] = pg_gridcell(path_list)
 % pg_gridcell.m
 % 13 December 2018
 %
@@ -10,7 +10,7 @@ function [grid_cell] = pg_gridcell(strokefile)
 % 
 % INPUTS:
 %       strokefile
-%           File with name format strokelist_lite_*.mat
+%           File with name format pathlist_lite_*.mat
 %           n x 5 matrix of stroke-station pairs, with format
 %           time | stroke_lat | stroke_lon | station_lat | station_lon
 %
@@ -29,18 +29,16 @@ function [grid_cell] = pg_gridcell(strokefile)
 
 %% 1b. Use AP data
 
-stroke_list = importdata(strokefile);
+%path_list = importdata(pathfile);
 
-lat1 = stroke_list(:,2);
-lon1 = stroke_list(:,3);
+lat1 = path_list(:,2);
+lon1 = path_list(:,3);
 
-lat2 = stroke_list(:,4);
-lon2 = stroke_list(:,5);
+lat2 = path_list(:,4);
+lon2 = path_list(:,5);
 
-time = stroke_list(:,1);
+time = path_list(:,1);
 
-
-%parameters
 nTracks = length(time);
 
 %% Make and grid tracks

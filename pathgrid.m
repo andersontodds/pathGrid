@@ -155,12 +155,26 @@ for m = 1:frames
     
     filestr = datestr(minute_bin_edges(m),'yyyymmddHHMM');
     %filenum = str2double(filestr);
-    strokefile = sprintf('pathlist_lite_10m_%s.mat',filestr);
-    
-    gridcell = pg_gridcell(strokefile);
-    
-    gridcross = pg_gridcross(gridcell);
-    
+    pathfile = sprintf('pathlist_lite_10m_%s.mat',filestr);
+    pathlist = importdata(pathfile);
+    % check that strokefile is non-empty
+    if isempty(pathlist)
+        gridcross = NaN*ones(180,360);
+        msg = sprintf('Path list %s was empty, wrote NaNs to grid_crossings!',filestr);
+        
+        fid = fopen('nanLog.txt', 'a');
+        if fid == -1
+            error('Cannot open log file.');
+        end
+        fprintf(fid, '%s: %s\n', datestr(now, 0), msg);
+        fclose(fid);
+
+    else
+        gridcell = pg_gridcell(pathlist);
+        gridcross = pg_gridcross(gridcell);
+        msg = sprintf('Completed run %s',filestr);
+    end
+
     grid_crossings(:,:,m) = gridcross;
         
 %     [gc_var, ~] = pg_variance(gridcell);
@@ -176,7 +190,7 @@ for m = 1:frames
 %     gc_meanaz(:,:,m) = gc_maz;
     
     % append to log file
-    msg = sprintf('Completed run %s',filestr);
+    %msg = sprintf('Completed run %s',filestr);
     fid = fopen('pgLog.txt', 'a');
     if fid == -1
         error('Cannot open log file.');
