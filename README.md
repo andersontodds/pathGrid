@@ -21,7 +21,7 @@ This code is fast enough to run in "near-real-time"; that is, it takes less than
 
 Here's an example of the stroke-to-station path distribution detected by WWLLN.  This is a plot of the whole day of March 30, 2022, averaged over a 10-minute window.
 
-![stroke-to-station paths in an average 10-minute window on March 30, 2022](https://github.com/andersontodds/pathGrid/blob/master/average_paths_20220330.jpg?raw=true)
+![average stroke-to-station paths in 10-minute windows in March 2022](https://github.com/andersontodds/pathGrid/blob/master/average_paths_202203.gif?raw=true)
 
 ## Current full pathGrid workflow
 1. ensure working directory contains daily APfiles for flare days, as well as all scripts mentioned in this procedure.
