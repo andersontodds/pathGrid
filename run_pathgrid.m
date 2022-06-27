@@ -22,6 +22,12 @@ run_end = datenum(2022, 03, 31);
 run_days = run_start:run_end;
 run_days = run_days';
 
+% entire month of September 2021
+run_start = datenum(2021, 09, 01);
+run_end = datenum(2021, 09, 30);
+run_days = run_start:run_end;
+run_days = run_days';
+
 % % the entire year of 2021
 % run_start = datenum(2021, 01, 01);
 % run_end = datenum(2021, 12, 31);
