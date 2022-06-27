@@ -16,11 +16,11 @@ overwrite = 0;
 % days = importdata('flarelist_days_20170101-20220331.mat');
 % run_days = days.x_day;
 
-% the entire month of March 2022
-run_start = datenum(2022, 03, 01);
-run_end = datenum(2022, 03, 31);
-run_days = run_start:run_end;
-run_days = run_days';
+% % the entire month of March 2022
+% run_start = datenum(2022, 03, 01);
+% run_end = datenum(2022, 03, 31);
+% run_days = run_start:run_end;
+% run_days = run_days';
 
 % entire month of September 2021
 run_start = datenum(2021, 09, 01);
