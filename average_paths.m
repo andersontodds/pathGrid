@@ -137,7 +137,7 @@ for k = 1:size(gc_cavg,3)
     %title(t, "Average number of WWLLN stroke-to-station path crossings in a 10 minute period, March 30, 2022");
 
     if k == 1
-        gif('test3.gif');
+        gif('average_paths_202203.gif');
     else
         gif;
     end
