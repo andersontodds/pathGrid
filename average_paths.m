@@ -41,8 +41,8 @@ day_avg = mean(gc, 3, "omitnan");
 % requires grid_crossings_10 files for entire time range; either download
 % these from flashlight or prepend "/gridstats" to gcfile below and run
 % this part on flashlight
-run_start = datenum(2022, 03, 01);
-run_end = datenum(2022, 03, 31);
+run_start = datenum(2021, 09, 01);
+run_end = datenum(2021, 09, 30);
 run_days = run_start:run_end;
 run_days = run_days';
 
@@ -132,12 +132,12 @@ for k = 1:size(gc_cavg,3)
     caxis([0.01 1000]);
     
     
-    titlestr = sprintf("Average number of WWLLN stroke-to-station path crossings \n March 2022 %s-%s", timestring(k), timestring(k+1));
+    titlestr = sprintf("Average number of WWLLN stroke-to-station path crossings \n September 2021 %s-%s", timestring(k), timestring(k+1));
     title(t, titlestr);
     %title(t, "Average number of WWLLN stroke-to-station path crossings in a 10 minute period, March 30, 2022");
 
     if k == 1
-        gif('average_paths_202203.gif');
+        gif('average_paths_202109.gif');
     else
         gif;
     end
