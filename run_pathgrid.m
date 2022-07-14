@@ -73,7 +73,7 @@ for i = 1:length(run_days)
         fprintf('%s already exists and overwrite is disabled, proceeding to next day \n', filename_gridcross);
     else % either overwrite is enabled, or overwrite is disabled and grid_crossings_10m file does not yet exist for this day
         pathlist = getpaths(run_days(i),getpaths_args);
-        pathgrid(pathlist);
+        pathgrid(pathlist, stationName);
         %animate_pg(run_days(i));
     end
     fprintf('Done with day %s \n',daystring);
