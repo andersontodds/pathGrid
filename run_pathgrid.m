@@ -12,6 +12,19 @@
 %   1 : overwrite enabled
 overwrite = 0;
 
+% specify optional arguments for getpaths.m
+%   'resolution' (keyword), resolution, in minutes (default: 10)
+%   'wholeNetwork' (keyword: default: enabled)
+%   'singleStation' (keyword), singleStation (string)
+%   'stationLatLon' (keyword), stationLatLon (1 x 2 double)
+%   'stationName' (keyword), stationName (string)
+sourceStation = 'Fairbanks';
+stationLatLon = [68.6276, -149.5950];
+stationName = '_Toolik';
+%getpaths_args = {'wholeNetwork'}; % for whole network/no simulated stations
+%getpaths_args = {'singleStation', sourceStation}; % for single existing WWLLN stations
+getpaths_args = {'singleStation', sourceStation, 'stationLatLon', stationLatLon, 'stationName', stationName}; % for simulated stations
+
 % % X-class flare days in 2017-March 2022; from flarelist_import.m
 % days = importdata('flarelist_days_20170101-20220331.mat');
 % run_days = days.x_day;
@@ -53,11 +66,11 @@ for i = 1:length(run_days)
             error('Cannot identify day format!');
     end
 
-    filename_gridcross = sprintf("gridstats/grid_crossings_10m_%s.mat",daystring);
+    filename_gridcross = sprintf("gridstats/grid_crossings_10m_%s_%s.mat",daystring,stationName);
     if overwrite == 0 && isfile(filename_gridcross)
         fprintf('%s already exists and overwrite is disabled, proceeding to next day \n', filename_gridcross);
     else % either overwrite is enabled, or overwrite is disabled and grid_crossings_10m file does not yet exist for this day
-        pathlist = getpaths(run_days(i), 10);
+        pathlist = getpaths(run_days(i),getpaths_args);
         pathgrid(pathlist);
         %animate_pg(run_days(i));
     end

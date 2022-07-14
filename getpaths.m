@@ -1,4 +1,4 @@
-function pathlist_lite = getpaths(day, resolution)
+function pathlist_lite = getpaths(day, varargin)
 % getpaths.m
 % Todd Anderson
 % April 11, 2022
@@ -13,16 +13,43 @@ function pathlist_lite = getpaths(day, resolution)
 % lower bound on the length of the output file is 5*length(AP.data or
 % AP.power).
 %
-% NOTE: This script writes 10-minute pathlist files, so that next steps
-% (e.g. pathgrid) can run with less memory use.  It outputs the full 1-day
-% pathlist, though, so 
+% NOTE: This script writes 10-minute pathlist files, but outputs the
+% whole-day pathlist.  The next step, pathgrid.m, can immediately use the
+% whole-day pathlist for calculating grid_cell and grid_crossings, other
+% uses of pathlist files outside of the normal pathgrid workflow can
+% benefit from smaller files.
 % 
-% MATLAB version compatibility
+% MATLAB version compatibility: R2019a+, I think?
 %
 % INPUTS:
 %       day: day on which flare occurred (or for which stroke-station path
 %       file is needed)
+%
+%   Optional inputs:
 %       resolution: width of time bin, in minutes (default: 10)
+%
+%   Keywords/keyword-value pairs:
+%       'wholeNetwork': use all stations in stations.mat (default)
+%
+%       'singleStation': use only the station specified in the next
+%       argument.  Make sure spelling and capitalization match station
+%       names in stations.mat! %TODO optionally specify station ID instead
+%       of name
+%
+%       'stationLatLon': if singleStation and stationLatLon are specified,
+%       next argument specifies the latitude and longitude to use for 
+%       station location.  The default is the latitude and longitude for 
+%       the specified singleStation in stations.mat.  Alternatively, 
+%       stationLatLon can be specified as any [lat lon] pair, which has the
+%       effect of making a pathlist with stroke locations equal to those 
+%       located by singleStation, with a simulated station location.
+%
+%       'stationName': next argument specifies name of simulated station.  If
+%       stationName is not used, default is either name of actual WWLLN
+%       station (from singleStation) if stationLatLon is not used, or
+%       string synthesized from stationLatLon if applicable.
+%
+%       
 %
 % Requires:
 %       APfile for input day at /flash5/wd2/APfiles/[YEAR/]
@@ -51,11 +78,49 @@ end
 starttime = daynum;
 stoptime = daynum + 1;
 
-frames = 24*60/resolution;
-
-%% load stations, AP file
-
 stations = importdata('stations.mat');
+
+% optional parameter defaults
+resolution = 10; % minutes
+%wholeNetwork = 1;
+stIDRange = 1:length(stations);
+%singleStation = [];
+%stationLatLon = [];
+custom_latlon = 0;
+
+% check for override parameters
+for i = 1 : length(varargin)
+
+		input = varargin{i};
+		
+		if ischar(input)
+			switch varargin{i}
+                case 'resolution'
+                    resolution = varargin{i+1};
+                case 'wholeNetwork'
+					%wholeNetwork = 1;
+                    stIDRange = 1:length(stations);
+                    stationName = ""; % default for whole-network save filename
+                case 'sourceStation'
+                    %wholeNetwork = 0;
+					sourceStation = varargin{i+1}; % value: station name to use/clone (string)
+                    station_ind = find(strcmp([stations{:,3}],sourceStation));
+                    stIDRange = station_ind;
+                    stationLatLon = [stations{1:2,station_ind}]; % default: same lat/lon as station to use/clone
+                    stationName = sourceStation; % default: same string as station name to use
+                case 'stationLatLon'
+                    custom_latlon = 1;
+					stationLatLon = varargin{i+1};	% value: lat/lon of simulated station (1x2 double)
+                    stationName = sprintf("_Lat%0.3fLon%0.3f", stationLatLon(1), stationLatLon(2)); % change this if you need more or less station precision in filename
+                case 'stationName'
+                    stationName = varargin{i+1};  % value: name of simulated station (string)
+			end
+		end
+end
+
+frames = 24*60/resolution; % default: 10 minute resolution --> 144 frames
+
+%% load AP file
 
 daystring = datestr(daynum,'YYYYmmDD');
 year = datestr(daynum, 'YYYY');
@@ -100,7 +165,7 @@ stmatr1(stmatr1 == 0) = 1;
 stmat(1,:) = stmatr1;
 
 
-% Find every stationID; as of 11 April 2022 there are 127 entries in
+% Find every stationID; as of July 2022 there are 128 entries in
 % stations.dat
 % 
 % Note that stations.dat, stations.mat etc begin with stID == 1, i.e.
@@ -108,7 +173,7 @@ stmat(1,:) = stmatr1;
 
 % number of columns in stroke list = APdata (10) + station ID, lat, lon (3)
 pathlist = zeros(1,13);
-for stID = 1:122
+for stID = stIDRange
     [~,col] = find(stmat == stID);   %all strokes detected by station number stID
     %lidx = sub2ind(size(power),row + 1,col); %indices of strokes detected by stID in AP.power
 
@@ -121,8 +186,13 @@ for stID = 1:122
     strokecount_stID = size(APdata_stID,1);
     c = ones(strokecount_stID,1);
     
-    st_lat = stations{stID,1};
-    st_lon = stations{stID,2};
+    if custom_latlon == 1
+        st_lat = stationLatLon(1);
+        st_lon = stationLatLon(2);
+    else
+        st_lat = stations{stID,1};
+        st_lon = stations{stID,2};
+    end
     
     pathlist_stID = cat(2,APdata_stID,stID*c,st_lat*c,st_lon*c);
     
@@ -160,7 +230,7 @@ for t = 1:frames
     
     filestr = datestr(minute_bin_edges(t),'yyyymmddHHMM');
     %filenum = str2double(filestr);
-    filename = sprintf('pathlist/pathlist_lite_10m_%s.mat',filestr);
+    filename = sprintf('pathlist/pathlist_lite_10m_%s%s.mat',filestr,stationName);
     
     save(filename,'pathlist_lite_10m');
             
