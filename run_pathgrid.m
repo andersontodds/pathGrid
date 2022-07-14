@@ -20,7 +20,7 @@ overwrite = 0;
 %   'stationName' (keyword), stationName (string)
 sourceStation = 'Fairbanks';
 stationLatLon = [68.6276, -149.5950];
-stationName = '_Toolik';
+stationName = 'Toolik';
 %getpaths_args = {'wholeNetwork'}; % for whole network/no simulated stations
 %getpaths_args = {'singleStation', sourceStation}; % for single existing WWLLN stations
 getpaths_args = {'singleStation', sourceStation, 'stationLatLon', stationLatLon, 'stationName', stationName}; % for simulated stations
@@ -66,6 +66,8 @@ for i = 1:length(run_days)
             error('Cannot identify day format!');
     end
 
+    
+    %filename_gridcross = sprintf("gridstats/grid_crossings_10m_%s.mat",daystring);
     filename_gridcross = sprintf("gridstats/grid_crossings_10m_%s_%s.mat",daystring,stationName);
     if overwrite == 0 && isfile(filename_gridcross)
         fprintf('%s already exists and overwrite is disabled, proceeding to next day \n', filename_gridcross);

@@ -1,4 +1,4 @@
-function pathgrid(pathlist)
+function pathgrid(pathlist, varargin)
 % pathgrid.m
 % Todd Anderson
 % April 13, 2022
@@ -139,6 +139,21 @@ stoptime = starttime + 1;
 % Enter number of time bins (e.g. 144 10-minute time bins per day)
 frames = 144;
 
+% check for override parameters
+for i = 1 : length(varargin)
+
+		input = varargin{i};
+		
+		if ischar(input)
+			switch varargin{i}
+                case 'stationName'
+                    stationName = varargin{i+1};  % value: name of simulated station (string)
+                    stationName = sprintf('_%s',stationName);
+			end
+		end
+end
+
+
 %% Initialization
 
 minute_bin_edges = linspace(starttime,stoptime,frames+1);
@@ -211,13 +226,13 @@ end
 %% save everything
 daystr = datestr(starttime, 'yyyymmdd');
 
-savefile_gc = sprintf('gridstats/grid_crossings_10m_%s.mat',daystr);
+savefile_gc = sprintf('gridstats/grid_crossings_10m_%s%s.mat',daystr,stationName);
 save(savefile_gc,'grid_crossings');
 
 %savefile_d = sprintf('d_gridcross_10m_%s.mat',daystr);
 %save(savefile_d,'d_gridcross');
 
-savefile_mm = sprintf('gridstats/mm_gridcross_10m_%s.mat',daystr);
+savefile_mm = sprintf('gridstats/mm_gridcross_10m_%s%s.mat',daystr, stationName);
 save(savefile_mm,'mm_gridcross');
 
 %save('20201129_attencont_lat.mat','latc');

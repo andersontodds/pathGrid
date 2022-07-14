@@ -105,15 +105,19 @@ for i = 1 : length(varargin)
                     %wholeNetwork = 0;
 					sourceStation = varargin{i+1}; % value: station name to use/clone (string)
                     station_ind = find(strcmp([stations{:,3}],sourceStation));
+                    if isempty(station_ind)
+                        error("Could not identify input station name! Check stations.mat for a list of stations.");
+                    end
                     stIDRange = station_ind;
-                    stationLatLon = [stations{1:2,station_ind}]; % default: same lat/lon as station to use/clone
-                    stationName = sourceStation; % default: same string as station name to use
+                    stationLatLon = [stations{station_ind, 1:2}]; % default: same lat/lon as station to use/clone
+                    stationName = sprintf('_%s',sourceStation); % default: same string as station name to use
                 case 'stationLatLon'
                     custom_latlon = 1;
 					stationLatLon = varargin{i+1};	% value: lat/lon of simulated station (1x2 double)
                     stationName = sprintf("_Lat%0.3fLon%0.3f", stationLatLon(1), stationLatLon(2)); % change this if you need more or less station precision in filename
                 case 'stationName'
                     stationName = varargin{i+1};  % value: name of simulated station (string)
+                    stationName = sprintf('_%s',stationName);
 			end
 		end
 end
