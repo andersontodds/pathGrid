@@ -219,10 +219,6 @@ stat_lon = pathlist(:,13);
 
 pathlist_lite = cat(2,stroke_time,stroke_lat,stroke_lon,stat_lat,stat_lon);
 
-%rand_strokes = randperm(length(pathlist),10000);
-
-%pathlist_10000 = pathlist_lite(rand_strokes,:);
-
 
 %% Save path files
 
@@ -241,7 +237,3 @@ for t = 1:frames
 end
 
 end
-
-% save('strokelist.mat','strokelist');
-% save('strokelist_lite_20170906.mat','strokelist_lite');
-% save('strokelist_10000.mat','strokelist_10000');

@@ -163,11 +163,15 @@ grid_crossings = zeros(180,360,frames);
 for m = 1:frames
     
     filestr = datestr(minute_bin_edges(m),'yyyymmddHHMM');
-    %filenum = str2double(filestr);
-    pathfile = sprintf('pathlist_lite_10m_%s.mat',filestr);
-    pathlist = importdata(pathfile);
-    % check that strokefile is non-empty
-    if isempty(pathlist)
+%     % uncomment the two lines below if you want to load pathlist from pathfiles
+%     pathfile = sprintf('pathlist_lite_10m_%s.mat',filestr);
+%     pathlist = importdata(pathfile);
+
+    in_frame = pathlist(:,1) > minute_bin_edges(m) & pathlist(:,1) < minute_bin_edges(m+1);
+    pathlist_frame = pathlist(in_frame, :);
+
+    % check that pathlist is non-empty
+    if isempty(pathlist_frame)
         gridcross = NaN*ones(180,360);
         msg = sprintf('Path list %s was empty, wrote NaNs to grid_crossings!',filestr);
         
@@ -179,7 +183,8 @@ for m = 1:frames
         fclose(fid);
 
     else
-        gridcell = pg_gridcell(pathlist);
+        %gridcell = pg_gridcell(pathlist); % for 180x360 pathlist, i.e. from single-frame files
+        gridcell = pg_gridcell(pathlist_frame); % for 180x360xN pathlist, i.e. directly from getpaths or from multi-frame file
         gridcross = pg_gridcross(gridcell);
         msg = sprintf('Completed run %s',filestr);
     end

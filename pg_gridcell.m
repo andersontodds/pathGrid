@@ -9,8 +9,7 @@ function [grid_cell] = pg_gridcell(path_list)
 % pg_gridcrossings.m.
 % 
 % INPUTS:
-%       strokefile
-%           File with name format pathlist_lite_*.mat
+%       path_list
 %           n x 5 matrix of stroke-station pairs, with format
 %           time | stroke_lat | stroke_lon | station_lat | station_lon
 %
@@ -42,7 +41,7 @@ time = path_list(:,1);
 nTracks = length(time);
 
 %% Make and grid tracks
-tic;
+%tic;
 
 grid_tracks = cell(nTracks,1);
 
@@ -63,13 +62,13 @@ for i = 1:nTracks
 
 end
 
-grid_track_time = toc;
+%grid_track_time = toc;
 % create and initialize grid cell array
 grid_cell = cell(180,360);
 
 %% 2a. Non-parallelizable method
 
-tic;
+%tic;
 
 for j = 1:nTracks
     
@@ -86,6 +85,6 @@ for j = 1:nTracks
    
 end
 
-nonp_time = toc;
+%nonp_time = toc;
 
 end

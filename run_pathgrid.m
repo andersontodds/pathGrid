@@ -19,11 +19,15 @@ overwrite = 0;
 %   'stationLatLon' (keyword), stationLatLon (1 x 2 double)
 %   'stationName' (keyword), stationName (string)
 sourceStation = 'Fairbanks';
-stationLatLon = [68.6276, -149.5950];
-stationName = 'Toolik';
+stationName = sourceStation;
+%stationLatLon = [68.6276, -149.5950];
+%stationName = 'Toolik';
+
+%TODO: get getpaths_args = {...} working! Currently need to edit getpaths
+%arguments in function call, which is slow and prone to error
 %getpaths_args = {'wholeNetwork'}; % for whole network/no simulated stations
-%getpaths_args = {'singleStation', sourceStation}; % for single existing WWLLN stations
-getpaths_args = {'singleStation', sourceStation, 'stationLatLon', stationLatLon, 'stationName', stationName}; % for simulated stations
+getpaths_args = {'sourceStation', sourceStation}; % for single existing WWLLN stations
+%getpaths_args = {'sourceStation', sourceStation, 'stationLatLon', stationLatLon, 'stationName', stationName}; % for simulated stations
 
 % % X-class flare days in 2017-March 2022; from flarelist_import.m
 % days = importdata('flarelist_days_20170101-20220331.mat');
@@ -67,12 +71,12 @@ for i = 1:length(run_days)
     end
 
     
-    %filename_gridcross = sprintf("gridstats/grid_crossings_10m_%s.mat",daystring);
-    filename_gridcross = sprintf("gridstats/grid_crossings_10m_%s_%s.mat",daystring,stationName);
+    stationNameStr = sprintf("_%s",stationName);
+    filename_gridcross = sprintf("gridstats/grid_crossings_10m_%s%s.mat",daystring,stationNameStr);
     if overwrite == 0 && isfile(filename_gridcross)
         fprintf('%s already exists and overwrite is disabled, proceeding to next day \n', filename_gridcross);
     else % either overwrite is enabled, or overwrite is disabled and grid_crossings_10m file does not yet exist for this day
-        pathlist = getpaths(run_days(i),getpaths_args);
+        pathlist = getpaths(run_days(i),'sourceStation',sourceStation);
         pathgrid(pathlist, stationName);
         %animate_pg(run_days(i));
     end
