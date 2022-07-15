@@ -11,9 +11,10 @@ June 24, 2022: The next updates to this project will be:
 
 1. examining nominal path distributions over month and year averages; 
 2. simulating additional stations, and investigating where additional stations might have outsized impacts on the nominal path distribution; 
-3. running analysis for recent X- and M-class flares, including getting the subsolar attenuation area analysis working; 
-4. incorporating and analyzing sferic dispersion, and estimating the electron density slope at the VLF reflection layer; and
-5. cleaning up documentation and packaging a release.
+3. ~~~running analysis for recent X- and M-class flares, including getting the subsolar attenuation area analysis working;~~~ switching focus to higher-latitude regions for now!
+4. investigating spatial resolution in polar/auroral regions
+5. incorporating and analyzing sferic dispersion, and estimating the electron density slope at the VLF reflection layer; and
+6. cleaning up documentation and packaging a release.
 
 All X-class flares between Jan 1, 2017, and March 30, 2022, have been processed, but need to be re-run with the subsolar attenuation region code.  If you want to try this out with your own data, send me a message and I'll help you get started!
 
