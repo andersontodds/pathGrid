@@ -62,7 +62,7 @@ run_days = [run_days_mar];
 
 for j = 1:length(sourceStationList)
     sourceStation = sourceStationList(j);
-    stationLatLon = stationLatLonList(j);
+    stationLatLon = stationLatLonList(j,:);
     stationName = stationNameList(j);
 
     for i = 1:length(run_days)
