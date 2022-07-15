@@ -53,13 +53,13 @@ daystr = string(datestr(run_days, "yyyymmdd"));
 % WARNING: any NaNs in first day will be propagated throughout whole
 % average!
 % load first day, initialize gc_avg
-gcfile = sprintf("data/grid_crossings_10m_%s.mat", daystr(1));
+gcfile = sprintf("data/grid_crossings_10m_%s_Fairbanks.mat", daystr(1));
 gc = importdata(gcfile);
 gc_cavg = gc;
 
 % load subsequent days and calculate cumulative average
 for j = 2:length(daystr)
-    gcfile = sprintf("data/grid_crossings_10m_%s.mat", daystr(j));
+    gcfile = sprintf("data/grid_crossings_10m_%s_Fairbanks.mat", daystr(j));
     gc = importdata(gcfile);
 
     % NaN handling: set all NaNs in gc to current gc_cavg values for those
@@ -132,12 +132,12 @@ for k = 1:size(gc_cavg,3)
     caxis([0.01 1000]);
     
     
-    titlestr = sprintf("Average number of WWLLN stroke-to-station path crossings \n September 2021 %s-%s", timestring(k), timestring(k+1));
+    titlestr = sprintf("Average number of WWLLN stroke-to-station path crossings \n September 2021 %s-%s \n station: Fairbanks (64.8737 N -147.8605 E)", timestring(k), timestring(k+1));
     title(t, titlestr);
     %title(t, "Average number of WWLLN stroke-to-station path crossings in a 10 minute period, March 30, 2022");
 
     if k == 1
-        gif('average_paths_202109.gif');
+        gif('average_paths_202109_Fairbanks.gif');
     else
         gif;
     end

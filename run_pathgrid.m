@@ -19,9 +19,9 @@ overwrite = 0;
 %   'stationLatLon' (keyword), stationLatLon (1 x 2 double)
 %   'stationName' (keyword), stationName (string)
 sourceStation = 'Fairbanks';
-stationName = sourceStation;
-%stationLatLon = [68.6276, -149.5950];
-%stationName = 'Toolik';
+%stationName = sourceStation;
+stationLatLon = [68.6276, -149.5950];
+stationName = 'Toolik';
 
 %TODO: get getpaths_args = {...} working! Currently need to edit getpaths
 %arguments in function call, which is slow and prone to error
@@ -76,7 +76,7 @@ for i = 1:length(run_days)
     if overwrite == 0 && isfile(filename_gridcross)
         fprintf('%s already exists and overwrite is disabled, proceeding to next day \n', filename_gridcross);
     else % either overwrite is enabled, or overwrite is disabled and grid_crossings_10m file does not yet exist for this day
-        pathlist = getpaths(run_days(i),'sourceStation',sourceStation);
+        pathlist = getpaths(run_days(i),'sourceStation',sourceStation, 'stationLatLon', stationLatLon, 'stationName', stationName);
         pathgrid(pathlist, stationName);
         %animate_pg(run_days(i));
     end
