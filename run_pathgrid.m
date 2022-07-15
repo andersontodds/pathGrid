@@ -19,14 +19,16 @@ overwrite = 0;
 %   'stationLatLon' (keyword), stationLatLon (1 x 2 double)
 %   'stationName' (keyword), stationName (string)
 sourceStationList = ["Fairbanks"; "Churchill"; "Sodankyla"];
-% sourceStationList = ["Fairbanks"; "Fairbanks"; "Fairbanks"; ...
-%                   "Churchill"; "Churchill"; "Churchill";
-%                   "Sodankyla"; "Sodankyla"];
+% sourceStationList = ["Fairbanks"; "Fairbanks"; ...
+%                   "Churchill"; "Churchill";
+%                   "Sodankyla"];
 stationNameList = sourceStationList;
-%stationLatLon = [64.68.6276, -149.5950];
-%stationNameList = ["Fairbanks"; "Toolik"; "Utqiagvik"; ...
-%                   "Churchill"; "Iqaluit"; "PondInlet"; ...
-%                   "Sodankyla"; "Longyearbyen"];
+%stationLatLonList = [68.6276, -149.5950; 71.2933, -156.7641; ...
+%                     63.7659, -68.5634; 72.6911, -77.9560; ...
+%                     78.2321, 15.5145];
+%stationNameList = ["Toolik"; "Utqiagvik"; ...
+%                   "Iqaluit"; "PondInlet"; ...
+%                   "Longyearbyen"];
 
 %TODO: get getpaths_args = {...} working! Currently need to edit getpaths
 %arguments in function call, which is slow and prone to error
@@ -50,7 +52,7 @@ run_end_sep = datenum(2021, 09, 30);
 run_days_sep = run_start_sep:run_end_sep;
 run_days_sep = run_days_sep';
 
-run_days = [run_days_sep; run_days_mar];
+run_days = [run_days_mar];
 
 % % the entire year of 2021
 % run_start = datenum(2021, 01, 01);
@@ -87,7 +89,7 @@ for j = 1:length(sourceStationList)
         if overwrite == 0 && isfile(filename_gridcross)
             fprintf('%s already exists and overwrite is disabled, proceeding to next day \n', filename_gridcross);
         else % either overwrite is enabled, or overwrite is disabled and grid_crossings_10m file does not yet exist for this day
-            pathlist = getpaths(run_days(i),'sourceStation',sourceStation, 'stationLatLon', stationLatLon, 'stationName', stationName);
+            pathlist = getpaths(run_days(i),'sourceStation',sourceStation);%, 'stationLatLon', stationLatLon, 'stationName', stationName);
             pathgrid(pathlist, stationName);
             %animate_pg(run_days(i));
         end

@@ -30,11 +30,11 @@
 
 %% 1. day
 % average each lat, lon element across 1 day
-daystr = "20220330";
-gcfile = sprintf("grid_crossings_10m_%s.mat", daystr);
+daystr = "20220301";
+gcfile = sprintf("data/grid_crossings_10m_%s_%s.mat", daystr, "Fairbanks");
 gc = importdata(gcfile);
 
-day_avg = mean(gc, 3, "omitnan");
+gc_avg = mean(gc, 3, "omitnan");
 
 %% 2. month
 % average each lat, lon, UT element across 1 month
@@ -136,10 +136,10 @@ for k = 1:size(gc_cavg,3)
     title(t, titlestr);
     %title(t, "Average number of WWLLN stroke-to-station path crossings in a 10 minute period, March 30, 2022");
 
-    if k == 1
-        gif('average_paths_202109_Fairbanks.gif');
-    else
-        gif;
-    end
+%     if k == 1
+%         gif('average_paths_202109_Fairbanks.gif');
+%     else
+%         gif;
+%     end
 
 end
