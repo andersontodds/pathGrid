@@ -93,15 +93,15 @@ for i = 1 : length(varargin)
 
 		input = varargin{i};
 		
-		if ischar(input)
+		if ischar(input) || isstring(input)
 			switch varargin{i}
-                case 'resolution'
+                case {'resolution',"resolution"}
                     resolution = varargin{i+1};
-                case 'wholeNetwork'
+                case {'wholeNetwork',"wholeNetwork"}
 					%wholeNetwork = 1;
                     stIDRange = 1:length(stations);
                     stationName = ""; % default for whole-network save filename
-                case 'sourceStation'
+                case {'sourceStation',"sourceStation"}
                     %wholeNetwork = 0;
 					sourceStation = varargin{i+1}; % value: station name to use/clone (string)
                     station_ind = find(strcmp([stations{:,3}],sourceStation));
@@ -111,11 +111,11 @@ for i = 1 : length(varargin)
                     stIDRange = station_ind;
                     stationLatLon = [stations{station_ind, 1:2}]; % default: same lat/lon as station to use/clone
                     stationName = sprintf('_%s',sourceStation); % default: same string as station name to use
-                case 'stationLatLon'
+                case {'stationLatLon',"stationLatLon"}
                     custom_latlon = 1;
 					stationLatLon = varargin{i+1};	% value: lat/lon of simulated station (1x2 double)
                     stationName = sprintf("_Lat%0.3fLon%0.3f", stationLatLon(1), stationLatLon(2)); % change this if you need more or less station precision in filename
-                case 'stationName'
+                case {'stationName',"stationName"}
                     stationName = varargin{i+1};  % value: name of simulated station (string)
                     stationName = sprintf('_%s',stationName);
 			end
