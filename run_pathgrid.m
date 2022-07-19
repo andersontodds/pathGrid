@@ -18,17 +18,18 @@ overwrite = 0;
 %   'singleStation' (keyword), singleStation (string)
 %   'stationLatLon' (keyword), stationLatLon (1 x 2 double)
 %   'stationName' (keyword), stationName (string)
-% sourceStationList = ["Fairbanks"; "Churchill"; "Sodankyla"];
-sourceStationList = ["Fairbanks"; "Fairbanks"; ...
-                    "Churchill"; "Churchill";
-                    "Sodankyla"];
+% sourceStationList = ["Fairbanks"];%; "Churchill"; "Sodankyla"];
+% sourceStationList = ["Fairbanks"; "Fairbanks"; ...
+%                     "Churchill"; "Churchill";
+%                     "Sodankyla"];
 % stationNameList = sourceStationList;
-stationLatLonList = [68.6276, -149.5950; 71.2933, -156.7641; ...
-                    63.7659, -68.5634; 72.6911, -77.9560; ...
-                    78.2321, 15.5145];
-stationNameList = ["Toolik"; "Utqiagvik"; ...
-                  "Iqaluit"; "PondInlet"; ...
-                  "Longyearbyen"];
+% stationLatLonList = [64.8737, -147.8605]; % Fairbanks
+% stationLatLonList = [68.6276, -149.5950; 71.2933, -156.7641; ...
+%                     63.7659, -68.5634; 72.6911, -77.9560; ...
+%                     78.2321, 15.5145];
+% stationNameList = ["Toolik"; "Utqiagvik"; ...
+%                   "Iqaluit"; "PondInlet"; ...
+%                   "Longyearbyen"];
 
 %TODO: get getpaths_args = {...} working! Currently need to edit getpaths
 %arguments in function call, which is slow and prone to error
@@ -40,7 +41,14 @@ stationNameList = ["Toolik"; "Utqiagvik"; ...
 % days = importdata('flarelist_days_20170101-20220331.mat');
 % run_days = days.x_day;
 
-% % the entire month of March 2022
+% the entire month of January 2022; includes Hunga Tonga Ha'apai explosive
+% eruption on Jan 15 04 UT
+run_start_jan = datenum(2022, 01, 01);
+run_end_jan = datenum(2022, 01, 31);
+run_days_jan = run_start_jan:run_end_jan;
+run_days_jan = run_days_jan';
+
+% the entire month of March 2022
 run_start_mar = datenum(2022, 03, 01);
 run_end_mar = datenum(2022, 03, 31);
 run_days_mar = run_start_mar:run_end_mar;
@@ -52,7 +60,7 @@ run_end_sep = datenum(2021, 09, 30);
 run_days_sep = run_start_sep:run_end_sep;
 run_days_sep = run_days_sep';
 
-run_days = [run_days_mar];
+run_days = [run_days_jan];
 
 % % the entire year of 2021
 % run_start = datenum(2021, 01, 01);
@@ -61,9 +69,9 @@ run_days = [run_days_mar];
 % run_days = run_days';
 
 for j = 1:length(sourceStationList)
-    sourceStation = sourceStationList(j);
-    stationLatLon = stationLatLonList(j,:);
-    stationName = stationNameList(j);
+    %sourceStation = sourceStationList(j);
+    %stationLatLon = stationLatLonList(j,:);
+    %stationName = stationNameList(j);
 
     for i = 1:length(run_days)
         % check to see if day has been run already
@@ -85,13 +93,13 @@ for j = 1:length(sourceStationList)
         end
     
         
-        stationNameStr = sprintf("_%s",stationName);
-        filename_gridcross = sprintf("gridstats/grid_crossings_10m_%s%s.mat",daystring,stationNameStr);
+        %stationNameStr = sprintf("_%s",stationName);
+        filename_gridcross = sprintf("gridstats/grid_crossings_10m_%s%s.mat",daystring);%,stationNameStr);
         if overwrite == 0 && isfile(filename_gridcross)
             fprintf('%s already exists and overwrite is disabled, proceeding to next day \n', filename_gridcross);
         else % either overwrite is enabled, or overwrite is disabled and grid_crossings_10m file does not yet exist for this day
-            pathlist = getpaths(run_days(i),'sourceStation',sourceStation, 'stationLatLon', stationLatLon, 'stationName', stationName);
-            pathgrid(pathlist, stationName);
+            pathlist = getpaths(run_days(i));%,'sourceStation',sourceStation, 'stationLatLon', stationLatLon, 'stationName', stationName);
+            pathgrid(pathlist);%, stationName);
             %animate_pg(run_days(i));
         end
         fprintf('Done with day %s \n',daystring);
