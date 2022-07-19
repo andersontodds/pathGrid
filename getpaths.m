@@ -84,6 +84,7 @@ stations = importdata('stations.mat');
 resolution = 10; % minutes
 %wholeNetwork = 1;
 stIDRange = 1:length(stations);
+stationName = "";
 %singleStation = [];
 %stationLatLon = [];
 custom_latlon = 0;
