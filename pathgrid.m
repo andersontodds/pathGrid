@@ -147,7 +147,6 @@ switch nargin
 end
 
 
-
 %% Initialization
 
 minute_bin_edges = linspace(starttime,stoptime,frames+1);

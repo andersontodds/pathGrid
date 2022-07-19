@@ -12,6 +12,7 @@
 %   1 : overwrite enabled
 overwrite = 0;
 
+
 % specify optional arguments for getpaths.m
 %   'resolution' (keyword), resolution, in minutes (default: 10)
 %   'wholeNetwork' (keyword: default: enabled)

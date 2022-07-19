@@ -220,7 +220,6 @@ stat_lon = pathlist(:,13);
 
 pathlist_lite = cat(2,stroke_time,stroke_lat,stroke_lon,stat_lat,stat_lon);
 
-
 %% Save path files
 
 minute_bin_edges = linspace(starttime,stoptime,frames+1);
