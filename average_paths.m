@@ -30,8 +30,8 @@
 
 %% 1. day
 % average each lat, lon element across 1 day
-daystr = "20220301";
-gcfile = sprintf("data/grid_crossings_10m_%s_%s.mat", daystr, "Fairbanks");
+daystr = "20220115";
+gcfile = sprintf("data/grid_crossings_10m_%s.mat", daystr);
 gc = importdata(gcfile);
 
 gc_avg = mean(gc, 3, "omitnan");
@@ -41,10 +41,11 @@ gc_avg = mean(gc, 3, "omitnan");
 % requires grid_crossings_10 files for entire time range; either download
 % these from flashlight or prepend "/gridstats" to gcfile below and run
 % this part on flashlight
-run_start = datenum(2022, 03, 01);
-run_end = datenum(2022, 03, 31);
+run_start = datenum(2022, 01, 01);
+run_end = datenum(2022, 01, 31);
 run_days = run_start:run_end;
 run_days = run_days';
+%run_days = run_days(run_days ~= datenum(2022, 01, 15));
 
 daystr = string(datestr(run_days, "yyyymmdd"));
 
@@ -53,13 +54,13 @@ daystr = string(datestr(run_days, "yyyymmdd"));
 % WARNING: any NaNs in first day will be propagated throughout whole
 % average!
 % load first day, initialize gc_avg
-gcfile = sprintf("data/grid_crossings_10m_%s_Fairbanks.mat", daystr(1));
+gcfile = sprintf("data/grid_crossings_10m_%s.mat", daystr(1));
 gc = importdata(gcfile);
 gc_cavg = gc;
 
 % load subsequent days and calculate cumulative average
 for j = 2:length(daystr)
-    gcfile = sprintf("data/grid_crossings_10m_%s_Fairbanks.mat", daystr(j));
+    gcfile = sprintf("data/grid_crossings_10m_%s.mat", daystr(j));
     gc = importdata(gcfile);
 
     % NaN handling: set all NaNs in gc to current gc_cavg values for those
@@ -76,10 +77,12 @@ end
 % whole day average: plot day_avg
 % month average: plot gc_cavg(:,:,k); manually input desired frame k or
 % loop over k
-%for k = 1:size(gc_cavg,3)
-for k = 100
+for k = 1:size(gc_cavg,3)
+%for k = 1:size(gc, 3)    
+%for k = 1
     gplot = gc_cavg(:,:,k);
-    
+    %gplot = gc(:,:,k);
+
     times = linspace(run_start, run_start+1, 145);
     timestring = string(datestr(times, "HH:MM:SS"));
     
@@ -133,14 +136,14 @@ for k = 100
     caxis([0.01 1000]);
     
     
-    titlestr = sprintf("Average number of WWLLN stroke-to-station path crossings \n March 2022 %s-%s \n station: Fairbanks (64.8737 N -147.8605 E)", timestring(k), timestring(k+1));
+    titlestr = sprintf("Average stroke-to-station path crossings \n Jan 2022 %s-%s", timestring(k), timestring(k+1));
     title(t, titlestr);
     %title(t, "Average number of WWLLN stroke-to-station path crossings in a 10 minute period, March 30, 2022");
 
-%     if k == 1
-%         gif('average_paths_202109_Fairbanks.gif');
-%     else
-%         gif;
-%     end
+    if k == 1
+        gif('average_paths_.gif');
+    else
+        gif;
+    end
 
 end
