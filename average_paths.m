@@ -41,26 +41,37 @@ gc_avg = mean(gc, 3, "omitnan");
 % requires grid_crossings_10 files for entire time range; either download
 % these from flashlight or prepend "/gridstats" to gcfile below and run
 % this part on flashlight
-run_start = datenum(2022, 01, 01);
-run_end = datenum(2022, 01, 31);
+run_start = datenum(2022, 03, 01);
+run_end = datenum(2022, 03, 31);
 run_days = run_start:run_end;
 run_days = run_days';
 %run_days = run_days(run_days ~= datenum(2022, 01, 15));
 
 daystr = string(datestr(run_days, "yyyymmdd"));
 
+% % WWLLN stations
+% stationID = 122; % 51:Fairbanks, 52:Sodankyla, 122:Churchill
+% stationLat = stations{stationID, 1};
+% stationLon = stations{stationID, 2};
+% stationName = stations{stationID,3};
+
+% simulated stations: Toolik, Utqiagvik, Iqaluit, PondInlet, Longyearbyen
+stationLat = 78.2321;
+stationLon = 15.5145;
+stationName = "Longyearbyen";
+
 % cumulative average method: avoid loading entire month of grid_crossings
 % at once
 % WARNING: any NaNs in first day will be propagated throughout whole
 % average!
 % load first day, initialize gc_avg
-gcfile = sprintf("data/grid_crossings_10m_%s.mat", daystr(1));
+gcfile = sprintf("data/grid_crossings_10m_%s_%s.mat", daystr(1), stationName);
 gc = importdata(gcfile);
 gc_cavg = gc;
 
 % load subsequent days and calculate cumulative average
 for j = 2:length(daystr)
-    gcfile = sprintf("data/grid_crossings_10m_%s.mat", daystr(j));
+    gcfile = sprintf("data/grid_crossings_10m_%s_%s.mat", daystr(j), stationName);
     gc = importdata(gcfile);
 
     % NaN handling: set all NaNs in gc to current gc_cavg values for those
@@ -136,12 +147,14 @@ for k = 1:size(gc_cavg,3)
     caxis([0.01 1000]);
     
     
-    titlestr = sprintf("Average stroke-to-station path crossings \n Jan 2022 %s-%s", timestring(k), timestring(k+1));
+    titlestr = sprintf("Average stroke-to-station path crossings \n March 2022 %s-%s \n station: %s (%0.3f N, %0.3f E)", ...
+        timestring(k), timestring(k+1), stationName, stationLat, stationLon);
     title(t, titlestr);
     %title(t, "Average number of WWLLN stroke-to-station path crossings in a 10 minute period, March 30, 2022");
 
+    gifname = sprintf('average_paths_202203_%s.gif', stationName);
     if k == 1
-        gif('average_paths_.gif');
+        gif(gifname);
     else
         gif;
     end
