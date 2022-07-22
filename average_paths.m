@@ -30,7 +30,8 @@
 
 %% 1. day
 % average each lat, lon element across 1 day
-daystr = "20220115";
+daystr = "20220330";
+run_start = datenum(2022, 03, 30);
 gcfile = sprintf("data/grid_crossings_10m_%s.mat", daystr);
 gc = importdata(gcfile);
 
@@ -88,11 +89,11 @@ end
 % whole day average: plot day_avg
 % month average: plot gc_cavg(:,:,k); manually input desired frame k or
 % loop over k
-for k = 1:size(gc_cavg,3)
-%for k = 1:size(gc, 3)    
+% %for k = 1:size(gc_cavg,3)
+for k = 1:size(gc, 3)    
 %for k = 1
-    gplot = gc_cavg(:,:,k);
-    %gplot = gc(:,:,k);
+    %gplot = gc_cavg(:,:,k);
+    gplot = gc(:,:,k);
 
     times = linspace(run_start, run_start+1, 145);
     timestring = string(datestr(times, "HH:MM:SS"));
@@ -147,12 +148,15 @@ for k = 1:size(gc_cavg,3)
     caxis([0.01 1000]);
     
     
-    titlestr = sprintf("Average stroke-to-station path crossings \n March 2022 %s-%s \n station: %s (%0.3f N, %0.3f E)", ...
-        timestring(k), timestring(k+1), stationName, stationLat, stationLon);
+%     titlestr = sprintf("Average stroke-to-station path crossings \n March 2022 %s-%s \n station: %s (%0.3f N, %0.3f E)", ...
+%         timestring(k), timestring(k+1), stationName, stationLat, stationLon);
+    titlestr = sprintf("WWLLN stroke-to-station path crossings \n March 30 2022 %s-%s", ...
+        timestring(k), timestring(k+1));
     title(t, titlestr);
     %title(t, "Average number of WWLLN stroke-to-station path crossings in a 10 minute period, March 30, 2022");
 
-    gifname = sprintf('average_paths_202203_%s.gif', stationName);
+%     gifname = sprintf('wwlln_paths_20220330_%s.gif', stationName);
+    gifname = sprintf('wwlln_paths_20220330.gif');
     if k == 1
         gif(gifname);
     else
