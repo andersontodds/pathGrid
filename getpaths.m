@@ -81,6 +81,7 @@ stoptime = daynum + 1;
 stations = importdata('stations.mat');
 
 % optional parameter defaults
+saveOption = 1;
 resolution = 10; % minutes
 %wholeNetwork = 1;
 stIDRange = 1:length(stations);
@@ -96,6 +97,8 @@ for i = 1 : length(varargin)
 		
 		if ischar(input) || isstring(input)
 			switch varargin{i}
+                case {'nosave'}
+                    saveOption = 0;
                 case {'resolution',"resolution"}
                     resolution = varargin{i+1};
                 case {'wholeNetwork',"wholeNetwork"}
@@ -222,18 +225,21 @@ pathlist_lite = cat(2,stroke_time,stroke_lat,stroke_lon,stat_lat,stat_lon);
 
 %% Save path files
 
-minute_bin_edges = linspace(starttime,stoptime,frames+1);
+if saveOption == 1
+    minute_bin_edges = linspace(starttime,stoptime,frames+1);
+    
+    for t = 1:frames
+        
+        pathlist_lite_10m = pathlist_lite(pathlist_lite(:,1) >= minute_bin_edges(t) & pathlist_lite(:,1) < minute_bin_edges(t+1),:);
+        
+        filestr = datestr(minute_bin_edges(t),'yyyymmddHHMM');
+        %filenum = str2double(filestr);
+        filename = sprintf('pathlist/pathlist_lite_10m_%s%s.mat',filestr,stationName);
+        
+        save(filename,'pathlist_lite_10m');
+                
+    end
 
-for t = 1:frames
-    
-    pathlist_lite_10m = pathlist_lite(pathlist_lite(:,1) >= minute_bin_edges(t) & pathlist_lite(:,1) < minute_bin_edges(t+1),:);
-    
-    filestr = datestr(minute_bin_edges(t),'yyyymmddHHMM');
-    %filenum = str2double(filestr);
-    filename = sprintf('pathlist/pathlist_lite_10m_%s%s.mat',filestr,stationName);
-    
-    save(filename,'pathlist_lite_10m');
-            
 end
 
 end
