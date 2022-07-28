@@ -1,4 +1,4 @@
-function strokegrid = gridstrokes(day, varargin)
+function stroke_grid = gridstrokes(day, varargin)
 % Todd Anderson
 % July 27 2022
 % 
@@ -52,6 +52,11 @@ for i = 1 : length(varargin)
                     resolution = varargin{i+1};
                 case {'wholeNetwork',"wholeNetwork"}
 					%wholeNetwork = 1;
+
+                    daystring = datestr(daynum,'YYYYmmDD');
+                    year = datestr(daynum, 'YYYY');
+                    APfilename = sprintf('AP%s.mat',daystring);
+
                     switch year
                         case {'2017','2018','2019'}
                             filepath = compose("/flash5/wd2/APfiles/%s/%s",year,APfilename);
