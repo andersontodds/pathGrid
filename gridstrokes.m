@@ -62,6 +62,12 @@ for i = 1 : length(varargin)
                     end
 
                     %TODO: load APfile here?
+                    APfile = importdata(filepath);
+                    
+                    time = datenum(APfile.data(:,1:6));
+                    lat = APfile.data(:,7);
+                    lon = APfile.data(:,8);
+                    
 
                     stationName = ""; % default for whole-network save filename
 %                 case {'sourceStation',"sourceStation"}
@@ -85,6 +91,15 @@ for i = 1 : length(varargin)
                     % pathlist files are only 10 minutes, so will be faster
                     % to just run getpaths(day, 'stationName', stationName)
                     %TODO: modify getpaths to allow running without saving
+
+                    pathlist = getpaths(daynum,'stationName', stationName, 'nosave');
+
+                    time = pathlist(:,1);   % stroke time
+                    lat = pathlist(:,2);    % stroke latitude
+                    lon = pathlist(:,3);    % stroke longitude
+
+                    stationName = sprintf('_%s',stationName);
+
 			end
 		end
 end
@@ -107,5 +122,8 @@ for i = 1:frames
     inbin = time > time_edge(i) & time < time_edge(i+1);
     stroke_grid(:,:,i) = histcounts2(lat(inbin), lon(inbin), lat_edges, lon_edges);
 end
+
+savefile = sprintf("strokegrid/strokegrid_10m_%s%s", daystring, stationName);
+save(savefile, 'stroke_grid');
 
 end
