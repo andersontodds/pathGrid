@@ -27,8 +27,9 @@ switch class(day)
         error('Cannot identify day format!');
 end
 
-starttime = daynum;
-stoptime = daynum + 1;
+%starttime = daynum;
+%stoptime = daynum + 1;
+daystring = datestr(daynum,'YYYYmmDD');
 
 %stations = importdata('stations.mat');
 
@@ -52,8 +53,6 @@ for i = 1 : length(varargin)
                     resolution = varargin{i+1};
                 case {'wholeNetwork',"wholeNetwork"}
 					%wholeNetwork = 1;
-
-                    daystring = datestr(daynum,'YYYYmmDD');
                     year = datestr(daynum, 'YYYY');
                     APfilename = sprintf('AP%s.mat',daystring);
 
