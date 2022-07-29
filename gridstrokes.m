@@ -91,7 +91,6 @@ for i = 1 : length(varargin)
                 case {'stationName',"stationName"}
                     %TODO: this should be the only option needed for single stations
                     stationName = varargin{i+1};  % value: name of simulated station (string)
-                    stationName = sprintf('_%s',stationName);
                     % pathlist files are only 10 minutes, so will be faster
                     % to just run getpaths(day, 'stationName', stationName)
                     %TODO: modify getpaths to allow running without saving
