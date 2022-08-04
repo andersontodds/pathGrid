@@ -50,8 +50,8 @@ for j = 1:length(stationNameList)
         end
     
         
-        %stationNameStr = sprintf("_%s",stationName);
-        filename_strokegrid = sprintf("strokegrid/strokegrid_10m_%s%s.mat",daystring);%,stationNameStr);
+        stationNameStr = sprintf("_%s",stationName);
+        filename_strokegrid = sprintf("strokegrid/strokegrid_10m_%s%s.mat",daystring,stationNameStr);
         if overwrite == 0 && isfile(filename_strokegrid)
             fprintf('%s already exists and overwrite is disabled, proceeding to next day \n', filename_strokegrid);
         else % either overwrite is enabled, or overwrite is disabled and grid_crossings_10m file does not yet exist for this day

@@ -37,11 +37,11 @@ set(gca, 'ColorScale', 'log');
 crameri('tokyo')
 colorbar('eastoutside');
 
-title()
+title("Strokes detected by Fairbanks WWLLN station")
 
 
 %% animate 10-minute windows
-for j = 1:size(stroke_grid, 3)
+for j = 1:size(sg, 3)
     
     figure(2)
     hold off
