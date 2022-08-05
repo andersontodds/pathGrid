@@ -55,7 +55,7 @@ for j = 1:length(stationNameList)
         if overwrite == 0 && isfile(filename_strokegrid)
             fprintf('%s already exists and overwrite is disabled, proceeding to next day \n', filename_strokegrid);
         else % either overwrite is enabled, or overwrite is disabled and grid_crossings_10m file does not yet exist for this day
-            strokegrid = gridstrokes(run_days(i),'stationName', stationName);
+            strokegrid = gridstrokes(run_days(i),'souceStation', stationName);
         end
         fprintf('Done with day %s \n',daystring);
     end
