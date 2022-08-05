@@ -95,7 +95,7 @@ for i = 1 : length(varargin)
                     % to just run getpaths(day, 'stationName', stationName)
                     %TODO: modify getpaths to allow running without saving
 
-                    pathlist = getpaths(daynum,'stationName', stationName, 'nosave');
+                    pathlist = getpaths(daynum,'sourceStation', stationName, 'nosave');
 
                     time = pathlist(:,1);   % stroke time
                     lat = pathlist(:,2);    % stroke latitude

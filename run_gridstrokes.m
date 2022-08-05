@@ -10,7 +10,7 @@
 % OPTIONS:
 %   0 : overwrite disabled
 %   1 : overwrite enabled
-overwrite = 0;
+overwrite = 1;
 
 % specify optional arguments for getpaths.m
 %   'resolution' (keyword), resolution, in minutes (default: 10)
@@ -55,7 +55,7 @@ for j = 1:length(stationNameList)
         if overwrite == 0 && isfile(filename_strokegrid)
             fprintf('%s already exists and overwrite is disabled, proceeding to next day \n', filename_strokegrid);
         else % either overwrite is enabled, or overwrite is disabled and grid_crossings_10m file does not yet exist for this day
-            strokegrid = gridstrokes(run_days(i),'souceStation', stationName);
+            strokegrid = gridstrokes(run_days(i),'stationName', stationName);
         end
         fprintf('Done with day %s \n',daystring);
     end
