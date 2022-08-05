@@ -16,10 +16,13 @@ run_days = run_days';
 
 daystr = string(datestr(run_days, "yyyymmdd"));
 
-filestr = sprintf("data/strokegrid_10m_%s.mat", daystr);
+stationstr = "Fairbanks";
+
+filestr = sprintf("data/strokegrid_10m_%s_%s.mat", daystr, stationstr);
 sg = importdata(filestr);
 
 %%  plot whole day
+sg = importdata("data/strokegrid_10m_20220301_Fairbanks.mat");
 sg_day = sum(sg, 3);
 
 load coastlines;
