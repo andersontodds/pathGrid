@@ -208,6 +208,8 @@ for stID = stIDRange
     
 end
 
+pathlist(1,:) = []; % remove first row of zeros
+
 %% Extract stroke-station path information: time, stroke lat/lon, station lat/lon
 
 % time
