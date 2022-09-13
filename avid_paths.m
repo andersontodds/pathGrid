@@ -8,22 +8,35 @@
 %% AVID network only
 
 % Tx:                 Lat (deg N)      Lon (deg E)
-Tx = {  "NLK"             48.2000 ,       -121.9167;
-        "NML"             46.3660 ,        -98.3357;
-        "NAA"             44.6500 ,        -67.2833};
+Tx = {  "NLK",             48.2000 ,       -121.9167;
+        "NML",             46.3660 ,        -98.3357;
+        "NAA",             44.6500 ,        -67.2833};
 
 
 % Rx:
-Rx = {  "Poker Flat"      65.1256 ,       -147.4919;
-        "Whitehorse"      60.7197 ,       -135.0523;
-        "Prince George"   53.9171 ,       -122.7497;
-        "Fort Nelson"     58.8050 ,       -122.6972;
-        "Yellowknife"     62.4540 ,       -114.3718;
-        "Rankin Inlet"    62.8084 ,        -92.0853;
-        "Iqaluit"         63.7467 ,        -68.5170;
-        "Kuujjuaq"        58.1030 ,        -68.4188;
-        "Labrador City"   52.9390 ,        -66.9142;
-        "Rimouski"        48.4390 ,        -68.5350};
+Rx = {  "Poker Flat"    ,  65.1256 ,       -147.4919;
+        "Whitehorse"    ,  60.7197 ,       -135.0523;
+        "Prince George" ,  53.9171 ,       -122.7497;
+        "Fort Nelson"   ,  58.8050 ,       -122.6972;
+        "Yellowknife"   ,  62.4540 ,       -114.3718;
+        "Rankin Inlet"  ,  62.8084 ,        -92.0853;
+        "Iqaluit"       ,  63.7467 ,        -68.5170;
+        "Kuujjuaq"      ,  58.1030 ,        -68.4188;
+        "Labrador City" ,  52.9390 ,        -66.9142;
+        "Rimouski"      ,  48.4390 ,        -68.5350};
+
+Rx_proposal = {
+        "Whitehorse"    ,  60.7197 ,       -135.0523;
+        "Juneau"        ,  58.3005 ,       -134.4201;
+        "Ketchikan"     ,  55.3422 ,       -131.6461;
+        "Bella Bella"   ,  52.1605 ,       -128.1456;
+        "Nahanni Butte" ,  61.0335 ,       -123.3834;
+        "Fort Smith"    ,  60.0055 ,       -111.8849;
+        "Stony Rapids"  ,  59.2588 ,       -105.8317;
+        "Churchill"     ,  58.7679 ,        -94.1696;
+        "Kuujjuaq"      ,  58.1030 ,        -68.4188;
+        "Labrador City" ,  52.9390 ,        -66.9142;
+        "Rimouski"      ,  48.4390 ,        -68.5350};
 
 
 % plot network paths
