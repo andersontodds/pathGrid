@@ -152,6 +152,7 @@ end
 minute_bin_edges = linspace(starttime,stoptime,frames+1);
 
 grid_crossings = zeros(180,360,frames);
+perp_gridcross = zeros(180,360,frames);
 
 %gc_variance = zeros(180,360,frames);
 %gc_kurtosis = zeros(180,360,frames);
@@ -185,10 +186,12 @@ for m = 1:frames
         %gridcell = pg_gridcell(pathlist); % for 180x360 pathlist, i.e. from single-frame files
         gridcell = pg_gridcell(pathlist_frame); % for 180x360xN pathlist, i.e. directly from getpaths or from multi-frame file
         gridcross = pg_gridcross(gridcell);
+        gc_perp = pg_perpendicularity(gridcell);
         msg = sprintf('Completed run %s',filestr);
     end
 
     grid_crossings(:,:,m) = gridcross;
+    perp_gridcross(:,:,m) = gc_perp;
         
 %     [gc_var, ~] = pg_variance(gridcell);
 %     gc_variance(:,:,m) = gc_var;
@@ -224,14 +227,17 @@ end
 %% save everything
 daystr = datestr(starttime, 'yyyymmdd');
 
-savefile_gc = sprintf('gridstats/grid_crossings_10m_%s%s.mat',daystr,stationName);
-save(savefile_gc,'grid_crossings');
+% savefile_gc = sprintf('gridstats/grid_crossings_10m_%s%s.mat',daystr,stationName);
+% save(savefile_gc,'grid_crossings');
 
 %savefile_d = sprintf('d_gridcross_10m_%s.mat',daystr);
 %save(savefile_d,'d_gridcross');
 
-savefile_mm = sprintf('gridstats/mm_gridcross_10m_%s%s.mat',daystr,stationName);
-save(savefile_mm,'mm_gridcross');
+% savefile_mm = sprintf('gridstats/mm_gridcross_10m_%s%s.mat',daystr,stationName);
+% save(savefile_mm,'mm_gridcross');
+
+savefile_perp = sprintf('gridstats/perp_gridcross_10m_%s%s.mat',daystr,stationName);
+save(savefile_perp, 'perp_gridcross');
 
 %save('20201129_attencont_lat.mat','latc');
 %save('20201129_attencont_lon.mat','lonc');

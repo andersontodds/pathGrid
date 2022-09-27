@@ -1,5 +1,5 @@
 function [gc_var, gc_angvar] = pg_variance(grid_cell)
-% pg_skewness.m
+% pg_variance.m
 % 17 December 2018
 % 
 % Finds circular variance of grid_cell input azimuths.  Applies

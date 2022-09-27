@@ -10,7 +10,7 @@
 % OPTIONS:
 %   0 : overwrite disabled
 %   1 : overwrite enabled
-overwrite = 0;
+overwrite = 1;
 
 
 % specify optional arguments for getpaths.m
@@ -61,7 +61,7 @@ run_end_sep = datenum(2021, 09, 30);
 run_days_sep = run_start_sep:run_end_sep;
 run_days_sep = run_days_sep';
 
-run_days = [run_days_jan];
+run_days = [run_days_mar];
 
 % % the entire year of 2021
 % run_start = datenum(2021, 01, 01);
@@ -69,7 +69,7 @@ run_days = [run_days_jan];
 % run_days = run_start:run_end;
 % run_days = run_days';
 
-for j = 1:length(sourceStationList)
+% for j = 1:length(sourceStationList)
     %sourceStation = sourceStationList(j);
     %stationLatLon = stationLatLonList(j,:);
     %stationName = stationNameList(j);
@@ -106,4 +106,4 @@ for j = 1:length(sourceStationList)
         fprintf('Done with day %s \n',daystring);
     end
 
-end
+% end
