@@ -1,6 +1,6 @@
-% average_paths.m
+% perp_paths.m
 % Todd Anderson
-% June 24 2022
+% September 27 2022
 %
 % Average WWLLN stroke-to-station path crossings for increasingly large
 % time period in order to get nominal s-s path distributions.
@@ -32,10 +32,10 @@
 % average each lat, lon element across 1 day
 daystr = "20220301";
 run_start = datenum(2022, 03, 01);
-gcfile = sprintf("data/grid_crossings_10m_%s.mat", daystr);
-gc = importdata(gcfile);
+pgfile = sprintf("data/perp_gridcross_10m_%s.mat", daystr);
+pg = importdata(pgfile);
 
-gc_avg = mean(gc, 3, "omitnan");
+pg_avg = mean(pg, 3, "omitnan");
 
 %% 2. month
 % average each lat, lon, UT element across 1 month
@@ -66,21 +66,21 @@ stationName = "Longyearbyen";
 % WARNING: any NaNs in first day will be propagated throughout whole
 % average!
 % load first day, initialize gc_avg
-gcfile = sprintf("data/grid_crossings_10m_%s_%s.mat", daystr(1), stationName);
-gc = importdata(gcfile);
-gc_cavg = gc;
+pgfile = sprintf("data/grid_crossings_10m_%s_%s.mat", daystr(1), stationName);
+pg = importdata(pgfile);
+pg_cavg = pg;
 
 % load subsequent days and calculate cumulative average
 for j = 2:length(daystr)
-    gcfile = sprintf("data/grid_crossings_10m_%s_%s.mat", daystr(j), stationName);
-    gc = importdata(gcfile);
+    pgfile = sprintf("data/grid_crossings_10m_%s_%s.mat", daystr(j), stationName);
+    pg = importdata(pgfile);
 
     % NaN handling: set all NaNs in gc to current gc_cavg values for those
     % array elements.
-    gc_nans = find(isnan(gc));
-    gc(gc_nans) = gc_cavg(gc_nans);
+    pg_nans = find(isnan(pg));
+    pg(pg_nans) = pg_cavg(pg_nans);
 
-    gc_cavg  = (gc_cavg.*(j-1) + gc)./j;
+    pg_cavg  = (pg_cavg.*(j-1) + pg)./j;
 
 end
 
@@ -90,10 +90,10 @@ end
 % month average: plot gc_cavg(:,:,k); manually input desired frame k or
 % loop over k
 % %for k = 1:size(gc_cavg,3)
-for k = 1:size(gc, 3)    
+for k = 1:size(pg, 3)    
 %for k = 1
     %gplot = gc_cavg(:,:,k);
-    gplot = gc(:,:,k);
+    pplot = pg(:,:,k);
 
     times = linspace(run_start, run_start+1, 145);
     timestring = string(datestr(times, "HH:MM:SS"));
@@ -110,47 +110,44 @@ for k = 1:size(gc, 3)
     
     nexttile([1,2])
     worldmap("World")
-    geoshow(gplot, geoidrefvec, "DisplayType","texturemap");
+    geoshow(pplot, geoidrefvec, "DisplayType","texturemap");
     hold on
-    geoshow(coastlat, coastlon, "Color","black");
-    set(gca,'ColorScale','log');
-    crameri('-hawaii');%,'pivot',1); % requires "crameri" colormap toolbox
+    geoshow(coastlat, coastlon, "Color","white");
+    crameri('tokyo');%,'pivot',1); % requires "crameri" colormap toolbox
+    caxis([0 1]);
     
     nexttile
     %worldmap("World");
     worldmap([60 90],[-180 180])
-    geoshow(gplot, geoidrefvec, "DisplayType","texturemap");
+    geoshow(pplot, geoidrefvec, "DisplayType","texturemap");
     hold on
-    geoshow(coastlat, coastlon, "Color","black");
+    geoshow(coastlat, coastlon, "Color","white");
     
     xlabel("Latitude");
     ylabel("Longitude");
     title("");
-    
-    set(gca,'ColorScale','log');
-    crameri('-hawaii');%,'pivot',1); % requires "crameri" colormap toolbox
-    
+    crameri('tokyo');%,'pivot',1); % requires "crameri" colormap toolbox
+    caxis([0 1]);
     
     nexttile
     worldmap([-90 -60],[-180 180])
-    geoshow(gplot, geoidrefvec, "DisplayType","texturemap");
+    geoshow(pplot, geoidrefvec, "DisplayType","texturemap");
     hold on
-    geoshow(coastlat, coastlon, "Color","black");
+    geoshow(coastlat, coastlon, "Color","white");
     
     xlabel("Latitude");
     ylabel("Longitude");
     title("");
-    
-    set(gca,'ColorScale','log');
-    crameri('-hawaii');%,'pivot',1); % requires "crameri" colormap toolbox
+    crameri('tokyo');%,'pivot',1); % requires "crameri" colormap toolbox
+    caxis([0 1]);
     cb = colorbar;
     cb.Layout.Tile = 'east';
-    caxis([0.01 1000]);
+    
     
     
 %     titlestr = sprintf("Average stroke-to-station path crossings \n March 2022 %s-%s \n station: %s (%0.3f N, %0.3f E)", ...
 %         timestring(k), timestring(k+1), stationName, stationLat, stationLon);
-    titlestr = sprintf("WWLLN stroke-to-station path crossings \n March 01 2022 %s-%s", ...
+    titlestr = sprintf("WWLLN stroke-to-station path perpendicularity \n March 01 2022 %s-%s", ...
         timestring(k), timestring(k+1));
     title(t, titlestr);
     %title(t, "Average number of WWLLN stroke-to-station path crossings in a 10 minute period, March 30, 2022");
