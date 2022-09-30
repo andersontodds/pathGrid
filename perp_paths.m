@@ -56,31 +56,47 @@ daystr = string(datestr(run_days, "yyyymmdd"));
 % stationLon = stations{stationID, 2};
 % stationName = stations{stationID,3};
 
-% simulated stations: Toolik, Utqiagvik, Iqaluit, PondInlet, Longyearbyen
-stationLat = 78.2321;
-stationLon = 15.5145;
-stationName = "Longyearbyen";
+% % simulated stations: Toolik, Utqiagvik, Iqaluit, PondInlet, Longyearbyen
+% stationLat = 78.2321;
+% stationLon = 15.5145;
+% stationName = "Longyearbyen";
 
 % cumulative average method: avoid loading entire month of grid_crossings
 % at once
 % WARNING: any NaNs in first day will be propagated throughout whole
 % average!
 % load first day, initialize gc_avg
-pgfile = sprintf("data/grid_crossings_10m_%s_%s.mat", daystr(1), stationName);
+gcfile = sprintf("data/grid_crossings_10m_%s.mat", daystr(1));
+pgfile = sprintf("data/perp_gridcross_10m_%s.mat", daystr(1));
+
+gc = importdata(gcfile);
+gc_cavg = gc;
+
 pg = importdata(pgfile);
 pg_cavg = pg;
 
+gcp = gc.*pg;
+gcp_cavg = gcp;
+
 % load subsequent days and calculate cumulative average
 for j = 2:length(daystr)
-    pgfile = sprintf("data/grid_crossings_10m_%s_%s.mat", daystr(j), stationName);
+    gcfile = sprintf("data/grid_crossings_10m_%s.mat", daystr(j));
+    pgfile = sprintf("data/perp_gridcross_10m_%s.mat", daystr(j));
+    
+    gc = importdata(gcfile);
     pg = importdata(pgfile);
+
+    gcp = gc.*pg;
 
     % NaN handling: set all NaNs in gc to current gc_cavg values for those
     % array elements.
-    pg_nans = find(isnan(pg));
-    pg(pg_nans) = pg_cavg(pg_nans);
+    gcp_nans = find(isnan(gcp));
+    gcp(gcp_nans) = gcp_cavg(gcp_nans);
+    gcp_cavg  = (gcp_cavg.*(j-1) + gcp)./j;
 
-    pg_cavg  = (pg_cavg.*(j-1) + pg)./j;
+%     pg_nans = find(isnan(pg));
+%     pg(pg_nans) = pg_cavg(pg_nans);
+%     pg_cavg  = (pg_cavg.*(j-1) + pg)./j;
 
 end
 
@@ -89,11 +105,12 @@ end
 % whole day average: plot day_avg
 % month average: plot gc_cavg(:,:,k); manually input desired frame k or
 % loop over k
-% %for k = 1:size(gc_cavg,3)
-for k = 1:size(pg, 3)    
-%for k = 1
-    %gplot = gc_cavg(:,:,k);
-    pplot = pg(:,:,k);
+for k = 1:size(pg_cavg,3)
+% for k = 1:size(pg, 3)    
+% for k = 1
+    gcpplot = gcp_cavg(:,:,k);
+%     pplot = pg_cavg(:,:,k);
+%     pplot = pg(:,:,k);
 
     times = linspace(run_start, run_start+1, 145);
     timestring = string(datestr(times, "HH:MM:SS"));
@@ -106,58 +123,67 @@ for k = 1:size(pg, 3)
     
     figure(1)
     hold off
-    t = tiledlayout(2,2, "TileSpacing","compact");
+    t = tiledlayout(2,2, "TileSpacing","compact", "Padding", "compact");
     
     nexttile([1,2])
     worldmap("World")
-    geoshow(pplot, geoidrefvec, "DisplayType","texturemap");
+    geoshow(gcpplot, geoidrefvec, "DisplayType","texturemap");
     hold on
-    geoshow(coastlat, coastlon, "Color","white");
-    crameri('tokyo');%,'pivot',1); % requires "crameri" colormap toolbox
-    caxis([0 1]);
+    geoshow(coastlat, coastlon, "Color","black");
+    
+    set(gca,'ColorScale','log');
+    crameri('-hawaii');
+    caxis([0.01 1000]);
+%     crameri('tokyo');%,'pivot',1); % requires "crameri" colormap toolbox
+%     caxis([0 1]);
     
     nexttile
     %worldmap("World");
     worldmap([60 90],[-180 180])
-    geoshow(pplot, geoidrefvec, "DisplayType","texturemap");
+    geoshow(gcpplot, geoidrefvec, "DisplayType","texturemap");
     hold on
-    geoshow(coastlat, coastlon, "Color","white");
+    geoshow(coastlat, coastlon, "Color","black");
     
     xlabel("Latitude");
     ylabel("Longitude");
     title("");
-    crameri('tokyo');%,'pivot',1); % requires "crameri" colormap toolbox
-    caxis([0 1]);
+    set(gca,'ColorScale','log');
+    crameri('-hawaii');
+    caxis([0.01 1000]);
+%     crameri('tokyo');%,'pivot',1); % requires "crameri" colormap toolbox
+%     caxis([0 1]);
     
     nexttile
     worldmap([-90 -60],[-180 180])
-    geoshow(pplot, geoidrefvec, "DisplayType","texturemap");
+    geoshow(gcpplot, geoidrefvec, "DisplayType","texturemap");
     hold on
-    geoshow(coastlat, coastlon, "Color","white");
+    geoshow(coastlat, coastlon, "Color","black");
     
     xlabel("Latitude");
     ylabel("Longitude");
     title("");
-    crameri('tokyo');%,'pivot',1); % requires "crameri" colormap toolbox
-    caxis([0 1]);
+    set(gca,'ColorScale','log');
+    crameri('-hawaii');
+    caxis([0.01 1000]);
+%     crameri('tokyo'); % requires "crameri" colormap toolbox
+%     caxis([0 1]);
     cb = colorbar;
     cb.Layout.Tile = 'east';
     
     
     
-%     titlestr = sprintf("Average stroke-to-station path crossings \n March 2022 %s-%s \n station: %s (%0.3f N, %0.3f E)", ...
-%         timestring(k), timestring(k+1), stationName, stationLat, stationLon);
-    titlestr = sprintf("WWLLN stroke-to-station path perpendicularity \n March 01 2022 %s-%s", ...
+    titlestr = sprintf("Average stroke-to-station paths weighted by perpendicularity \n March 2022 %s-%s", ...
         timestring(k), timestring(k+1));
+%     titlestr = sprintf("WWLLN stroke-to-station path perpendicularity \n March 01 2022 %s-%s", ...
+%         timestring(k), timestring(k+1));
     title(t, titlestr);
     %title(t, "Average number of WWLLN stroke-to-station path crossings in a 10 minute period, March 30, 2022");
 
-%     gifname = sprintf('wwlln_paths_20220330_%s.gif', stationName);
-%     gifname = sprintf('wwlln_paths_20220330.gif');
-%     if k == 1
-%         gif(gifname);
-%     else
-%         gif;
-%     end
+    gifname = sprintf('average_paths_perp_202203.gif');
+    if k == 1
+        gif(gifname);
+    else
+        gif;
+    end
 
 end
