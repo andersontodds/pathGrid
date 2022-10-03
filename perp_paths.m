@@ -94,9 +94,13 @@ for j = 2:length(daystr)
     gcp(gcp_nans) = gcp_cavg(gcp_nans);
     gcp_cavg  = (gcp_cavg.*(j-1) + gcp)./j;
 
-%     pg_nans = find(isnan(pg));
-%     pg(pg_nans) = pg_cavg(pg_nans);
-%     pg_cavg  = (pg_cavg.*(j-1) + pg)./j;
+    pg_nans = find(isnan(pg));
+    pg(pg_nans) = pg_cavg(pg_nans);
+    pg_cavg  = (pg_cavg.*(j-1) + pg)./j;
+
+    gc_nans = find(isnan(gc));
+    gc(gc_nans) = gc_cavg(gc_nans);
+    gc_cavg  = (gc_cavg.*(j-1) + gc)./j;
 
 end
 
@@ -180,6 +184,95 @@ for k = 1:size(pg_cavg,3)
     %title(t, "Average number of WWLLN stroke-to-station path crossings in a 10 minute period, March 30, 2022");
 
     gifname = sprintf('average_paths_perp_202203.gif');
+    if k == 1
+        gif(gifname);
+    else
+        gif;
+    end
+
+end
+
+%% plot average path crossings, perpendicularity, and path crossings weighted by perpendicularity
+
+for k = 1:size(pg_cavg,3)
+% for k = 1:size(pg, 3)    
+% for k = 1
+    gcplot = gc_cavg(:,:,k);
+    pgplot = pg_cavg(:,:,k);
+    gcpplot = gcp_cavg(:,:,k);
+%     pplot = pg_cavg(:,:,k);
+%     pplot = pg(:,:,k);
+
+    times = linspace(run_start, run_start+1, 145);
+    timestring = string(datestr(times, "HH:MM:SS"));
+    
+    
+    coastlines = importdata('coastlines.mat');
+    coastlat = coastlines.coastlat;
+    coastlon = coastlines.coastlon;
+    geoidrefvec = [1,90,-180];
+    
+    figure(1)
+    hold off
+    t = tiledlayout(3,1, "Padding", "compact"); % add "TileSpacing", "compact" if subtitles are not needed
+    
+    % path crossings
+    nexttile
+    worldmap("World")
+    geoshow(gcplot, geoidrefvec, "DisplayType","texturemap");
+    hold on
+    geoshow(coastlat, coastlon, "Color","black");
+    
+    set(gca,'ColorScale','log');
+    crameri('-hawaii');
+    caxis([0.01 1000]);
+    cb = colorbar;
+    cb.Layout.Tile = 'east';
+    titlestr = "average number of stroke-to-station path crossings";
+    title(titlestr);
+    
+    % perpendicularity
+    nexttile
+    worldmap("World");
+    geoshow(pgplot, geoidrefvec, "DisplayType","texturemap");
+    hold on
+    geoshow(coastlat, coastlon, "Color","black");
+    
+    xlabel("Latitude");
+    ylabel("Longitude");
+    title("");
+    crameri('tokyo');
+    caxis([0 1]);
+    cb = colorbar;
+    cb.Layout.Tile = 'east';
+
+    titlestr = "perpendicularity";
+    title(titlestr);
+    
+    % weighted path crossings
+    nexttile
+    worldmap('World')
+    geoshow(gcpplot, geoidrefvec, "DisplayType","texturemap");
+    hold on
+    geoshow(coastlat, coastlon, "Color","black");
+    
+    xlabel("Latitude");
+    ylabel("Longitude");
+    title("");
+    set(gca,'ColorScale','log');
+    crameri('-hawaii');
+    caxis([0.01 1000]);
+    cb = colorbar;
+    cb.Layout.Tile = 'east';
+    
+    titlestr = "path crossings weighted by perpendicularity";
+    title(titlestr);
+
+    supertitlestr = sprintf("WWLLN stroke-to-station path statistics \n March 2022 %s-%s", ...
+        timestring(k), timestring(k+1));
+    title(t, supertitlestr)     ;
+
+    gifname = sprintf('average_paths_perp_weighted_202203.gif');
     if k == 1
         gif(gifname);
     else
