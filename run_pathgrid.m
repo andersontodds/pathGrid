@@ -10,7 +10,7 @@
 % OPTIONS:
 %   0 : overwrite disabled
 %   1 : overwrite enabled
-overwrite = 1;
+overwrite = 0;
 
 
 % specify optional arguments for getpaths.m

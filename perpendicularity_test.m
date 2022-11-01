@@ -29,7 +29,7 @@ p_perp2 = circ_var(2*a_perp2);
 p_perp4 = circ_var(2*a_perp4);
 
 figure(1)
-tiledlayout(2,2)
+tiledlayout(2,2, "TileSpacing","compact","Padding","compact")
 nexttile
 polarhistogram(a_uniform,36);
 titlestr = sprintf("Uniform\nP = %0.2f, V = %0.2f", p_uniform, v_uniform);
