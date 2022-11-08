@@ -61,35 +61,107 @@ s=y';
 S=fft(s);
 
  %Option to measure phase relative to first sample
-    tOffset = 0;
+tOffset = 0;
     
-    %or measure phase relative to trigger point
-    %i.e. delayed by N/4 samples
-    wtN4=i*2*pi*0.25*(0:N/2-1);
-    S=exp(wtN4).*S(1:N/2);
-    tOffset = 0.25*N/Fs;
-  
-    measuredPhase = unwrap(angle(S));
+%or measure phase relative to trigger point
+%i.e. delayed by N/4 samples
+wtN4=1i*2*pi*0.25*(0:N/2-1);
+S=exp(wtN4).*S(1:N/2);
+tOffset = 0.25*N/Fs;
 
-    %estimate range
-    amp = abs(S(f1Idx:f4Idx));
-    %amp = amp.^2;
-    phase = measuredPhase(f1Idx:f4Idx);
-    freq = f(f1Idx:f4Idx);
-    w=2*pi*freq;
-   
-    ws=w/std(w);
-    pa=togafit(ws,phase,amp);
-   
-    pa(1)=pa(1)/std(w);
-    pa(3)=pa(3)*std(w);
-   
-     pa
-    fittedPhase = pa(1).*w + pa(2) + pa(3)./w;
-    cfitph = c1.*w + c2 + c3./w;
+measuredPhase = unwrap(angle(S));
+
+%estimate range
+amp = abs(S(f1Idx:f4Idx));
+%amp = amp.^2;
+phase = measuredPhase(f1Idx:f4Idx);
+freq = f(f1Idx:f4Idx);
+w=2*pi*freq;
+
+ws=w/std(w);
+pa=togafit(ws,phase,amp);
+
+pa(1)=pa(1)/std(w);
+pa(3)=pa(3)*std(w);
+
+pa
+fittedPhase = pa(1).*w + pa(2) + pa(3)./w;
+cfitph = c1.*w + c2 + c3./w;
+
+%do the linear toga fit
+ta=polyfit(w,phase,1);
+t1=-ta(1) + tOffset;
+
+%mLinPhaseFit = (180/pi)*(ta(1)*w+ta(2));
+
+figure(1)
+
+subplot(2,2,[1 3])
+
+%plot the measured and fitted phase 
+deltaPhase = (180/pi)*(phase - fittedPhase);
+rmsPhaseError = sqrt(sum(deltaPhase.*deltaPhase)/length(phase));
+
+
+kHzFreq=0.001*freq;
+plot(kHzFreq,phase*180/pi,'k',kHzFreq,fittedPhase*180/pi,'b--',kHzFreq,cfitph*180/pi,'r*');
+xlabel('Frequency (kHz)');
+ylabel('Phase (degrees)');
+legend('Measured phase','MATLAB fit','C++ fit')
+title(sprintf('RMS phase error = %f',rmsPhaseError));
+
+%group travel time = -dphi/dw
+t0=-pa(1) + tOffset;
+tg= t0 + pa(3)./(w.*w);
+subplot(2,2,2)
+
+plot([t1 t1],[kHzFreq(1) kHzFreq(end)],'b',dtoga*ones(size(kHzFreq(1:3:end))),kHzFreq(1:3:end),'r*', tg,kHzFreq,'k',[t0 t0],[kHzFreq(1) kHzFreq(end)],'k--');
+xlabel('Time (s)');
+ylabel('Frequency (kHz)');
+
+legend('MATLAB TOGA','C++ TOGA')
+title('Dispersion & TOGA (linear fit)');
+v=axis;
+v(1)=0e-3;
+v(2)=1.2e-3;
+axis(v);
+
+subplot(2,2,4)
+
+%compute RMS amp
+mRMSAmp = sqrt(mean(s(N/4:end).^2))*32768;
+timeBase = (1:length(s))/Fs;
+
+%,[min(timeBase) max(timeBase)],[mRMSAmp mRMSAmp],'g--',[min(timeBase) max(timeBase)],[rmsAmp rmsAmp]/32768,'g*'
+plot([t1 t1],[-1 1],'b',[dtoga dtoga dtoga dtoga dtoga dtoga],[-0.5 -0.3 -0.1 0.1 0.3 0.5 ],'r*',timeBase,s,'k',[-c1+0.25*N/Fs -c1+0.25*N/Fs],[-1 1],'k--');%,[t0 t0],[min(s) max(s)],'r--');
+xlabel('Time (s)')
+ylabel('Amplitude');
+legend('MATLAB TOGA','C++ TOGA')
+title(sprintf('Sferic waveform & TOGA. RMS Amp = %f, %d',mRMSAmp,rmsAmp));
+v=axis;
+v(1)=0e-3;
+v(2)=1.2e-3;
+v(3)=-0.8;
+v(4)=0.8;
+axis(v);
+
+%c=299792458;
+%h=87e3;
+%w1= 2*pi*c/(2*h);
+%r=c*2*pa(3)/(w1*w1);
+%tstr = sprintf('h = %d km, range = %6g km',h/1000,r/1000);
+%title(tstr);
+
+
     
-    %do the linear toga fit
-    ta=polyfit(w,phase,1);
-    t1=-ta(1) + tOffset;
+%  end
+%if okSferic==1,
+%        pause
+% else
+%     pause(0.1)
+% end
+rms(j,:)=[mRMSAmp, rmsAmp];
+%     j=j+1;
+% end
 
 fclose(fid);
