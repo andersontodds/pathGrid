@@ -219,11 +219,12 @@ stroke_time = datenum(pathlist(:,1:6));
 stroke_lat = pathlist(:,7);
 stroke_lon = pathlist(:,8);
 
-% station lat/lon
+% station lat/lon, ID
 stat_lat = pathlist(:,12);
 stat_lon = pathlist(:,13);
+stat_ID  = pathlist(:,11);
 
-pathlist_lite = cat(2,stroke_time,stroke_lat,stroke_lon,stat_lat,stat_lon);
+pathlist_lite = cat(2,stroke_time,stroke_lat,stroke_lon,stat_lat,stat_lon,stat_ID);
 
 %% Save path files
 
