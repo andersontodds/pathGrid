@@ -25,7 +25,8 @@ sfile_time_start = min(sfile_values(:,1));
 sfile_time_end = max(sfile_values(:,1));
 
 c = 299792458; % speed of light in a vacuum (m/s)
-c_eiwg = 0.9914*c; % band-averaged group velocity == propagation speed in EIWG (Dowden et al 2002)
+% c_eiwg = 0.9914*c; % band-averaged group velocity == propagation speed in EIWG (Dowden et al 2002)
+c_eiwg = 0.9905*c; % from James' email Nov 09 2022
 re_km = 6371; % mean radius of the Earth in km
 eps_eiwg = pi*re_km*1000/c_eiwg; % time for a sferic to travel halfway around the Earth in seconds
 
@@ -37,7 +38,9 @@ pathlist = pathlist_day(in_sfile_time, :);
 stroke_time_sec = (pathlist(:,1) - floor(pathlist(:,1)))*86400;
 
 % calculate distance --> propagation time between each stroke and the Sfile station
-d_ss = distance(pathlist(:,2), pathlist(:,3), pathlist(:,4), pathlist(:,5), re_km); % in km
+% d_ss = distance(pathlist(:,2), pathlist(:,3), pathlist(:,4), pathlist(:,5), re_km); % in km
+d_ss = distance(pathlist(:,2), pathlist(:,3), pathlist(:,4), pathlist(:,5), referenceEllipsoid('wgs84'))./1000; % in km
+
 t_ss = 1000*d_ss./c_eiwg;
 
 % check correspondence between sfile times and pathlist times
