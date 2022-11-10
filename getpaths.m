@@ -82,6 +82,7 @@ stations = importdata('stations.mat');
 
 % optional parameter defaults
 saveOption = 1;
+localFile = 0;
 resolution = 10; % minutes
 %wholeNetwork = 1;
 stIDRange = 1:length(stations);
@@ -97,8 +98,10 @@ for i = 1 : length(varargin)
 		
 		if ischar(input) || isstring(input)
 			switch varargin{i}
-                case {'nosave'}
+                case {'nosave',"nosave"}
                     saveOption = 0;
+                case {'localfile',"localfile"}
+                    localFile = 1;
                 case {'resolution',"resolution"}
                     resolution = varargin{i+1};
                 case {'wholeNetwork',"wholeNetwork"}
@@ -135,17 +138,22 @@ year = datestr(daynum, 'YYYY');
 
 APfilename = sprintf('AP%s.mat',daystring);
 
-switch year
-    case {'2017','2018','2019'}
-        filepath = compose("/flash5/wd2/APfiles/%s/%s",year,APfilename);
-    case {'2020','2021','2022'}
-        filepath = compose("/flash5/wd2/APfiles/%s",APfilename);
-    otherwise
-        error('Input year outside range 2017-2022!')
+if localFile == 0
+    switch year
+        case {'2017','2018','2019'}
+            filepath = compose("/flash5/wd2/APfiles/%s/%s",year,APfilename);
+        case {'2020','2021','2022'}
+            filepath = compose("/flash5/wd2/APfiles/%s",APfilename);
+        otherwise
+            error('Input year outside range 2017-2022!')
+    end
+else % localFile == 1
+    filepath = APfilename;
 end
 
 fprintf('attempting import from path %s \n', filepath)
 APfile = importdata(filepath);
+
 data = APfile.data;
 power = APfile.power;
 

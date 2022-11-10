@@ -5,6 +5,10 @@ function out = getsferics(pathlist)
 %
 % Gets sferic information related to lightning strokes in APfile.
 
+% VLF propagation speed in the Earth-Ionosphere waveguide:
+c = 299792458; % speed of light in a vacuum (m/s)
+c_eiwg = 0.9914*c; % band-averaged group velocity == propagation speed in EIWG (Dowden et al 2002)
+
 % Get date(s) of pathlist
 % usually each pathlist will be run for a single day
 date = unique(floor(pathlist(:,1))); % in datenum format
@@ -47,8 +51,8 @@ for i = 1:length(stationname)
     % station stationname(i)
     st = pathlist(:,6) == stationlist(i);
     station_stroketimes = pathlist(st, 1);
-    ss_distance = distance(pathlist(st, 2),pathlist(st, 3), pathlist(st, 4), pathlist(st, 5), )
-
+    ss_distance = distance(pathlist(st, 2),pathlist(st, 3), pathlist(st, 4), pathlist(st, 5), 6371);
+    sferic_time = ss_distance./c_eiwg;
 
 end
 
