@@ -38,7 +38,9 @@ t_ss = d_ss./c_eiwg;
 for i = 1:length(stationname)
     flashprocpath = sprintf("/flashproc/wd4/cchris28/S-files/%s/%d", stationname(i), yyyy);
     flashlightpath = sprintf("./S-files/%s/%d", stationname(i), yyyy);
-    if exist(flashprocpath, "dir") && exist(flashlightpath,"dir")
+    % check that source and destination folders exist, and that source
+    % folder is not empty
+    if exist(flashprocpath, "dir") && numel(dir(flashprocpath)) > 2 && exist(flashlightpath,"dir")
         msg = sprintf("Copying Sfiles from %s", flashprocpath);
         disp(msg);
         cmd_cp = sprintf("cp %s/S%d%02d%02d*.tar.bz2 %s", flashprocpath, yyyy,mm,dd, flashlightpath);
@@ -58,10 +60,10 @@ for i = 1:length(stationname)
         cmd_bunzip2 = sprintf("bunzip2 %s/S%d%02d%02d%02d.tar.bz2", flashlightpath, yyyy,mm,dd,HH);
         [status] = system(cmd_bunzip2);
         tarname = sprintf("%s/S%d%02d%02d%02d.tar", flashlightpath, yyyy,mm,dd,HH);
-        untar(tarname);
+        untar(tarname, flashlightpath);
 
         for MM = 0:59
-            sfilename = sprintf("S%d%02d%02d%02d%02d",yyyy,mm,dd,HH,MM);
+            sfilename = sprintf("%s/S%d%02d%02d%02d%02d",flashlightpath,yyyy,mm,dd,HH,MM);
             sfile = import_sfile(sfilename);
             sfile_day = cat(1,sfile_day, sfile);
         end
