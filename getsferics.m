@@ -38,25 +38,30 @@ t_ss = d_ss./c_eiwg;
 for i = 1:length(stationname)
     flashprocpath = sprintf("/flashproc/wd4/cchris28/S-files/%s/%d", stationname(i), yyyy);
     flashlightpath = sprintf("./S-files/%s/%d", stationname(i), yyyy);
-    cmd_cp = sprintf("cp %s/S%d%02d%02d*.tar.bz2 %s", flashprocpath, yyyy,mm,dd, flashlightpath);
-    [status] = system(cmd_cp);
-    cmd_bunzip2 = sprintf("bunzip2 %s/S%d%02d%02d.tar.bz2", flashlightpath, yyyy,mm,dd);
-    [status] = system(cmd_bunzip2);
-    tarname = sprintf("%s/S%d%02d%02d*.tar", flashlightpath, yyyy,mm,dd);
-    untar(tarname);
+    if exist(flashprocpath, "dir") && exist(flashlightpath,"dir")
+        msg = sprintf("Copying Sfiles from %s", flashprocpath);
+        disp(msg);
+        cmd_cp = sprintf("cp %s/S%d%02d%02d*.tar.bz2 %s", flashprocpath, yyyy,mm,dd, flashlightpath);
+        [status] = system(cmd_cp);
+    else
+        msg = sprintf("No Sfiles from %s, going to next station.", stationname(i));
+        disp(msg);
+        continue;
+    end
 
-    % at this point, all Sfiles for stationname(i) on the same date as
-    % pathlist should be unzipped and untarred.  Next, extract pertinent
-    % sferic information from all of them, and save them to a list.
-    % This should be its own function; modify read_sfile.m
 
     % for each Sfile,
     %   get or calculate pertinent sferic information --> readSfile
     % save daily information
     sfile_day = [];
-    for h = 0:23
-        for m = 0:59
-            sfilename = sprintf("S%d%02d%02d%02d%02d",yyyy,mm,dd,h,m);
+    for HH = 0:23
+        cmd_bunzip2 = sprintf("bunzip2 %s/S%d%02d%02d%02d.tar.bz2", flashlightpath, yyyy,mm,dd,HH);
+        [status] = system(cmd_bunzip2);
+        tarname = sprintf("%s/S%d%02d%02d%02d.tar", flashlightpath, yyyy,mm,dd,HH);
+        untar(tarname);
+
+        for MM = 0:59
+            sfilename = sprintf("S%d%02d%02d%02d%02d",yyyy,mm,dd,HH,MM);
             sfile = import_sfile(sfilename);
             sfile_day = cat(1,sfile_day, sfile);
         end
