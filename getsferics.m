@@ -57,13 +57,20 @@ for i = 1:length(stationname)
     % save daily information
     sfile_day = [];
     for HH = 0:23
-        cmd_bunzip2 = sprintf("bunzip2 %s/S%d%02d%02d%02d.tar.bz2", flashlightpath, yyyy,mm,dd,HH);
+        path_bunzip2 = sprintf("%s/S%d%02d%02d%02d.tar.bz2", flashlightpath, yyyy,mm,dd,HH);
+        if ~exist(path_bunzip2, "file")
+            continue;
+        end
+        cmd_bunzip2 = sprintf("bunzip2 %s", path_bunzip2);
         [status] = system(cmd_bunzip2);
         tarname = sprintf("%s/S%d%02d%02d%02d.tar", flashlightpath, yyyy,mm,dd,HH);
         untar(tarname, flashlightpath);
 
         for MM = 0:59
             sfilename = sprintf("%s/S%d%02d%02d%02d%02d",flashlightpath,yyyy,mm,dd,HH,MM);
+            if ~exist(sfilename, "file")
+                continue;
+            end
             sfile = import_sfile(sfilename);
             sfile_day = cat(1,sfile_day, sfile);
         end
@@ -83,13 +90,16 @@ for i = 1:length(stationname)
 
     % match sferics to strokes
 
+    min_dayfrac = zeros(size(st_stroke_dayfrac));
     min_dayfrac_idx = zeros(size(st_stroke_dayfrac));
     for j = 1:length(st_stroke_dayfrac)
-        [~, min_dayfrac_idx(j)] = min(abs((sferic_dayfrac.*86400 + mutoga./1E6) - (st_stroke_dayfrac(j)*86400 + st_tss(j))));
+        [min_dayfrac(j), min_dayfrac_idx(j)] = min(abs((sferic_dayfrac.*86400 + mutoga./1E6) - (st_stroke_dayfrac(j)*86400 + st_tss(j)))); % units: seconds
     end
 
     % save dispersion fit parameters to sfericlist
+    bad_fit = min_dayfrac > 1E-4; % i.e. could not find sferic within 100 us
     sfericlist(st, :) = sfile_day(min_dayfrac_idx, 5:7);
+    sfericlist(st(bad_fit), :) = [NaN NaN NaN];
 
 end
 
