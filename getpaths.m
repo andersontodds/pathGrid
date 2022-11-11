@@ -222,6 +222,7 @@ pathlist(1,:) = []; % remove first row of zeros
 
 % time
 stroke_time = datenum(pathlist(:,1:6));
+stroke_secs = pathlist(:,6);
 
 % stroke lat/lon
 stroke_lat = pathlist(:,7);
@@ -232,7 +233,7 @@ stat_lat = pathlist(:,12);
 stat_lon = pathlist(:,13);
 stat_ID  = pathlist(:,11);
 
-pathlist_lite = cat(2,stroke_time,stroke_lat,stroke_lon,stat_lat,stat_lon,stat_ID);
+pathlist_lite = cat(2,stroke_time,stroke_lat,stroke_lon,stat_lat,stat_lon,stat_ID,stroke_secs);
 
 %% Save path files
 

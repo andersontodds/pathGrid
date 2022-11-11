@@ -39,7 +39,7 @@ while j <= nlines
     %[y, count] = sscanf(tLine(nextindex+6:end),'%f,',inf);
     
     time(j) = datenum(A(2:7)');
-%     secs(j) = second(datetime(time, "ConvertFrom", "datenum"));
+    %secs(j) = A(7);
 
     mutoga(j) = A(8);  % UTC toga offset in microseconds
     rmsAmp(j) = A(9);  % rms amplitude

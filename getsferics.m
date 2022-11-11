@@ -1,13 +1,16 @@
-function out = getsferics(pathlist)
+function sfericlist = getsferics(pathlist)
 % getsferics.m
 % Todd Anderson
 % November 8 2022
 %
 % Gets sferic information related to lightning strokes in APfile.
 
+% initialize output
+sfericlist = zeros(length(pathlist),3);
+
 % VLF propagation speed in the Earth-Ionosphere waveguide:
 c = 299792458; % speed of light in a vacuum (m/s)
-c_eiwg = 0.9914*c; % band-averaged group velocity == propagation speed in EIWG (Dowden et al 2002)
+c_eiwg = 0.9905*c; % from James' email Nov 09 2022
 
 % Get date(s) of pathlist
 % usually each pathlist will be run for a single day
@@ -22,6 +25,10 @@ stations = importdata("stations.mat");
 stationlist = unique(pathlist(:,6)); 
 % convert station ID to lowercase station name
 stationname = lower([stations{stationlist, 3}]);
+
+% compute stroke-station distances --> time offset in pathlist
+d_ss = distance(pathlist(:,2), pathlist(:,3), pathlist(:,4), pathlist(:,5), referenceEllipsoid('wgs84'));
+t_ss = d_ss./c_eiwg;
 
 % Get Sfiles for each station in pathlist
 % for i in each station, j in each date
@@ -46,13 +53,36 @@ for i = 1:length(stationname)
     % for each Sfile,
     %   get or calculate pertinent sferic information --> readSfile
     % save daily information
-    
+    sfile_day = [];
+    for h = 0:23
+        for m = 0:59
+            sfilename = sprintf("S%d%02d%02d%02d%02d",yyyy,mm,dd,h,m);
+            sfile = import_sfile(sfilename);
+            sfile_day = cat(1,sfile_day, sfile);
+        end
+    end
     % find entries in pathlist when strokes occurred that were detected by
     % station stationname(i)
     st = pathlist(:,6) == stationlist(i);
-    station_stroketimes = pathlist(st, 1);
-    ss_distance = distance(pathlist(st, 2),pathlist(st, 3), pathlist(st, 4), pathlist(st, 5), 6371);
-    sferic_time = ss_distance./c_eiwg;
+    st_stroketime = pathlist(st, 1);
+    %st_strokesecs = pathlist(st, 7);
+    st_stroke_dayfrac = st_stroketime - floor(st_stroketime);
+    
+    sferictime = sfile_day(:,1); % sferic UTC time (datenum)
+    sferic_dayfrac = sferictime - floor(sferictime);
+    mutoga = sfile_day(:,2); % sferic TOGA offest from UTC time (us)
+
+    st_tss = t_ss(st);
+
+    % match sferics to strokes
+
+    min_dayfrac_idx = zeros(size(st_stroke_dayfrac));
+    for j = 1:length(st_stroke_dayfrac)
+        [~, min_dayfrac_idx(j)] = min(abs((sferic_dayfrac.*86400 + mutoga./1E6) - (st_stroke_dayfrac(j)*86400 + st_tss(j))));
+    end
+
+    % save dispersion fit parameters to sfericlist
+    sfericlist(st, :) = sfile_day(min_dayfrac_idx, 5:7);
 
 end
 
