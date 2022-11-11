@@ -99,7 +99,9 @@ for i = 1:length(stationname)
     % save dispersion fit parameters to sfericlist
     bad_fit = min_dayfrac > 1E-4; % i.e. could not find sferic within 100 us
     sfericlist(st, :) = sfile_day(min_dayfrac_idx, 5:7);
-    sfericlist(st(bad_fit), :) = [NaN NaN NaN];
+    if any(bad_fit)
+        sfericlist(st(bad_fit), :) = [NaN NaN NaN];
+    end
 
 end
 
