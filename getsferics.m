@@ -1,11 +1,11 @@
-function sfericlist = getsferics(pathlist)
+function pathlist_sferic = getsferics(pathlist)
 % getsferics.m
 % Todd Anderson
 % November 8 2022
 %
 % Gets sferic information related to lightning strokes in APfile.
 
-% initialize output
+% initialize sfericlist
 sfericlist = zeros(length(pathlist),3);
 
 % VLF propagation speed in the Earth-Ionosphere waveguide:
@@ -107,11 +107,26 @@ for i = 1:length(stationname)
     end
 
     % clean up untarred Sfiles
-    if numel(dir("S!(*.*)")) > 0
+
+    if numel(dir(sprintf("%s/S!(*.*)", flashlightpath))) > 0
         cmd_rm = sprintf("rm %s/S!(*.*)", flashlightpath);
         [status] = system(cmd_rm);
     end
 
 end
+
+% get subset of pathlist with nonzero sferic information
+c1zero = sfericlist(:,1) == 0;
+c2zero = sfericlist(:,2) == 0;
+c3zero = sfericlist(:,3) == 0;
+goodsferics = ~(c1zero & c2zero & c3zero);
+
+sferics = sfericlist(goodsferics, :);
+sfericpaths = pathlist(goodsferics, :);
+
+pathlist_sferic = cat(2, sfericpaths, sferics);
+
+savename = sprintf("./pathlist/pathlist_sferic_%04d%02d%02d.mat", yyyy,mm,dd);
+save(savename, "pathlist_sferic");
 
 end
