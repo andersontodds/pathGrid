@@ -37,13 +37,16 @@ t_ss = d_ss./c_eiwg;
 % tar -xf Syyyymmdd*.tar        --> SyyyymmddHHMM
 for i = 1:length(stationname)
     flashprocpath = sprintf("/flashproc/wd4/cchris28/S-files/%s/%d", stationname(i), yyyy);
+    flashprocfile = sprintf("%s/S%d%02d%02d*.tar.bz2", flashprocpath, yyyy,mm,dd);
     flashlightpath = sprintf("./S-files/%s/%d", stationname(i), yyyy);
     % check that source and destination folders exist, and that source
     % folder is not empty
-    if exist(flashprocpath, "dir") && numel(dir(flashprocpath)) > 2 && exist(flashlightpath,"dir")
+    % conditions:
+    %   source directory exists     | source directory is non-empty  | destination directory exists | source directory has at least one file in date range
+    if exist(flashprocpath, "dir") && numel(dir(flashprocpath)) > 2 && exist(flashlightpath,"dir") && numel(dir(flashprocfile)) > 0
         msg = sprintf("Copying Sfiles from %s", flashprocpath);
         disp(msg);
-        cmd_cp = sprintf("cp %s/S%d%02d%02d*.tar.bz2 %s", flashprocpath, yyyy,mm,dd, flashlightpath);
+        cmd_cp = sprintf("cp %s %s", flashprocfile, flashlightpath);
         [status] = system(cmd_cp);
     else
         msg = sprintf("No Sfiles from %s, going to next station.", stationname(i));
@@ -101,6 +104,12 @@ for i = 1:length(stationname)
     sfericlist(st, :) = sfile_day(min_dayfrac_idx, 5:7);
     if any(bad_fit)
         sfericlist(st(bad_fit), :) = [NaN NaN NaN];
+    end
+
+    % clean up untarred Sfiles
+    if numel(dir("S!(*.*)")) > 0
+        cmd_rm = sprintf("rm %s/S!(*.*)", flashlightpath);
+        [status] = system(cmd_rm);
     end
 
 end
