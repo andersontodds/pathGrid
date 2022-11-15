@@ -50,7 +50,7 @@ time = pathlist_sferic(:,1);
 
 c1 = pathlist_sferic(:,8);
 c2 = pathlist_sferic(:,9);
-c3 = pathlsit_sferic(:,10);
+c3 = pathlist_sferic(:,10);
 
 nTracks = length(time);
 
