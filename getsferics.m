@@ -64,7 +64,7 @@ for i = 1:length(stationname)
         end
         cmd_bunzip2 = sprintf("bunzip2 %s", path_bunzip2);
         status = system(cmd_bunzip2);
-        if status ~= 0
+        if status == 2 % should flag only on corrupted file ("Compressed file ends unexpectedly")
             fprintf("Problem unzipping %s, going to next file.\n", path_bunzip2);
             continue;
         end
