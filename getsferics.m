@@ -44,13 +44,11 @@ for i = 1:length(stationname)
     % conditions:
     %   source directory exists     | source directory is non-empty  | destination directory exists | source directory has at least one file in date range
     if exist(flashprocpath, "dir") && numel(dir(flashprocpath)) > 2 && exist(flashlightpath,"dir") && numel(dir(flashprocfile)) > 0
-        msg = sprintf("Copying Sfiles from %s", flashprocpath);
-        disp(msg);
+        fprintf("Copying Sfiles from %s\n", flashprocpath);
         cmd_cp = sprintf("cp %s %s", flashprocfile, flashlightpath);
         [status] = system(cmd_cp);
     else
-        msg = sprintf("No Sfiles from %s, going to next station.", stationname(i));
-        disp(msg);
+        fprintf("No Sfiles from %s, going to next station.\n", stationname(i));
         continue;
     end
 
@@ -65,7 +63,11 @@ for i = 1:length(stationname)
             continue;
         end
         cmd_bunzip2 = sprintf("bunzip2 %s", path_bunzip2);
-        [status] = system(cmd_bunzip2);
+        status = system(cmd_bunzip2);
+        if status ~= 0
+            fprintf("Problem unzipping %s, going to next file.\n", path_bunzip2);
+            continue;
+        end
         tarname = sprintf("%s/S%d%02d%02d%02d.tar", flashlightpath, yyyy,mm,dd,HH);
         untar(tarname, flashlightpath);
 
