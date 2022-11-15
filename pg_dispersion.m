@@ -1,4 +1,4 @@
-function [gc_mean_c1, gc_mean_c2, gc_mean_c3] = pg_dispersion(grid_cell_sferic)
+function [gc_mean_c1, gc_mean_c2, gc_mean_c3, gc_var_c1, gc_var_c2, gc_var_c3] = pg_dispersion(grid_cell_sferic)
 % pg_dispersion.m
 % 14 November 2022
 % 
@@ -24,7 +24,13 @@ function [gc_mean_c1, gc_mean_c2, gc_mean_c3] = pg_dispersion(grid_cell_sferic)
 % OUTPUTS:
 %       gc_mean_c1, gc_mean_c2, gc_mean_c3
 %           180 x 360 arrays of means of each dispersion parameter. Each 
-%           element refers to the mean of all paths crossing that lat/lon 
+%           element refers to the mean of dispersion parameters of all paths crossing that lat/lon 
+%           grid location in the input grid_cell; i.e. each element is the 
+%           size n of the corresponding n x 3 cell in grid_cell.
+%
+%       gc_var_c1, gc_var_c2, gc_var_c3
+%           180 x 360 arrays of variances of each dispersion parameter. Each 
+%           element refers to the variance of the dispersion parameters of all paths crossing that lat/lon 
 %           grid location in the input grid_cell; i.e. each element is the 
 %           size n of the corresponding n x 3 cell in grid_cell.
 %
@@ -40,6 +46,9 @@ function [gc_mean_c1, gc_mean_c2, gc_mean_c3] = pg_dispersion(grid_cell_sferic)
 gc_mean_c1 = zeros(180,360);
 gc_mean_c2 = zeros(180,360);
 gc_mean_c3 = zeros(180,360);
+gc_var_c1 = zeros(180,360);
+gc_var_c2 = zeros(180,360);
+gc_var_c3 = zeros(180,360);
 
 for lat = 1:180
     for lon = 1:360
@@ -48,10 +57,16 @@ for lat = 1:180
             gc_mean_c1(lat,lon) = NaN;
             gc_mean_c2(lat,lon) = NaN;
             gc_mean_c3(lat,lon) = NaN;
+            gc_var_c1(lat,lon) = NaN;
+            gc_var_c2(lat,lon) = NaN;
+            gc_var_c3(lat,lon) = NaN;
         else
             gc_mean_c1(lat,lon) = mean(grid_cell_sferic{lat,lon}(:,4), 'omitnan');
             gc_mean_c2(lat,lon) = mean(grid_cell_sferic{lat,lon}(:,5), 'omitnan');
             gc_mean_c3(lat,lon) = mean(grid_cell_sferic{lat,lon}(:,6), 'omitnan');
+            gc_var_c1(lat,lon) = mean(grid_cell_sferic{lat,lon}(:,4), 'omitnan');
+            gc_var_c2(lat,lon) = mean(grid_cell_sferic{lat,lon}(:,5), 'omitnan');
+            gc_var_c3(lat,lon) = mean(grid_cell_sferic{lat,lon}(:,6), 'omitnan');
         end
         
         

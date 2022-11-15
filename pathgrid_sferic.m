@@ -176,7 +176,7 @@ for m = 1:frames
         gridcell = pg_gridcell_sferic(pathlist_frame); % for 180x360xN pathlist, i.e. directly from getpaths or from multi-frame file
         gridcross = pg_gridcross(gridcell);
         gc_perp = pg_perpendicularity(gridcell);
-        [gc_c1, gc_c2, gc_c3] = pg_dispersion(gridcell);
+        [gc_c1, gc_c2, gc_c3, gc_var_c1, gc_var_c2, gc_var_c3] = pg_dispersion(gridcell);
         msg = sprintf('Completed run %s',filestr);
     end
 
@@ -185,6 +185,10 @@ for m = 1:frames
     sferic_c1_gricross(:,:,m) = gc_c1;
     sferic_c2_gricross(:,:,m) = gc_c2;
     sferic_c3_gricross(:,:,m) = gc_c3;
+    sferic_var_c1_gricross(:,:,m) = gc_var_c1;
+    sferic_var_c2_gricross(:,:,m) = gc_var_c2;
+    sferic_var_c3_gricross(:,:,m) = gc_var_c3;
+
         
 %     [gc_var, ~] = pg_variance(gridcell);
 %     gc_variance(:,:,m) = gc_var;
@@ -200,7 +204,7 @@ for m = 1:frames
     
     % append to log file
     %msg = sprintf('Completed run %s',filestr);
-    fid = fopen('pgLog.txt', 'a');
+    fid = fopen('pgSfericLog.txt', 'a');
     if fid == -1
         error('Cannot open log file.');
     end
@@ -240,5 +244,14 @@ save(savefile_c2, "sferic_c2_gricross");
 
 savefile_c3 = sprintf("gridstats/sferic_c3_gridcross_10m_%s%s.mat", daystr, stationName);
 save(savefile_c3, "sferic_c3_gricross");
+
+savefile_vc1 = sprintf("gridstats/sferic_var_c1_gridcross_10m_%s%s.mat", daystr, stationName);
+save(savefile_vc1, "sferic_var_c1_gricross");
+
+savefile_vc2 = sprintf("gridstats/sferic_var_c2_gridcross_10m_%s%s.mat", daystr, stationName);
+save(savefile_vc2, "sferic_var_c2_gricross");
+
+savefile_vc3 = sprintf("gridstats/sferic_var_c3_gridcross_10m_%s%s.mat", daystr, stationName);
+save(savefile_vc3, "sferic_var_c3_gricross");
 
 end

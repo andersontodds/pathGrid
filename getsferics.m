@@ -103,7 +103,7 @@ for i = 1:length(stationname)
     bad_fit = min_dayfrac > 1E-4; % i.e. could not find sferic within 100 us
     sfericlist(st, :) = sfile_day(min_dayfrac_idx, 5:7);
     if any(bad_fit)
-        sfericlist(st(bad_fit), :) = [NaN NaN NaN];
+        sfericlist(st(bad_fit), :) = NaN;
     end
 
     % clean up untarred Sfiles
