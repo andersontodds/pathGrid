@@ -188,7 +188,7 @@ stmat(1,:) = stmatr1;
 % stID == 1 corresponds to the Dunedin station
 
 % number of columns in stroke list = APdata (10) + station ID, lat, lon (3)
-pathlist = zeros(1,13);
+pathlist = zeros(1,14);
 for stID = stIDRange
     [~,col] = find(stmat == stID);   %all strokes detected by station number stID
     %lidx = sub2ind(size(power),row + 1,col); %indices of strokes detected by stID in AP.power
@@ -210,7 +210,7 @@ for stID = stIDRange
         st_lon = stations{stID,2};
     end
     
-    pathlist_stID = cat(2,APdata_stID,stID*c,st_lat*c,st_lon*c,col*c);
+    pathlist_stID = cat(2,APdata_stID,stID*c,st_lat*c,st_lon*c,col);
     
     pathlist = cat(1,pathlist,pathlist_stID);
     
