@@ -120,6 +120,8 @@ for i = 1:length(stationname)
         [status] = system(cmd_rm); 
         % this statement could still result in a breaking error if the 
         % directory contains over 1000 tar/tar.bz2 files, but no Sfiles.
+        % Update after trying run_pathgrid_sferic: looks like bash does not
+        % recognize the glob, but does not appear to break getsferics.
     end
 
 end
