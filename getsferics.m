@@ -107,10 +107,19 @@ for i = 1:length(stationname)
     end
 
     % clean up untarred Sfiles
-
-    if numel(dir(sprintf("%s/S!(*.*)", flashlightpath))) > 0
+    % This doesn't work, since MATLAB doesn't do globbing and can't
+    % recognize !(*.*), and therefore the condition is never met.
+    % if numel(dir(sprintf("%s/S!(*.*)", flashlightpath))) > 0
+    % instead, try:
+    if numel(dir(sprintf("%s/S*", flashlightpath))) > 1000
+        % this condition triggers if there are more than 1000 files in the
+        % station's yearly sferic directory.  Untarring each hourly tar
+        % file should generate 1440 Sfiles, whereas a month of tar files
+        % should only be <744 files.
         cmd_rm = sprintf("rm %s/S!(*.*)", flashlightpath);
-        [status] = system(cmd_rm);
+        [status] = system(cmd_rm); 
+        % this statement could still result in a breaking error if the 
+        % directory contains over 1000 tar/tar.bz2 files, but no Sfiles.
     end
 
 end

@@ -1,6 +1,6 @@
 function [gc_perp] = pg_perpendicularity(grid_cell)
 % pg_variance.m
-% 17 December 2018
+% October 2022 (?)
 % 
 % Finds perpendicularity of of grid_cell input azimuths.  Applies 
 % circ_var.m from CircStat2012a library.
