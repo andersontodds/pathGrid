@@ -139,9 +139,12 @@ minute_bin_edges = linspace(starttime,stoptime,frames+1);
 
 grid_crossings = zeros(180,360,frames);
 perp_gridcross = zeros(180,360,frames);
-sferic_c1_gricross = zeros(180,360,frames);
-sferic_c2_gricross = zeros(180,360,frames);
-sferic_c3_gricross = zeros(180,360,frames);
+sferic_c1_gridcross = zeros(180,360,frames);
+sferic_c2_gricdross = zeros(180,360,frames);
+sferic_c3_gricrdoss = zeros(180,360,frames);
+sferic_var_c1_gridcross = zeros(180,360,frames);
+sferic_var_c2_gridcross = zeros(180,360,frames);
+sferic_var_c3_gridcross = zeros(180,360,frames);
 
 %gc_variance = zeros(180,360,frames);
 %gc_kurtosis = zeros(180,360,frames);
@@ -182,12 +185,12 @@ for m = 1:frames
 
     grid_crossings(:,:,m) = gridcross;
     perp_gridcross(:,:,m) = gc_perp;
-    sferic_c1_gricross(:,:,m) = gc_c1;
-    sferic_c2_gricross(:,:,m) = gc_c2;
-    sferic_c3_gricross(:,:,m) = gc_c3;
-    sferic_var_c1_gricross(:,:,m) = gc_var_c1;
-    sferic_var_c2_gricross(:,:,m) = gc_var_c2;
-    sferic_var_c3_gricross(:,:,m) = gc_var_c3;
+    sferic_c1_gridcross(:,:,m) = gc_c1;
+    sferic_c2_gricdross(:,:,m) = gc_c2;
+    sferic_c3_gricrdoss(:,:,m) = gc_c3;
+    sferic_var_c1_gridcross(:,:,m) = gc_var_c1;
+    sferic_var_c2_gridcross(:,:,m) = gc_var_c2;
+    sferic_var_c3_gridcross(:,:,m) = gc_var_c3;
 
         
 %     [gc_var, ~] = pg_variance(gridcell);
@@ -237,21 +240,21 @@ savefile_perp = sprintf('gridstats/sferic_perp_gridcross_10m_%s%s.mat',daystr,st
 save(savefile_perp, 'perp_gridcross');
 
 savefile_c1 = sprintf("gridstats/sferic_c1_gridcross_10m_%s%s.mat", daystr, stationName);
-save(savefile_c1, "sferic_c1_gricross");
+save(savefile_c1, "sferic_c1_gridcross");
 
 savefile_c2 = sprintf("gridstats/sferic_c2_gridcross_10m_%s%s.mat", daystr, stationName);
-save(savefile_c2, "sferic_c2_gricross");
+save(savefile_c2, "sferic_c2_gricdross");
 
 savefile_c3 = sprintf("gridstats/sferic_c3_gridcross_10m_%s%s.mat", daystr, stationName);
-save(savefile_c3, "sferic_c3_gricross");
+save(savefile_c3, "sferic_c3_gricrdoss");
 
 savefile_vc1 = sprintf("gridstats/sferic_var_c1_gridcross_10m_%s%s.mat", daystr, stationName);
-save(savefile_vc1, "sferic_var_c1_gricross");
+save(savefile_vc1, "sferic_var_c1_gridcross");
 
 savefile_vc2 = sprintf("gridstats/sferic_var_c2_gridcross_10m_%s%s.mat", daystr, stationName);
-save(savefile_vc2, "sferic_var_c2_gricross");
+save(savefile_vc2, "sferic_var_c2_gridcross");
 
 savefile_vc3 = sprintf("gridstats/sferic_var_c3_gridcross_10m_%s%s.mat", daystr, stationName);
-save(savefile_vc3, "sferic_var_c3_gricross");
+save(savefile_vc3, "sferic_var_c3_gridcross");
 
 end

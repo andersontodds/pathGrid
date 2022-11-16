@@ -5,14 +5,10 @@
 % Scratch work for dispersion fits
 
 % get sample pathgrid with sferic information
-ps = importdata("data/pathlist_sferic_10m_20221108.mat");
+ps = importdata("data/pathlist_sferic_20221108.mat");
+stations = importdata("stations.mat");
 
-% get stroke lat/lon, station lat/lon
-stroke_lat_all = ps(:,2);
-stroke_lon_all = ps(:,3);
-station_lat_all = ps(:,4);
-station_lon_all = ps(:,5);
-
+% get dispersion coefficients and discard rows with bad sferic fits
 c1_all = ps(:,8);
 c2_all = ps(:,9);
 c3_all = ps(:,10);
@@ -23,11 +19,14 @@ c3zero = c3_all == 0;
 
 goodsferic = ~(c1zero & c2zero & c3zero);
 
-% get lats, lons and dispersion coefficients with 
-stroke_lat = stroke_lat_all(goodsferic);
-stroke_lon = stroke_lon_all(goodsferic);
-station_lat = station_lat_all(goodsferic);
-station_lon = station_lon_all(goodsferic);
+% get lats, lons and dispersion coefficients for sferics
+stroke_time = ps(goodsferic,1);
+stroke_lat = ps(goodsferic,2);
+stroke_lon = ps(goodsferic,3);
+station_lat = ps(goodsferic,4);
+station_lon = ps(goodsferic,5);
+station_ID = ps(goodsferic,6);
+stroke_ID = ps(goodsferic,7);
 
 c1 = c1_all(goodsferic);
 c2 = c2_all(goodsferic);
@@ -52,11 +51,43 @@ c3_std = std(c3, 'omitnan');
 freq = 6000:10:18000;
 w = 2*pi*freq;
 
+%% variation of sferic parameters for each lightning stroke
+strokes = unique(stroke_ID);
+for i = 9%:length(strokes)
+    stroke_sferics = stroke_ID == strokes(i);
+    stroke_c1 = c1(stroke_sferics);
+    stroke_c2 = c2(stroke_sferics);
+    stroke_c3 = c3(stroke_sferics);
+    stroke_d_ss = d_ss(stroke_sferics);
+    stroke_station_ID = station_ID(stroke_sferics);
+    lat = stroke_lat(stroke_sferics);
+    lon = stroke_lon(stroke_sferics);
+    time = stroke_time(stroke_sferics);
+    
+
+    figure(1)
+    hold off
+    for j = 1:length(find(stroke_sferics))
+        phase = stroke_c1(j).*w + stroke_c2(j) + stroke_c3(j)./w;
+        dispname = sprintf("%s: %.0f km", stations{stroke_station_ID(j),3}, stroke_d_ss(j)/1000);
+        plot(freq/1000, phase*180/pi, '.', "DisplayName",dispname);
+        hold on
+    end
+    xlabel("frequency (kHz)");
+    ylabel("phase (\circ)");
+    legend;
+    timestr = datestr(time(1), "yyyy-mm-dd HH:MM:SS");
+    titlestr = sprintf("Sferics associated with stroke at %0.3fN, %0.3fE, %s UTC", lat(1), lon(1), timestr);
+    title(titlestr);
+
+
+end
+
+%% plots
+
 ph = c1_mean.*w + c2_mean + c3_mean./w;
 ph_p1c1std = (c1_mean + c1_std).*w + c2_mean + c3_mean./w;
 ph_n1c1std = (c1_mean - c1_std).*w + c2_mean + c3_mean./w;
-
-%% plots
 
 figure(2)
 hold off
