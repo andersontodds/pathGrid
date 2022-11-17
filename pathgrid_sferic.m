@@ -179,6 +179,7 @@ for m = 1:frames
         gridcell = pg_gridcell_sferic(pathlist_frame); % for 180x360xN pathlist, i.e. directly from getpaths or from multi-frame file
         gridcross = pg_gridcross(gridcell);
         gc_perp = pg_perpendicularity(gridcell);
+        gc_dist = pg_distance(gridcell);
         [gc_c1, gc_c2, gc_c3, gc_var_c1, gc_var_c2, gc_var_c3] = pg_dispersion(gridcell);
         msg = sprintf('Completed run %s',filestr);
     end
@@ -191,6 +192,7 @@ for m = 1:frames
     sferic_var_c1_gridcross(:,:,m) = gc_var_c1;
     sferic_var_c2_gridcross(:,:,m) = gc_var_c2;
     sferic_var_c3_gridcross(:,:,m) = gc_var_c3;
+    sferic_pathlength_gridcross(:,:,m) = gc_dist;
 
         
 %     [gc_var, ~] = pg_variance(gridcell);
@@ -256,5 +258,10 @@ save(savefile_vc2, "sferic_var_c2_gridcross");
 
 savefile_vc3 = sprintf("gridstats/sferic_var_c3_gridcross_10m_%s%s.mat", daystr, stationName);
 save(savefile_vc3, "sferic_var_c3_gridcross");
+
+savefile_vc3 = sprintf("gridstats/sferic_pathlength_gridcross_10m_%s%s.mat", daystr, stationName);
+save(savefile_vc3, "sferic_pathlength_gridcross");
+
+
 
 end

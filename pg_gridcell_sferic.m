@@ -46,6 +46,8 @@ lon1 = pathlist_sferic(:,3);
 lat2 = pathlist_sferic(:,4);
 lon2 = pathlist_sferic(:,5);
 
+dist = distance(lat1,lon1,lat2,lon2, referenceEllipsoid("wgs84")); % this will add significant computation time
+
 time = pathlist_sferic(:,1);
 
 c1 = pathlist_sferic(:,8);
@@ -94,7 +96,7 @@ for j = 1:nTracks
     
    for k = 1:size(grid_loc,1)
        grid_cell_sferic{grid_loc(k,1),grid_loc(k,2)} = [grid_cell_sferic{grid_loc(k,1),grid_loc(k,2)}; ...
-           j, time(j), az_to_stroke(k), c1(j), c2(j), c3(j)];
+           j, time(j), az_to_stroke(k), c1(j), c2(j), c3(j), dist(j)];
    end   
    
 end

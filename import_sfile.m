@@ -34,8 +34,12 @@ while j <= nlines
     tLine = fgets(fid); % each successive call gets next line in sfile
     
     % get header values, minus leading magic header "W210"
-    [A, ~, errmsg, nextindex] = sscanf(tLine(6:end),'%d,%4d-%2d-%dT%2d:%2d:%2d,%d,%d,%f,%f,%f,%f,%d,%f,%d',16);
+    [A, ~, errmsg] = sscanf(tLine(6:end),'%d,%4d-%2d-%dT%2d:%2d:%2d,%d,%d,%f,%f,%f,%f,%d,%f,%d',16);
     % add check: if line in Sfile does not have enough elements, skip it
+    if ~isempty(errmsg)
+        j = j+1;
+        continue;
+    end
 
     % get waveform samples
     %[y, count] = sscanf(tLine(nextindex+6:end),'%f,',inf);
