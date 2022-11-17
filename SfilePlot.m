@@ -33,7 +33,7 @@
 fclose('all');
 clear;
 j=1;
-mskPipe = fopen('data/S202107080401','r');
+mskPipe = fopen('data/S-files/2021/S202107080401','r');
 
 while 1==1,
 
