@@ -66,7 +66,7 @@ for lat = 1:180
             
         else
             % grid_cell_sferic{lat,lon}(:,6): c3
-            % grid_cell_sferic{lat,lon}(:,6): propagation distance
+            % grid_cell_sferic{lat,lon}(:,7): propagation distance
             gc_mean_grouptimediff(lat,lon) = mean(grid_cell_sferic{lat,lon}(:,6)./grid_cell_sferic{lat,lon}(:,7), 'omitnan');
             
         end

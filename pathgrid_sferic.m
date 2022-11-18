@@ -266,6 +266,7 @@ save(savefile_vc3, "sferic_var_c3_gridcross");
 savefile_vc3 = sprintf("gridstats/sferic_pathlength_gridcross_10m_%s%s.mat", daystr, stationName);
 save(savefile_vc3, "sferic_pathlength_gridcross");
 
-
+savefile_gtd = sprintf("gridstats/sferic_grouptimediff_gridcross_10m_%s%s.mat", daystr, stationName);
+save(savefile_gtd, "sferic_grouptimediff_param");
 
 end
