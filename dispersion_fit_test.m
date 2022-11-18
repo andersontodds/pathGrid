@@ -8,6 +8,12 @@
 ps = importdata("data/pathlist_sferic_20221108.mat");
 stations = importdata("stations.mat");
 
+% globe plot background
+load coastlines;
+R = georefcells([-90 90],[-180 180],0.25,0.25);
+V = ones(R.RasterSize);
+[V,R] = vec2mtx(lat,lon,V,R,'filled');
+
 % get dispersion coefficients and discard rows with bad sferic fits
 c1_all = ps(:,8);
 c2_all = ps(:,9);
@@ -53,18 +59,20 @@ w = 2*pi*freq;
 
 %% variation of sferic parameters for each lightning stroke
 strokes = unique(stroke_ID);
-for i = 1%:length(strokes)
+for i = 4%:length(strokes)
     stroke_sferics = stroke_ID == strokes(i);
     stroke_c1 = c1(stroke_sferics);
     stroke_c2 = c2(stroke_sferics);
     stroke_c3 = c3(stroke_sferics);
     stroke_d_ss = d_ss(stroke_sferics);
     stroke_station_ID = station_ID(stroke_sferics);
+    stroke_station_lat = station_lat(stroke_sferics);
+    stroke_station_lon = station_lon(stroke_sferics);
     lat = stroke_lat(stroke_sferics);
     lon = stroke_lon(stroke_sferics);
     time = stroke_time(stroke_sferics);
 
-    sf = [stroke_c1 stroke_c2 stroke_c3 stroke_d_ss stroke_station_ID];
+    sf = [stroke_c1 stroke_c2 stroke_c3 stroke_d_ss stroke_station_ID stroke_station_lat stroke_station_lon];
     sf = sortrows(sf, 4);
 
     %close(figure(1))
@@ -72,7 +80,15 @@ for i = 1%:length(strokes)
     t1 = tiledlayout(2,2, "TileSpacing","compact");
     h1 = nexttile;
     h2 = nexttile;
-    h3 = nexttile([1 2]);
+    h3 = nexttile;
+    h4 = nexttile;
+    axesm("globe", "grid", "on")
+    view(90 + lon(1), lat(1))
+    axis off;
+    geoshow(V,R,"DisplayType","texturemap");
+    colormap([1 1 1]);
+    alpha(0.5);
+    plotm(coastlat, coastlon, "Color", "black")
     % colormap
     colors = crameri('-lajolla', size(sf,1)+3);
     colors = colors(2:end, :);
@@ -84,33 +100,50 @@ for i = 1%:length(strokes)
         t_g_diff = t_g_6kHz - t_g_18kHz;
         dispname = sprintf("%s: %.0f km", stations{sf(j,5),3}, sf(j,4)/1000);
         
+        % try fitting a line (least squares regression) to each phase(w)
+        % plot, compare slope/distance
+        pslope = w'\phase';
+
         axes(h1);
-        plot(freq/1000, phase*180/pi, '.', "DisplayName",dispname);
+        plot(freq/1000, (phase/sf(j,4))*180/pi, '.', "DisplayName",dispname);
         hold on
+        %plot(freq/1000, pslope*(freq/1000)*180/pi, 'r--')
 
         axes(h2);
         plot((t_g - t_g(end))*1000, freq/1000, '.', "DisplayName",dispname)
+%         plot((t_g)*1000, freq/1000, '.', "DisplayName",dispname)
         hold on
 
         axes(h3);
         scatter(sf(j,4)/1000, t_g_diff*1000, 15, "filled", "DisplayName",dispname);
+%         scatter(sf(j,4)/1000, pslope, 15, "filled", "DisplayName",dispname);
         hold on
+
+        axes(h4);
+        plotm([lat(1) sf(j,6)], [lon(1) sf(j,7)], "LineWidth", 2, "Color", colors(j,:))
+        hold on
+
+
     end
     axes(h1);
     xlabel("frequency (kHz)");
-    ylabel("phase (\circ)");
+    ylabel("phase/path length (\circ/m)");
     legend;
     colororder(h1, colors);
+    title("\phi(\omega)/path length")
     axes(h2);
     xlabel("time (ms)");
     ylabel("frequency (kHz)");
     legend;
     colororder(h2, colors);
+    title("t_g(\omega)")
     axes(h3);
     xlabel("distance (km)");
     ylabel("\Deltat_{18-6 kHz} (ms)");
+%     ylabel("slope of \phi/\omega regression")
     %legend;
     colororder(h3, colors);
+    title("18kHz-6kHz delay time")
     timestr = datestr(time(1), "yyyy-mm-dd HH:MM:SS");
     titlestr = sprintf("Sferics associated with stroke at %0.3fN, %0.3fE, %s UTC", lat(1), lon(1), timestr);
     title(t1,titlestr);
@@ -119,6 +152,12 @@ for i = 1%:length(strokes)
 end
 
 %% plots
+
+dpdw = zeros(size(c1));
+for k = 1:length(c1)
+    phase = c1(k).*w + c2(k) + c3(k)./w;
+    dpdw(k) = w'\phase';
+end
 
 ph = c1_mean.*w + c2_mean + c3_mean./w;
 ph_p1c1std = (c1_mean + c1_std).*w + c2_mean + c3_mean./w;
@@ -173,9 +212,10 @@ xlabel("distance (m)")
 
 nexttile
 hold off
-plot(d_ss, dt_16k_8k, '.');
-ylabel("16kHz-8kHz time delay (s)")
-ylabel("group velocity (m s^{-1})")
+% plot(d_ss, dt_16k_8k, '.');
+% ylabel("16kHz-8kHz time delay (s)")
+plot(d_ss, dpdw, '.');
+ylabel("slope of \phi/\omega regression")
 xlabel("distance (m)")
 
 
