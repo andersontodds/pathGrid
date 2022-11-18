@@ -145,6 +145,8 @@ sferic_c3_gricrdoss = zeros(180,360,frames);
 sferic_var_c1_gridcross = zeros(180,360,frames);
 sferic_var_c2_gridcross = zeros(180,360,frames);
 sferic_var_c3_gridcross = zeros(180,360,frames);
+sferic_pathlength_gridcross = zeros(180,360,frames);
+sferic_grouptimediff_param = zeros(180,360,frames);
 
 %gc_variance = zeros(180,360,frames);
 %gc_kurtosis = zeros(180,360,frames);
@@ -181,6 +183,7 @@ for m = 1:frames
         gc_perp = pg_perpendicularity(gridcell);
         gc_dist = pg_distance(gridcell);
         [gc_c1, gc_c2, gc_c3, gc_var_c1, gc_var_c2, gc_var_c3] = pg_dispersion(gridcell);
+        gc_tgdiff = pg_grouptimediff(gridcell);
         msg = sprintf('Completed run %s',filestr);
     end
 
@@ -193,6 +196,7 @@ for m = 1:frames
     sferic_var_c2_gridcross(:,:,m) = gc_var_c2;
     sferic_var_c3_gridcross(:,:,m) = gc_var_c3;
     sferic_pathlength_gridcross(:,:,m) = gc_dist;
+    sferic_grouptimediff_param(:,:,m) = gc_tgdiff;
 
         
 %     [gc_var, ~] = pg_variance(gridcell);
