@@ -102,9 +102,14 @@ run_days = [run_days_nov];
     
         
         %stationNameStr = sprintf("_%s",stationName);
-        filename_gridcross = sprintf("gridstats/sferic_gridcrossings_10m_%s%s.mat",daystring);%,stationNameStr);
-        if overwrite == 0 && isfile(filename_gridcross)
-            fprintf('%s already exists and overwrite is disabled, proceeding to next day \n', filename_gridcross);
+        filename_gtd = sprintf("gridstats/sferic_grouptimediff_gridcross_10m_%s.mat",daystring);%,stationNameStr); % add second "%s" if using individual station option 
+        filename_pls = sprintf("pathlist/pathlist_sferic_%s.mat", daystring);
+        if overwrite == 0 && isfile(filename_gtd)
+            fprintf('%s already exists and overwrite is disabled, proceeding to next day \n', filename_gtd);
+        elseif overwrite == 0 && isfile(filename_pls) % pathlist_sferic already exists, but grouptimediff file does not
+            fprintf('%s already exists and overwrite is disabled, running pathgrid with this pathlist file. \n', filename_pls);
+            pathlist_sferic = importdata(filename_pls);
+            pathgrid_sferic(pathlist_sferic);
         else % either overwrite is enabled, or overwrite is disabled and grid_crossings_10m file does not yet exist for this day
             pathlist = getpaths(run_days(i));%,'sourceStation',sourceStation, 'stationLatLon', stationLatLon, 'stationName', stationName);
             pathlist_sferic = getsferics(pathlist);
