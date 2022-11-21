@@ -30,7 +30,7 @@
 
 %% 1. day
 % average each lat, lon element across 1 day
-run_start = datenum(2022, 11, 07);
+run_start = datenum(2022, 11, 16);
 daystr = string(datestr(run_start, "yyyymmdd"));
 % c3file = sprintf("data/sferic_c3_gridcross_10m_%s.mat", daystr);
 % plfile = sprintf("data/sferic_pathlength_gridcross_10m_%s.mat", daystr);
@@ -49,7 +49,7 @@ gtd_avg = mean(gtd, 3, "omitnan");
 % these from flashlight or prepend "/gridstats" to gcfile below and run
 % this part on flashlight
 run_start = datenum(2022, 11, 01);
-run_end = datenum(2022, 11, 07);
+run_end = datenum(2022, 11, 16);
 run_days = run_start:run_end;
 run_days = run_days';
 %run_days = run_days(run_days ~= datenum(2022, 01, 15));
@@ -72,47 +72,28 @@ daystr = string(datestr(run_days, "yyyymmdd"));
 % WARNING: any NaNs in first day will be propagated throughout whole
 % average!
 % load first day, initialize gc_avg
-% c3file = sprintf("data/sferic_c3_gridcross_10m_%s.mat", daystr(1));
-% plfile = sprintf("data/sferic_pathlength_gridcross_10m_%s.mat", daystr(1));
 gtdfile = sprintf("data/sferic_grouptimediff_gridcross_10m_%s.mat", daystr(1));
-
-% s_c3 = importdata(c3file);
-% c3_cavg = s_c3;
-% 
-% pl = importdata(c3file);
-% pl_cavg = pl;
-
 gtd = importdata(gtdfile);
 gtd_cavg = gtd;
 
-% c3pl = s_c3./pl;
-% c3pl_cavg = c3pl;
 
 % load subsequent days and calculate cumulative average
 for j = 2:length(daystr)
-%     c3file = sprintf("data/sferic_c3_gridcross_10m_%s.mat", daystr(j));
-%     plfile = sprintf("data/sferic_pathlength_gridcross_10m_%s.mat", daystr(j));
     gtdfile = sprintf("data/sferic_grouptimediff_gridcross_10m_%s.mat", daystr(j));
-
-%     s_c3 = importdata(c3file);
-%     pl = importdata(plfile);
     gtd = importdata(gtdfile);
-    
-%     c3pl = s_c3./pl;
 
-    % NaN handling: set all NaNs in gc to current gc_cavg values for those
+    % NaN handling: 
+    % (1) set all NaNs in gc to current gc_cavg values for those
     % array elements.
-    gtd_nans = find(isnan(gtd));
-    gtd(gtd_nans) = gtd_cavg(gtd_nans);
-    gtd_cavg  = (gtd_cavg.*(j-1) + gtd)./j;
+    %gtd_nans = find(isnan(gtd));
+    %gtd(gtd_nans) = gtd_cavg(gtd_nans);
+    %gtd_cavg  = (gtd_cavg.*(j-1) + gtd)./j;
 
-%     c3_nans = find(isnan(s_c3));
-%     s_c3(c3_nans) = c3_cavg(c3_nans);
-%     c3_cavg  = (c3_cavg.*(j-1) + s_c3)./j;
-
-%     pl_nans = find(isnan(pl));
-%     pl(pl_nans) = pl_cavg(pl_nans);
-%     pl_cavg  = (pl_cavg.*(j-1) + pl)./j;
+    % find zeros and set these values to NaN
+%     gtd_zeros = gtd == 0;
+%     gtd(gtd_zeros) = NaN;
+    gtd_big = cat(4, gtd_cavg, gtd);
+    gtd_cavg = mean(gtd_big, 4, "omitnan");
 
 end
 
@@ -121,8 +102,8 @@ end
 % whole day average: plot day_avg
 % month average: plot gc_cavg(:,:,k); manually input desired frame k or
 % loop over k
-for k = 1:size(gtd_cavg,3)
-% for k = 1:size(gtd, 3)    
+% for k = 1:size(gtd_cavg,3)
+for k = 1:size(gtd, 3)    
 % for k = 144
 %     c3plot = mean(c3pl_cavg, 3,'omitnan');
     c3plot = gtd_cavg(:,:,k);
@@ -194,12 +175,12 @@ for k = 1:size(gtd_cavg,3)
     
 %     titlestr = sprintf("Average sferic c3/path length \n %s %s-%s", ...
 %         datestring, timestring(k), timestring(k+1));
-    titlestr = sprintf("Average sferic c3/path length \n November 1-7 %s-%s", ...
+    titlestr = sprintf("Average sferic c3/path length \n November 1-16 %s-%s", ...
        timestring(k), timestring(k+1));
     title(t, titlestr);
 
-%     gifname = sprintf('animations/sferic_gtd_%s.gif', daystr);
-    gifname = 'animations/sferic_gtd_mean_20221101-07.gif';
+% %     gifname = sprintf('animations/sferic_gtd_%s.gif', daystr);
+    gifname = 'animations/sferic_gtd_mean_20221101-16.gif';
     if k == 1
         gif(gifname);
     else
