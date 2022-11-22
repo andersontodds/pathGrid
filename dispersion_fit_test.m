@@ -8,11 +8,11 @@
 ps = importdata("data/pathlist_sferic_20221108.mat");
 stations = importdata("stations.mat");
 
-% globe plot background
-load coastlines;
-R = georefcells([-90 90],[-180 180],0.25,0.25);
-V = ones(R.RasterSize);
-[V,R] = vec2mtx(lat,lon,V,R,'filled');
+% % globe plot background
+% load coastlines;
+% R = georefcells([-90 90],[-180 180],0.25,0.25);
+% V = ones(R.RasterSize);
+% [V,R] = vec2mtx(-90:10:90,-180:10:180,V,R,'filled');
 
 % get dispersion coefficients and discard rows with bad sferic fits
 c1_all = ps(:,8);
@@ -59,7 +59,7 @@ w = 2*pi*freq;
 
 %% variation of sferic parameters for each lightning stroke
 strokes = unique(stroke_ID);
-for i = 4%:length(strokes)
+for i = 1%:length(strokes)
     stroke_sferics = stroke_ID == strokes(i);
     stroke_c1 = c1(stroke_sferics);
     stroke_c2 = c2(stroke_sferics);
@@ -81,14 +81,14 @@ for i = 4%:length(strokes)
     h1 = nexttile;
     h2 = nexttile;
     h3 = nexttile;
-    h4 = nexttile;
-    axesm("globe", "grid", "on")
-    view(90 + lon(1), lat(1))
-    axis off;
-    geoshow(V,R,"DisplayType","texturemap");
-    colormap([1 1 1]);
-    alpha(0.5);
-    plotm(coastlat, coastlon, "Color", "black")
+%     h4 = nexttile;
+%     axesm("globe", "grid", "on")
+%     view(90 + lon(1), lat(1))
+%     axis off;
+%     geoshow(V,R,"DisplayType","texturemap");
+%     colormap([1 1 1]);
+%     alpha(0.5);
+%     plotm(coastlat, coastlon, "Color", "black")
     % colormap
     colors = crameri('-lajolla', size(sf,1)+3);
     colors = colors(2:end, :);
@@ -119,9 +119,9 @@ for i = 4%:length(strokes)
 %         scatter(sf(j,4)/1000, pslope, 15, "filled", "DisplayName",dispname);
         hold on
 
-        axes(h4);
-        plotm([lat(1) sf(j,6)], [lon(1) sf(j,7)], "LineWidth", 2, "Color", colors(j,:))
-        hold on
+%         axes(h4);
+%         plotm([lat(1) sf(j,6)], [lon(1) sf(j,7)], "LineWidth", 2, "Color", colors(j,:))
+%         hold on
 
 
     end
@@ -153,36 +153,40 @@ end
 
 %% plots
 
-dpdw = zeros(size(c1));
-for k = 1:length(c1)
-    phase = c1(k).*w + c2(k) + c3(k)./w;
-    dpdw(k) = w'\phase';
-end
+% dpdw = zeros(size(c1));
+% for k = 1:length(c1)
+%     phase = c1(k).*w + c2(k) + c3(k)./w;
+%     dpdw(k) = w'\phase';
+% end
 
-ph = c1_mean.*w + c2_mean + c3_mean./w;
-ph_p1c1std = (c1_mean + c1_std).*w + c2_mean + c3_mean./w;
-ph_n1c1std = (c1_mean - c1_std).*w + c2_mean + c3_mean./w;
+% ph = c1_mean.*w + c2_mean + c3_mean./w;
+% ph_p1c1std = (c1_mean + c1_std).*w + c2_mean + c3_mean./w;
+% ph_n1c1std = (c1_mean - c1_std).*w + c2_mean + c3_mean./w;
+% 
+% tg_16kHz = c3./(2*pi*16000)^2;% - c1;
+% tg_8kHz = c3./(2*pi*8000)^2;% - c1;
+% dt_16k_8k = tg_8kHz - tg_16kHz;
+% 
+% d_filter = d_ss < 5000E3 & d_ss > 4000E3; % only sferics near mode of propagation distance distribution
+% 
+% v_g = d_ss./tg_16kHz;
 
-tg_16kHz = c3./(2*pi*16000)^2;% - c1;
-tg_8kHz = c3./(2*pi*8000)^2;% - c1;
-dt_16k_8k = tg_8kHz - tg_16kHz;
+st_num = 5;
+st = unique(ps(:,6));
+st_ind = ps(:,6) == st(st_num);
 
-d_filter = d_ss < 5000E3 & d_ss > 4000E3; % only sferics near mode of propagation distance distribution
-
-v_g = d_ss./tg_16kHz;
-
-figure(2)
-hold off
-tiledlayout(3,1,"TileSpacing","compact");
-nexttile
-plot(1:length(c1_dnorm), c1_dnorm, 'r.');
-title("c1")
-nexttile
-plot(1:length(c2_dnorm), c2_dnorm, 'g.');
-title("c2")
-nexttile
-semilogy(1:length(c3_dnorm), c3_dnorm, 'b.');
-title("c3")
+% figure(2)
+% hold off
+% tiledlayout(3,1,"TileSpacing","compact");
+% nexttile
+% plot(1:length(c1_dnorm), c1_dnorm, 'r.');
+% title("c1")
+% nexttile
+% plot(1:length(c2_dnorm), c2_dnorm, 'g.');
+% title("c2")
+% nexttile
+% semilogy(1:length(c3_dnorm), c3_dnorm, 'b.');
+% title("c3")
 
 figure(3)
 tiledlayout(2,2)
@@ -209,15 +213,20 @@ plot(d_ss, c3, '.');
 % plot(d_ss(d_filter), c3(d_filter), '.');
 ylabel("c3 (rad^2 s^{-1})")
 xlabel("distance (m)")
+xlim([0 2E7]);
+ylim([0 2.5E6]);
 
 nexttile
 hold off
-% plot(d_ss, dt_16k_8k, '.');
-% ylabel("16kHz-8kHz time delay (s)")
-plot(d_ss, dpdw, '.');
-ylabel("slope of \phi/\omega regression")
+plot(d_ss(st_ind), c3(st_ind), '.');
+ylabel("c3 (rad^2 s^{-1})")
+% plot(d_ss, dpdw, '.');
+% ylabel("slope of \phi/\omega regression")
 xlabel("distance (m)")
-
+titlestr = sprintf("%s strokes only", stations{st(st_num), 3});
+title(titlestr);
+xlim([0 2E7]);
+ylim([0 2.5E6]);
 
 
 % figure(4)
