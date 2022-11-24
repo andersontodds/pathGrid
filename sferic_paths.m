@@ -102,6 +102,27 @@ end
 % whole day average: plot day_avg
 % month average: plot gc_cavg(:,:,k); manually input desired frame k or
 % loop over k
+
+times = linspace(run_start, run_start+1, 145);
+timestring = string(datestr(times, "HH:MM:SS"));
+datestring = string(datestr(run_start, "mmmm dd yyyy"));
+
+[lonmesh, latmesh] = meshgrid(-179.5:179.5,-89.5:89.5);
+lsi = importdata("../landseaice/LSI_mask.mat");
+lsimask = interp2(lsi.lon_mesh, lsi.lat_mesh, lsi.LSI, lonmesh, latmesh, "nearest");
+
+coastlines = importdata('coastlines.mat');
+coastlat = coastlines.coastlat;
+coastlon = coastlines.coastlon;
+geoidrefvec = [1,90,-180];
+
+
+daymean = zeros(size(gtd, 3),1);
+nightmean = zeros(size(gtd, 3),1);
+landmean = zeros(size(gtd, 3),1);
+seamean = zeros(size(gtd, 3),1);
+icemean = zeros(size(gtd, 3),1);
+
 % for k = 1:size(gtd_cavg,3)
 for k = 1:size(gtd, 3)    
 % for k = 144
@@ -110,16 +131,18 @@ for k = 1:size(gtd, 3)
 %     pplot = pg_cavg(:,:,k);
 %     c3plot = gtd_avg;
 %     c3plot = gtd(:,:,k);
+    
+    % terminator test
+    [sslat, sslon] = subsolar(times(k));
+    night = distance(sslat, sslon, latmesh, lonmesh, 'degrees') > 90;
+    %c3plot(night) = 10;
+    
+    daymean(k) = mean(c3plot(~night), "all", "omitnan");
+    nightmean(k) = mean(c3plot(night), "all", "omitnan");
+    landmean(k) = mean(c3plot(lsimask == 1), "all", "omitnan");
+    seamean(k) = mean(c3plot(lsimask == -1), "all", "omitnan");
+    icemean(k) = mean(c3plot(lsimask == 0), "all", "omitnan");
 
-    times = linspace(run_start, run_start+1, 145);
-    timestring = string(datestr(times, "HH:MM:SS"));
-    datestring = string(datestr(run_start, "mmmm dd yyyy"));
-    
-    coastlines = importdata('coastlines.mat');
-    coastlat = coastlines.coastlat;
-    coastlon = coastlines.coastlon;
-    geoidrefvec = [1,90,-180];
-    
     figure(1)
     hold off
     t = tiledlayout(2,2, "TileSpacing","compact", "Padding", "compact");
@@ -180,14 +203,27 @@ for k = 1:size(gtd, 3)
     title(t, titlestr);
 
 % %     gifname = sprintf('animations/sferic_gtd_%s.gif', daystr);
-    gifname = 'animations/sferic_gtd_mean_20221101-16.gif';
-    if k == 1
-        gif(gifname);
-    else
-        gif;
-    end
+%     gifname = 'animations/sferic_gtd_mean_20221101-16.gif';
+%     if k == 1
+%         gif(gifname);
+%     else
+%         gif;
+%     end
 
 end
+
+figure(2)
+hold off
+plot(datetime(times(2:end), "ConvertFrom", "datenum"), nightmean, '-o')
+hold on
+plot(datetime(times(2:end), "ConvertFrom", "datenum"), daymean, '-o')
+plot(datetime(times(2:end), "ConvertFrom", "datenum"), landmean, '-^', "Color", [0.5 0.5 0.2])
+plot(datetime(times(2:end), "ConvertFrom", "datenum"), seamean, '-^', "Color", [0.1 0.1 0.8])
+plot(datetime(times(2:end), "ConvertFrom", "datenum"), icemean, '-^', "Color", [0.2 0.2 0.2])
+legend("night", "day", "land", "sea", "ice")
+ylabel("c3/d (rad^2 s^{-1} m^{-1})")    
+title("Mean c3/d for night and day hemispheres and land/sea/ice")
+
 
 %% plot average path crossings, perpendicularity, and path crossings weighted by perpendicularity
 
