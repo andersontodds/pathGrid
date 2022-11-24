@@ -10,6 +10,10 @@ function [grid_cell_sferic] = pg_gridcell_sferic(pathlist_sferic)
 %
 % This version requires the input pathlist to include sferic information.
 % 
+% TODO (11/23/2022):
+%   Merge the two for loops that both iterate over 1:nTracks.  These are
+%   holdovers from an earlier version that should not be necessary.
+%
 % INPUTS:
 %       pathlist_sferic
 %           n x 10 matrix of stroke-station pairs, with columns:
@@ -36,9 +40,7 @@ function [grid_cell_sferic] = pg_gridcell_sferic(pathlist_sferic)
 %
 % 
 
-%% 1b. Use AP data
-
-%path_list = importdata(pathfile);
+%% break out pathlist variables
 
 lat1 = pathlist_sferic(:,2);
 lon1 = pathlist_sferic(:,3);
@@ -59,11 +61,12 @@ nTracks = length(time);
 %% Make and grid tracks
 %tic;
 
-grid_tracks = cell(nTracks,1);
+% create and initialize grid cell array
+grid_cell_sferic = cell(180,360);
 
-for i = 1:nTracks
-
-    [lattrkgc, lontrkgc] = track2(lat1(i),lon1(i),lat2(i),lon2(i),[],'degrees',400);
+for j = 1:nTracks
+   
+    [lattrkgc, lontrkgc] = track2(lat1(j),lon1(j),lat2(j),lon2(j),[],'degrees',400);
     
     % place all GC path points on grid locations
     % NOTE: grid points are transformed from lat-lon coordinates to indices for
@@ -71,33 +74,17 @@ for i = 1:nTracks
     % plotting function using geoidrefvec.
     lattrkgc_grid = floor(lattrkgc) + 91;
     lontrkgc_grid = floor(lontrkgc) + 181;
-    
-    % remove duplicate points
+
+    grid_loc = unique([lattrkgc_grid, lontrkgc_grid],'rows','stable');
+    grid_lat = grid_loc(:,1) - 91;
+    grid_lon = grid_loc(:,2) - 181;
    
-    grid_tracks{i} = unique([lattrkgc_grid, lontrkgc_grid],'rows','stable');
-
-end
-
-%grid_track_time = toc;
-% create and initialize grid cell array
-grid_cell_sferic = cell(180,360);
-
-%% 2a. Non-parallelizable method
-
-%tic;
-
-for j = 1:nTracks
+    az_to_stroke = azimuth(grid_lat,grid_lon,grid_lat(1),grid_lon(1));
     
-   grid_loc = grid_tracks{j};
-   grid_lat = grid_loc(:,1) - 91;
-   grid_lon = grid_loc(:,2) - 181;
-   
-   az_to_stroke = azimuth(grid_lat,grid_lon,grid_lat(1),grid_lon(1));
-    
-   for k = 1:size(grid_loc,1)
-       grid_cell_sferic{grid_loc(k,1),grid_loc(k,2)} = [grid_cell_sferic{grid_loc(k,1),grid_loc(k,2)}; ...
+    for k = 1:size(grid_loc,1)
+        grid_cell_sferic{grid_loc(k,1),grid_loc(k,2)} = [grid_cell_sferic{grid_loc(k,1),grid_loc(k,2)}; ...
            j, time(j), az_to_stroke(k), c1(j), c2(j), c3(j), dist(j)];
-   end   
+    end   
    
 end
 
