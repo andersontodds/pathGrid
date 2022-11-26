@@ -62,8 +62,8 @@ overwrite = 0;
 % run_days_sep = run_days_sep';
 
 % the month of November 2022 so far
-run_start_nov = datenum(2022, 11, 01);
-run_end_nov = datenum(2022, 11, 16);
+run_start_nov = datenum(2022, 11, 17); % already ran Nov 1-16
+run_end_nov = datenum(2022, 11, 25);
 run_days_nov = run_start_nov:run_end_nov;
 run_days_nov = run_days_nov';
 
