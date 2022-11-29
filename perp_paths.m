@@ -30,12 +30,12 @@
 
 %% 1. day
 % average each lat, lon element across 1 day
-daystr = "20220301";
-run_start = datenum(2022, 03, 01);
-pgfile = sprintf("data/perp_gridcross_10m_%s.mat", daystr);
+run_start = datenum(2022, 11, 01);
+daystr = string(datestr(run_start, "yyyymmdd"));
+pgfile = sprintf("data/sferic_perp_gridcross_10m_%s.mat", daystr);
 pg = importdata(pgfile);
 
-pg_avg = mean(pg, 3, "omitnan");
+%pg_avg = mean(pg, 3, "omitnan");
 
 %% 2. month
 % average each lat, lon, UT element across 1 month
@@ -109,12 +109,12 @@ end
 % whole day average: plot day_avg
 % month average: plot gc_cavg(:,:,k); manually input desired frame k or
 % loop over k
-for k = 1:size(pg_cavg,3)
-% for k = 1:size(pg, 3)    
+% for k = 1:size(pg_cavg,3)
+for k = 1:size(pg, 3)    
 % for k = 1
-    gcpplot = gcp_cavg(:,:,k);
+%     pplot = gcp_cavg(:,:,k);
 %     pplot = pg_cavg(:,:,k);
-%     pplot = pg(:,:,k);
+    pplot = pg(:,:,k);
 
     times = linspace(run_start, run_start+1, 145);
     timestring = string(datestr(times, "HH:MM:SS"));
@@ -131,20 +131,20 @@ for k = 1:size(pg_cavg,3)
     
     nexttile([1,2])
     worldmap("World")
-    geoshow(gcpplot, geoidrefvec, "DisplayType","texturemap");
+    geoshow(pplot, geoidrefvec, "DisplayType","texturemap");
     hold on
     geoshow(coastlat, coastlon, "Color","black");
     
     set(gca,'ColorScale','log');
-    crameri('-hawaii');
-    caxis([0.01 1000]);
-%     crameri('tokyo');%,'pivot',1); % requires "crameri" colormap toolbox
-%     caxis([0 1]);
+%     crameri('-hawaii');
+%     caxis([0.01 1000]);
+    crameri('tokyo');%,'pivot',1); % requires "crameri" colormap toolbox
+    caxis([0 1]);
     
     nexttile
     %worldmap("World");
     worldmap([60 90],[-180 180])
-    geoshow(gcpplot, geoidrefvec, "DisplayType","texturemap");
+    geoshow(pplot, geoidrefvec, "DisplayType","texturemap");
     hold on
     geoshow(coastlat, coastlon, "Color","black");
     
@@ -152,14 +152,14 @@ for k = 1:size(pg_cavg,3)
     ylabel("Longitude");
     title("");
     set(gca,'ColorScale','log');
-    crameri('-hawaii');
-    caxis([0.01 1000]);
-%     crameri('tokyo');%,'pivot',1); % requires "crameri" colormap toolbox
-%     caxis([0 1]);
+%     crameri('-hawaii');
+%     caxis([0.01 1000]);
+    crameri('tokyo');%,'pivot',1); % requires "crameri" colormap toolbox
+    caxis([0 1]);
     
     nexttile
     worldmap([-90 -60],[-180 180])
-    geoshow(gcpplot, geoidrefvec, "DisplayType","texturemap");
+    geoshow(pplot, geoidrefvec, "DisplayType","texturemap");
     hold on
     geoshow(coastlat, coastlon, "Color","black");
     
@@ -167,28 +167,28 @@ for k = 1:size(pg_cavg,3)
     ylabel("Longitude");
     title("");
     set(gca,'ColorScale','log');
-    crameri('-hawaii');
-    caxis([0.01 1000]);
-%     crameri('tokyo'); % requires "crameri" colormap toolbox
-%     caxis([0 1]);
+%     crameri('-hawaii');
+%     caxis([0.01 1000]);
+    crameri('tokyo'); % requires "crameri" colormap toolbox
+    caxis([0 1]);
     cb = colorbar;
     cb.Layout.Tile = 'east';
     
     
     
-    titlestr = sprintf("Average stroke-to-station paths weighted by perpendicularity \n March 2022 %s-%s", ...
-        timestring(k), timestring(k+1));
-%     titlestr = sprintf("WWLLN stroke-to-station path perpendicularity \n March 01 2022 %s-%s", ...
+%     titlestr = sprintf("Average stroke-to-station paths weighted by perpendicularity \n March 2022 %s-%s", ...
 %         timestring(k), timestring(k+1));
+    titlestr = sprintf("WWLLN stroke-to-station path perpendicularity \n March 01 2022 %s-%s", ...
+        timestring(k), timestring(k+1));
     title(t, titlestr);
     %title(t, "Average number of WWLLN stroke-to-station path crossings in a 10 minute period, March 30, 2022");
 
-    gifname = sprintf('average_paths_perp_202203.gif');
-    if k == 1
-        gif(gifname);
-    else
-        gif;
-    end
+%     gifname = sprintf('average_paths_perp_202203.gif');
+%     if k == 1
+%         gif(gifname);
+%     else
+%         gif;
+%     end
 
 end
 
@@ -199,7 +199,7 @@ for k = 1:size(pg_cavg,3)
 % for k = 1
     gcplot = gc_cavg(:,:,k);
     pgplot = pg_cavg(:,:,k);
-    gcpplot = gcp_cavg(:,:,k);
+    pplot = gcp_cavg(:,:,k);
 %     pplot = pg_cavg(:,:,k);
 %     pplot = pg(:,:,k);
 
@@ -252,7 +252,7 @@ for k = 1:size(pg_cavg,3)
     % weighted path crossings
     nexttile
     worldmap('World')
-    geoshow(gcpplot, geoidrefvec, "DisplayType","texturemap");
+    geoshow(pplot, geoidrefvec, "DisplayType","texturemap");
     hold on
     geoshow(coastlat, coastlon, "Color","black");
     

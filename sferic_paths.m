@@ -30,7 +30,7 @@
 
 %% 1. day
 % average each lat, lon element across 1 day
-run_start = datenum(2022, 11, 16);
+run_start = datenum(2022, 11, 24);
 daystr = string(datestr(run_start, "yyyymmdd"));
 % c3file = sprintf("data/sferic_c3_gridcross_10m_%s.mat", daystr);
 % plfile = sprintf("data/sferic_pathlength_gridcross_10m_%s.mat", daystr);
@@ -49,7 +49,7 @@ gtd_avg = mean(gtd, 3, "omitnan");
 % these from flashlight or prepend "/gridstats" to gcfile below and run
 % this part on flashlight
 run_start = datenum(2022, 11, 01);
-run_end = datenum(2022, 11, 16);
+run_end = datenum(2022, 11, 24);
 run_days = run_start:run_end;
 run_days = run_days';
 %run_days = run_days(run_days ~= datenum(2022, 01, 15));
@@ -127,10 +127,10 @@ icemean = zeros(size(gtd, 3),1);
 for k = 1:size(gtd, 3)    
 % for k = 144
 %     c3plot = mean(c3pl_cavg, 3,'omitnan');
-    c3plot = gtd_cavg(:,:,k);
+%     c3plot = gtd_cavg(:,:,k);
 %     pplot = pg_cavg(:,:,k);
 %     c3plot = gtd_avg;
-%     c3plot = gtd(:,:,k);
+    c3plot = gtd(:,:,k);
     
     % terminator test
     [sslat, sslon] = subsolar(times(k));
@@ -196,19 +196,19 @@ for k = 1:size(gtd, 3)
     
     
     
-%     titlestr = sprintf("Average sferic c3/path length \n %s %s-%s", ...
-%         datestring, timestring(k), timestring(k+1));
-    titlestr = sprintf("Average sferic c3/path length \n November 1-16 %s-%s", ...
-       timestring(k), timestring(k+1));
+    titlestr = sprintf("Average sferic c3/path length \n %s %s-%s", ...
+        datestring, timestring(k), timestring(k+1));
+%     titlestr = sprintf("Average sferic c3/path length \n November 1-16 %s-%s", ...
+%        timestring(k), timestring(k+1));
     title(t, titlestr);
 
-% %     gifname = sprintf('animations/sferic_gtd_%s.gif', daystr);
+    gifname = sprintf('animations/sferic_gtd_%s.gif', daystr);
 %     gifname = 'animations/sferic_gtd_mean_20221101-16.gif';
-%     if k == 1
-%         gif(gifname);
-%     else
-%         gif;
-%     end
+    if k == 1
+        gif(gifname);
+    else
+        gif;
+    end
 
 end
 
