@@ -62,8 +62,8 @@ overwrite = 0;
 % run_days_sep = run_days_sep';
 
 % the month of November 2022 so far
-run_start_nov = datenum(2022, 11, 17); % already ran Nov 1-16
-run_end_nov = datenum(2022, 11, 25);
+run_start_nov = datenum(2022, 11, 1); % rerunning whole month to get median gtd
+run_end_nov = datenum(2022, 11, 28);
 run_days_nov = run_start_nov:run_end_nov;
 run_days_nov = run_days_nov';
 
@@ -102,7 +102,7 @@ run_days = [run_days_nov];
     
         
         %stationNameStr = sprintf("_%s",stationName);
-        filename_gtd = sprintf("gridstats/sferic_grouptimediff_gridcross_10m_%s.mat",daystring);%,stationNameStr); % add second "%s" if using individual station option 
+        filename_gtd = sprintf("gridstats/sferic_median_grouptimediff_gridcross_10m_%s.mat",daystring);%,stationNameStr); % add second "%s" if using individual station option 
         filename_pls = sprintf("pathlist/pathlist_sferic_%s.mat", daystring);
         if overwrite == 0 && isfile(filename_gtd)
             fprintf('%s already exists and overwrite is disabled, proceeding to next day \n', filename_gtd);

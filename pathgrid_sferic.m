@@ -146,7 +146,8 @@ sferic_var_c1_gridcross = zeros(180,360,frames);
 sferic_var_c2_gridcross = zeros(180,360,frames);
 sferic_var_c3_gridcross = zeros(180,360,frames);
 sferic_pathlength_gridcross = zeros(180,360,frames);
-sferic_grouptimediff_param = zeros(180,360,frames);
+sferic_mean_grouptimediff = zeros(180,360,frames);
+sferic_median_grouptimediff = zeros(180,360,frames);
 
 %gc_variance = zeros(180,360,frames);
 %gc_kurtosis = zeros(180,360,frames);
@@ -183,7 +184,7 @@ for m = 1:frames
         gc_perp = pg_perpendicularity(gridcell);
         gc_dist = pg_distance(gridcell);
         [gc_c1, gc_c2, gc_c3, gc_var_c1, gc_var_c2, gc_var_c3] = pg_dispersion(gridcell);
-        gc_tgdiff = pg_grouptimediff(gridcell);
+        [gc_mean_tgdiff, gc_median_tgdiff] = pg_grouptimediff(gridcell);
         msg = sprintf('Completed run %s',filestr);
     end
 
@@ -196,9 +197,9 @@ for m = 1:frames
     sferic_var_c2_gridcross(:,:,m) = gc_var_c2;
     sferic_var_c3_gridcross(:,:,m) = gc_var_c3;
     sferic_pathlength_gridcross(:,:,m) = gc_dist;
-    sferic_grouptimediff_param(:,:,m) = gc_tgdiff;
-
-        
+    sferic_mean_grouptimediff(:,:,m) = gc_mean_tgdiff;
+    sferic_median_grouptimediff(:,:,m) = gc_median_tgdiff;
+    
 %     [gc_var, ~] = pg_variance(gridcell);
 %     gc_variance(:,:,m) = gc_var;
 %     
@@ -266,7 +267,10 @@ save(savefile_vc3, "sferic_var_c3_gridcross");
 savefile_vc3 = sprintf("gridstats/sferic_pathlength_gridcross_10m_%s%s.mat", daystr, stationName);
 save(savefile_vc3, "sferic_pathlength_gridcross");
 
-savefile_gtd = sprintf("gridstats/sferic_grouptimediff_gridcross_10m_%s%s.mat", daystr, stationName);
-save(savefile_gtd, "sferic_grouptimediff_param");
+savefile_mean_gtd = sprintf("gridstats/sferic_grouptimediff_gridcross_10m_%s%s.mat", daystr, stationName);
+save(savefile_mean_gtd, "sferic_mean_grouptimediff");
+
+savefile_median_gtd = sprintf("gridstats/sferic_median_grouptimediff_gridcross_10m_%s%s.mat", daystr, stationName);
+save(savefile_median_gtd, "sferic_median_grouptimediff");
 
 end

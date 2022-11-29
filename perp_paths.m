@@ -35,6 +35,11 @@ daystr = string(datestr(run_start, "yyyymmdd"));
 pgfile = sprintf("data/sferic_perp_gridcross_10m_%s.mat", daystr);
 pg = importdata(pgfile);
 
+gtdfile = sprintf("data/sferic_grouptimediff_gridcross_10m_%s.mat", daystr);
+gtd = importdata(gtdfile);
+
+gtd_pg = gtd.*pg;
+
 %pg_avg = mean(pg, 3, "omitnan");
 
 %% 2. month
@@ -114,11 +119,11 @@ for k = 1:size(pg, 3)
 % for k = 1
 %     pplot = gcp_cavg(:,:,k);
 %     pplot = pg_cavg(:,:,k);
-    pplot = pg(:,:,k);
+    pplot = gtd_pg(:,:,k);
 
     times = linspace(run_start, run_start+1, 145);
     timestring = string(datestr(times, "HH:MM:SS"));
-    
+    daystring = string(datestr(times, "mmmm dd"));
     
     coastlines = importdata('coastlines.mat');
     coastlat = coastlines.coastlat;
@@ -135,11 +140,11 @@ for k = 1:size(pg, 3)
     hold on
     geoshow(coastlat, coastlon, "Color","black");
     
-    set(gca,'ColorScale','log');
-%     crameri('-hawaii');
-%     caxis([0.01 1000]);
-    crameri('tokyo');%,'pivot',1); % requires "crameri" colormap toolbox
-    caxis([0 1]);
+%     set(gca,'ColorScale','log');
+    crameri('-hawaii');
+    caxis([0 0.2]);
+%     crameri('tokyo');%,'pivot',1); % requires "crameri" colormap toolbox
+%     caxis([0 1]);
     
     nexttile
     %worldmap("World");
@@ -152,10 +157,10 @@ for k = 1:size(pg, 3)
     ylabel("Longitude");
     title("");
     set(gca,'ColorScale','log');
-%     crameri('-hawaii');
-%     caxis([0.01 1000]);
-    crameri('tokyo');%,'pivot',1); % requires "crameri" colormap toolbox
-    caxis([0 1]);
+    crameri('-hawaii');
+    caxis([0 0.2]);
+%     crameri('tokyo');%,'pivot',1); % requires "crameri" colormap toolbox
+%     caxis([0 1]);
     
     nexttile
     worldmap([-90 -60],[-180 180])
@@ -166,20 +171,20 @@ for k = 1:size(pg, 3)
     xlabel("Latitude");
     ylabel("Longitude");
     title("");
-    set(gca,'ColorScale','log');
-%     crameri('-hawaii');
-%     caxis([0.01 1000]);
-    crameri('tokyo'); % requires "crameri" colormap toolbox
-    caxis([0 1]);
+%     set(gca,'ColorScale','log');
+    crameri('-hawaii');
+    caxis([0 0.2]);
+%     crameri('tokyo'); % requires "crameri" colormap toolbox
+%     caxis([0 1]);
     cb = colorbar;
     cb.Layout.Tile = 'east';
     
     
     
-%     titlestr = sprintf("Average stroke-to-station paths weighted by perpendicularity \n March 2022 %s-%s", ...
+    titlestr = sprintf("Average stroke-to-station paths weighted by perpendicularity \n November %s %s-%s", ...
+        daystring(k), timestring(k), timestring(k+1));
+%     titlestr = sprintf("WWLLN stroke-to-station path perpendicularity \n March 01 2022 %s-%s", ...
 %         timestring(k), timestring(k+1));
-    titlestr = sprintf("WWLLN stroke-to-station path perpendicularity \n March 01 2022 %s-%s", ...
-        timestring(k), timestring(k+1));
     title(t, titlestr);
     %title(t, "Average number of WWLLN stroke-to-station path crossings in a 10 minute period, March 30, 2022");
 
