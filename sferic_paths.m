@@ -30,11 +30,11 @@
 
 %% 1. day
 % average each lat, lon element across 1 day
-run_start = datenum(2022, 11, 24);
+run_start = datenum(2022, 11, 1);
 daystr = string(datestr(run_start, "yyyymmdd"));
 % c3file = sprintf("data/sferic_c3_gridcross_10m_%s.mat", daystr);
 % plfile = sprintf("data/sferic_pathlength_gridcross_10m_%s.mat", daystr);
-gtdfile = sprintf("data/sferic_grouptimediff_gridcross_10m_%s.mat", daystr);
+gtdfile = sprintf("data/sferic_median_grouptimediff_gridcross_10m_%s.mat", daystr);
 % s_c3 = importdata(c3file);
 % pl = importdata(plfile);
 gtd = importdata(gtdfile);
@@ -196,19 +196,19 @@ for k = 1:size(gtd, 3)
     
     
     
-    titlestr = sprintf("Average sferic c3/path length \n %s %s-%s", ...
+    titlestr = sprintf("Median sferic c3/path length \n %s %s-%s", ...
         datestring, timestring(k), timestring(k+1));
 %     titlestr = sprintf("Average sferic c3/path length \n November 1-16 %s-%s", ...
 %        timestring(k), timestring(k+1));
     title(t, titlestr);
 
-    gifname = sprintf('animations/sferic_gtd_%s.gif', daystr);
-%     gifname = 'animations/sferic_gtd_mean_20221101-16.gif';
-    if k == 1
-        gif(gifname);
-    else
-        gif;
-    end
+%     gifname = sprintf('animations/sferic_median_gtd_%s.gif', daystr);
+% %     gifname = 'animations/sferic_gtd_mean_20221101-16.gif';
+%     if k == 1
+%         gif(gifname);
+%     else
+%         gif;
+%     end
 
 end
 
@@ -222,7 +222,7 @@ plot(datetime(times(2:end), "ConvertFrom", "datenum"), seamean, '-^', "Color", [
 plot(datetime(times(2:end), "ConvertFrom", "datenum"), icemean, '-^', "Color", [0.2 0.2 0.2])
 legend("night", "day", "land", "sea", "ice")
 ylabel("c3/d (rad^2 s^{-1} m^{-1})")    
-title("Mean c3/d for night and day hemispheres and land/sea/ice")
+title("Median c3/d for night and day hemispheres and land/sea/ice")
 
 
 %% plot average path crossings, perpendicularity, and path crossings weighted by perpendicularity

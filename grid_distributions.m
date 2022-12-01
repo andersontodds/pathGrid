@@ -76,22 +76,23 @@ for j = 1:length(gc_equatorial)
     gtd_equatorial = [gtd_equatorial; gtd];
 end
 
+%%
 figure(1)
 hold off
 ha = histogram(gtd_auroral);
 hold on
 hs = histogram(gtd_subauroral);
 hm = histogram(gtd_midlatitude);
-he = histogram(gtd_equatorial);
+% he = histogram(gtd_equatorial);
 ha.Normalization = 'probability';
 hs.Normalization = 'probability';
 hm.Normalization = 'probability';
-he.Normalization = 'probability';
+% he.Normalization = 'probability';
 ha.BinWidth = 0.005;
 hs.BinWidth = 0.005;
 hm.BinWidth = 0.005;
-he.BinWidth = 0.005;
-legend("auroral", "subauroral", "midlatitude", "equatorial");
+% he.BinWidth = 0.005;
+legend("auroral", "subauroral", "midlatitude");%, "equatorial");
 xlabel("c3/d");
 ylabel("fraction of total")
 titlestr = sprintf("c3/d for various magnetic latitude regions, %s %s-%s", datestr(starttime, "yyyy mmmm dd"), datestr(minute_bin_edges(m), "HH:MM:SS"), datestr(minute_bin_edges(m+1), "HH:MM:SS"));
