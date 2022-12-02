@@ -15,7 +15,7 @@
 %   dist(j) :       propagation distance (stroke to station)
 
 % load pathlist
-pathlist = importdata("data/pathlist_sferic_20221101.mat");
+pathlist = importdata("data/pathlist_sferic_20221107.mat");
 
 % filter time
 starttime = floor(pathlist(2,1));
@@ -23,7 +23,7 @@ stoptime = starttime + 1;
 frames = 24; % number of time bins per day
 minute_bin_edges = linspace(starttime,stoptime,frames+1);
 % generate gridcell
-for m = 20
+for m = 12
     in_frame = pathlist(:,1) > minute_bin_edges(m) & pathlist(:,1) < minute_bin_edges(m+1);
     pathlist_frame = pathlist(in_frame, :);
     gridcell = pg_gridcell_sferic(pathlist_frame);
@@ -37,10 +37,11 @@ end
 % mlatmesh = reshape(geog2geom(latmesh(:), lonmesh(:), 0, decyear(datevec(starttime))), 180,360);
 mlatmesh = importdata("mlatmesh.mat");
 
-auroral = (mlatmesh > 65 & mlatmesh < 75) | (mlatmesh < -65 & mlatmesh > -75);
-subauroral = (mlatmesh > 45 & mlatmesh < 65) | (mlatmesh < -45 & mlatmesh > -65);
-midlatitude = (mlatmesh > 30 & mlatmesh < 45) | (mlatmesh < -30 & mlatmesh > -45);
-equatorial = (mlatmesh > -30 & mlatmesh < 30);
+%% 
+auroral = (mlatmesh > 65 & mlatmesh < 75); %| (mlatmesh < -65 & mlatmesh > -75);
+subauroral = (mlatmesh > 45 & mlatmesh < 65); %| (mlatmesh < -45 & mlatmesh > -65);
+midlatitude = (mlatmesh > 30 & mlatmesh < 45); %| (mlatmesh < -30 & mlatmesh > -45);
+% equatorial = (mlatmesh > -30 & mlatmesh < 30);
 
 gc_auroral = gridcell(auroral);
 gc_auroral = gc_auroral(~cellfun(@isempty, gc_auroral));
@@ -48,8 +49,8 @@ gc_subauroral = gridcell(subauroral);
 gc_subauroral = gc_subauroral(~cellfun(@isempty, gc_subauroral));
 gc_midlatitude = gridcell(midlatitude);
 gc_midlatitude = gc_midlatitude(~cellfun(@isempty, gc_midlatitude));
-gc_equatorial = gridcell(equatorial);
-gc_equatorial = gc_equatorial(~cellfun(@isempty, gc_equatorial));
+% gc_equatorial = gridcell(equatorial);
+% gc_equatorial = gc_equatorial(~cellfun(@isempty, gc_equatorial));
 
 %% calculate and plot histograms of c3/d
 gtd_auroral = [];
@@ -70,28 +71,43 @@ for j = 1:length(gc_midlatitude)
     gtd_midlatitude = [gtd_midlatitude; gtd];
 end
 
-gtd_equatorial = [];
-for j = 1:length(gc_equatorial)
-    gtd = gc_equatorial{j}(:,6)./gc_equatorial{j}(:,7);
-    gtd_equatorial = [gtd_equatorial; gtd];
-end
+% gtd_equatorial = [];
+% for j = 1:length(gc_equatorial)
+%     gtd = gc_equatorial{j}(:,6)./gc_equatorial{j}(:,7);
+%     gtd_equatorial = [gtd_equatorial; gtd];
+% end
 
 %%
+
+% try histcounts
+step = 0.005;
+edges = 0:step:0.5;
+faces = edges(1:end-1) + step/2;
+ha = histcounts(gtd_auroral, edges, "Normalization","probability");
+hs = histcounts(gtd_subauroral, edges, "Normalization","probability");
+hm = histcounts(gtd_midlatitude, edges, "Normalization","probability");
+
+
 figure(1)
 hold off
-ha = histogram(gtd_auroral);
+plot(faces, ha);
+% ha = histogram(gtd_auroral);
 hold on
-hs = histogram(gtd_subauroral);
-hm = histogram(gtd_midlatitude);
+plot(faces, hs);
+plot(faces, hm);
+% hs = histogram(gtd_subauroral);
+% hm = histogram(gtd_midlatitude);
 % he = histogram(gtd_equatorial);
-ha.Normalization = 'probability';
-hs.Normalization = 'probability';
-hm.Normalization = 'probability';
+% ha.Normalization = 'probability';
+% hs.Normalization = 'probability';
+% hm.Normalization = 'probability';
 % he.Normalization = 'probability';
-ha.BinWidth = 0.005;
-hs.BinWidth = 0.005;
-hm.BinWidth = 0.005;
+% ha.BinWidth = 0.005;
+% hs.BinWidth = 0.005;
+% hm.BinWidth = 0.005;
 % he.BinWidth = 0.005;
+xlim([0 0.5]);
+ylim([0 0.1]);
 legend("auroral", "subauroral", "midlatitude");%, "equatorial");
 xlabel("c3/d");
 ylabel("fraction of total")
