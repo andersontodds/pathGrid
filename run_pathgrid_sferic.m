@@ -63,7 +63,7 @@ overwrite = 0;
 
 % the month of November 2022 so far
 run_start_nov = datenum(2022, 11, 1); % rerunning whole month to get median gtd
-run_end_nov = datenum(2022, 11, 28);
+run_end_nov = datenum(2022, 11, 30);
 run_days_nov = run_start_nov:run_end_nov;
 run_days_nov = run_days_nov';
 
