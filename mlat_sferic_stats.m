@@ -6,14 +6,27 @@
 % these.  Try other filters like day/night, land/sea,
 % perpendicularity-weighted number of paths threshold
 
+% TODO:
+% smaller regions
+% get _sm5 options working
+
 year = 2022;
 month = 11;
-day = 11;
+day = 07;
 
 % load quietavg gtd and gc
 gtd_quietavg = importdata("data/sferic_grouptimediff_10m_202211_quietavg.mat");
 gc_quietavg =  importdata("data/sferic_gridcrossings_10m_202211_quietavg.mat");
-gc_quietavg_sm5 = importdata("data/sferic_grouptimediff_10m_202211_quietavg_sm5.mat");
+
+gtd_quiet_sm5 = zeros(size(gtd_quietavg));
+gc_quiet_sm5 = zeros(size(gc_quietavg));
+for i = size(gtd_quiet_sm5,3)
+    gtd_quiet_sm5(:,:,i) = smooth2(gtd_quietavg(:,:,i), 5);
+    gc_quiet_sm5(:,:,i) = smooth2(gc_quietavg(:,:,i), 5);
+end
+
+gtd_quietavg_sm5 = importdata("data/sferic_grouptimediff_10m_202211_quietavg_sm5.mat");
+gc_quietavg_sm5 =  importdata("data/sferic_gridcrossings_10m_202211_quietavg_sm5.mat");
 
 % for day = 1:28
 
@@ -72,8 +85,8 @@ gc_quietavg_sm5 = importdata("data/sferic_grouptimediff_10m_202211_quietavg_sm5.
         end
     
 %         plot(datetime(time_face, "ConvertFrom","datenum"), gtd_mean(:,i), '-', "Color", colors(i,:))
-%         plot(datetime(time_face, "ConvertFrom","datenum"), gtd_quiet_mean(:,i), '-', "Color", colors(i,:))        
-        plot(datetime(time_face, "ConvertFrom","datenum"), gtd_mean_qd(:,i), '-', "Color", colors(i,:))
+        plot(datetime(time_face, "ConvertFrom","datenum"), gtd_quiet_mean(:,i), '-', "Color", colors(i,:))        
+%         plot(datetime(time_face, "ConvertFrom","datenum"), gtd_mean_qd(:,i), '-', "Color", colors(i,:))
         hold on
     end
     

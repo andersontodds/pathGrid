@@ -111,12 +111,19 @@ end
 % 
 % gc_cavg_file = "data/sferic_gridcrossings_10m_202211_quietavg.mat";
 % save(gc_cavg_file, "gc_cavg");
-
+% 
+% gtd_quietavg = importdata("data/sferic_grouptimediff_10m_202211_quietavg.mat");
+% gc_quietavg =  importdata("data/sferic_gridcrossings_10m_202211_quietavg.mat");
+% gtd_quiet_sm5 = zeros(size(gtd_quietavg));
+% gc_quiet_sm5 = zeros(size(gc_quietavg));
 % for i = size(gtd_quiet_sm5,3)
 %     gtd_quiet_sm5(:,:,i) = smooth2(gtd_quietavg(:,:,i), 5);
+%     gc_quiet_sm5(:,:,i) = smooth2(gc_quietavg(:,:,i), 5);
 % end
 % 
 % save("data/sferic_grouptimediff_10m_202211_quietavg_sm5.mat", "gtd_quiet_sm5");
+% save("data/sferic_gridcrossings_10m_202211_quietavg_sm5.mat", "gc_quiet_sm5");
+
 
 %% plot
 % whole day average: plot day_avg
@@ -223,12 +230,12 @@ for k = 1:size(gtd, 3)
     title(t, titlestr);
 
 %     gifname = sprintf('animations/sferic_mean_gtd_%s.gif', daystr);
-    gifname = 'animations/sferic_gtd_quietmean_202211_sm5.gif';
-    if k == 1
-        gif(gifname);
-    else
-        gif;
-    end
+%     gifname = 'animations/sferic_gtd_quietmean_202211_sm5.gif';
+%     if k == 1
+%         gif(gifname);
+%     else
+%         gif;
+%     end
 
 end
 
