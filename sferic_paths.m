@@ -48,9 +48,10 @@ gtd_avg = mean(gtd, 3, "omitnan");
 % requires grid_crossings_10 files for entire time range; either download
 % these from flashlight or prepend "/gridstats" to gcfile below and run
 % this part on flashlight
-run_start = datenum(2022, 11, 01);
-run_end = datenum(2022, 11, 24);
-run_days = run_start:run_end;
+run_start = datenum(2022, 11, 06);
+% run_end = datenum(2022, 11, 24);
+% run_days = run_start:run_end;
+run_days = datenum(2022, 11, [6, 10, 12, 14, 15, 16, 17, 19, 21, 22, 23, 24]);
 run_days = run_days';
 %run_days = run_days(run_days ~= datenum(2022, 01, 15));
 
@@ -76,12 +77,17 @@ gtdfile = sprintf("data/sferic_grouptimediff_gridcross_10m_%s.mat", daystr(1));
 gtd = importdata(gtdfile);
 gtd_cavg = gtd;
 
+gcfile = sprintf("data/sferic_gridcrossings_10m_%s.mat", daystr(1));
+gc = importdata(gcfile);
+gc_cavg = gc;
 
 % load subsequent days and calculate cumulative average
 for j = 2:length(daystr)
     gtdfile = sprintf("data/sferic_grouptimediff_gridcross_10m_%s.mat", daystr(j));
     gtd = importdata(gtdfile);
 
+    gcfile = sprintf("data/sferic_gridcrossings_10m_%s.mat", daystr(j));
+    gc = importdata(gcfile);
     % NaN handling: 
     % (1) set all NaNs in gc to current gc_cavg values for those
     % array elements.
@@ -95,8 +101,22 @@ for j = 2:length(daystr)
     gtd_big = cat(4, gtd_cavg, gtd);
     gtd_cavg = mean(gtd_big, 4, "omitnan");
 
+    gc_big = cat(4, gc_cavg, gc);
+    gc_cavg = mean(gc_big, 4, "omitnan");
+
 end
 
+% gtd_cavg_file = "data/sferic_grouptimediff_10m_202211_quietavg.mat";
+% save(gtd_cavg_file, "gtd_cavg");
+% 
+% gc_cavg_file = "data/sferic_gridcrossings_10m_202211_quietavg.mat";
+% save(gc_cavg_file, "gc_cavg");
+
+% for i = size(gtd_quiet_sm5,3)
+%     gtd_quiet_sm5(:,:,i) = smooth2(gtd_quietavg(:,:,i), 5);
+% end
+% 
+% save("data/sferic_grouptimediff_10m_202211_quietavg_sm5.mat", "gtd_quiet_sm5");
 
 %% plot
 % whole day average: plot day_avg
@@ -127,10 +147,10 @@ icemean = zeros(size(gtd, 3),1);
 for k = 1:size(gtd, 3)    
 % for k = 144
 %     c3plot = mean(c3pl_cavg, 3,'omitnan');
-%     c3plot = gtd_cavg(:,:,k);
+    c3plot = smooth2(gtd_cavg(:,:,k), 5);
 %     pplot = pg_cavg(:,:,k);
 %     c3plot = gtd_avg;
-    c3plot = gtd(:,:,k);
+%     c3plot = gtd(:,:,k);
     
     % terminator test
     [sslat, sslon] = subsolar(times(k));
@@ -196,19 +216,19 @@ for k = 1:size(gtd, 3)
     
     
     
-    titlestr = sprintf("Median sferic c3/path length \n %s %s-%s", ...
-        datestring, timestring(k), timestring(k+1));
-%     titlestr = sprintf("Average sferic c3/path length \n November 1-16 %s-%s", ...
-%        timestring(k), timestring(k+1));
+%     titlestr = sprintf("Median sferic c3/path length \n %s %s-%s", ...
+%         datestring, timestring(k), timestring(k+1));
+    titlestr = sprintf("Average sferic c3/path length \n November quiet days %s-%s", ...
+       timestring(k), timestring(k+1));
     title(t, titlestr);
 
-%     gifname = sprintf('animations/sferic_median_gtd_%s.gif', daystr);
-% %     gifname = 'animations/sferic_gtd_mean_20221101-16.gif';
-%     if k == 1
-%         gif(gifname);
-%     else
-%         gif;
-%     end
+%     gifname = sprintf('animations/sferic_mean_gtd_%s.gif', daystr);
+    gifname = 'animations/sferic_gtd_quietmean_202211_sm5.gif';
+    if k == 1
+        gif(gifname);
+    else
+        gif;
+    end
 
 end
 
@@ -222,7 +242,7 @@ plot(datetime(times(2:end), "ConvertFrom", "datenum"), seamean, '-^', "Color", [
 plot(datetime(times(2:end), "ConvertFrom", "datenum"), icemean, '-^', "Color", [0.2 0.2 0.2])
 legend("night", "day", "land", "sea", "ice")
 ylabel("c3/d (rad^2 s^{-1} m^{-1})")    
-title("Median c3/d for night and day hemispheres and land/sea/ice")
+title("Mean c3/d for night and day hemispheres and land/sea/ice")
 
 
 %% plot average path crossings, perpendicularity, and path crossings weighted by perpendicularity
