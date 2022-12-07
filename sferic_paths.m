@@ -116,7 +116,7 @@ end
 % gc_quietavg =  importdata("data/sferic_gridcrossings_10m_202211_quietavg.mat");
 % gtd_quiet_sm5 = zeros(size(gtd_quietavg));
 % gc_quiet_sm5 = zeros(size(gc_quietavg));
-% for i = size(gtd_quiet_sm5,3)
+% for i = 1:size(gtd_quiet_sm5,3)
 %     gtd_quiet_sm5(:,:,i) = smooth2(gtd_quietavg(:,:,i), 5);
 %     gc_quiet_sm5(:,:,i) = smooth2(gc_quietavg(:,:,i), 5);
 % end
@@ -124,6 +124,20 @@ end
 % save("data/sferic_grouptimediff_10m_202211_quietavg_sm5.mat", "gtd_quiet_sm5");
 % save("data/sferic_gridcrossings_10m_202211_quietavg_sm5.mat", "gc_quiet_sm5");
 
+%% 3. day - quiet mean
+% 
+run_start = datenum(2022, 11, 11);
+daystr = string(datestr(run_start, "yyyymmdd"));
+gtdfile = sprintf("data/sferic_grouptimediff_gridcross_10m_%s.mat", daystr);
+perpfile = sprintf("data/sferic_perp_gridcross_10m_%s.mat", daystr);
+gcfile = sprintf("data/sferic_gridcrossings_10m_%s.mat", daystr);
+gtd = importdata(gtdfile);
+perp = importdata(perpfile);
+gc = importdata(gcfile);
+gtd_quietavg = importdata("data/sferic_grouptimediff_10m_202211_quietavg.mat");
+gtd_quietavg_sm5 = importdata("data/sferic_grouptimediff_10m_202211_quietavg_sm5.mat");
+
+gcpw = gc.*perp;
 
 %% plot
 % whole day average: plot day_avg
@@ -143,32 +157,39 @@ coastlat = coastlines.coastlat;
 coastlon = coastlines.coastlon;
 geoidrefvec = [1,90,-180];
 
+gcpw_threshold = 1;
 
-daymean = zeros(size(gtd, 3),1);
-nightmean = zeros(size(gtd, 3),1);
-landmean = zeros(size(gtd, 3),1);
-seamean = zeros(size(gtd, 3),1);
-icemean = zeros(size(gtd, 3),1);
+% daymean = zeros(size(gtd, 3),1);
+% nightmean = zeros(size(gtd, 3),1);
+% landmean = zeros(size(gtd, 3),1);
+% seamean = zeros(size(gtd, 3),1);
+% icemean = zeros(size(gtd, 3),1);
 
 % for k = 1:size(gtd_cavg,3)
 for k = 1:size(gtd, 3)    
 % for k = 144
 %     c3plot = mean(c3pl_cavg, 3,'omitnan');
-    c3plot = smooth2(gtd_cavg(:,:,k), 5);
+%     c3plot = smooth2(gtd_cavg(:,:,k), 5);
 %     pplot = pg_cavg(:,:,k);
 %     c3plot = gtd_avg;
-%     c3plot = gtd(:,:,k);
+    gtd_frame = gtd(:,:,k);
+    gtd_quietavg_sm5_frame = gtd_quietavg_sm5(:,:,k);
+    gcpw_frame = gcpw(:,:,k);
+    gcpw_above_threshold = gcpw_frame > gcpw_threshold; 
+    gtd_frame(~gcpw_above_threshold) = NaN;
+    gtd_quietavg_sm5_frame(~gcpw_above_threshold) = NaN;
+    c3plot = gtd_frame - gtd_quietavg_sm5_frame ;
     
     % terminator test
     [sslat, sslon] = subsolar(times(k));
     night = distance(sslat, sslon, latmesh, lonmesh, 'degrees') > 90;
     %c3plot(night) = 10;
     
-    daymean(k) = mean(c3plot(~night), "all", "omitnan");
-    nightmean(k) = mean(c3plot(night), "all", "omitnan");
-    landmean(k) = mean(c3plot(lsimask == 1), "all", "omitnan");
-    seamean(k) = mean(c3plot(lsimask == -1), "all", "omitnan");
-    icemean(k) = mean(c3plot(lsimask == 0), "all", "omitnan");
+%     daymean(k) = mean(c3plot(~night), "all", "omitnan");
+%     nightmean(k) = mean(c3plot(night), "all", "omitnan");
+%     landmean(k) = mean(c3plot(lsimask == 1), "all", "omitnan");
+%     seamean(k) = mean(c3plot(lsimask == -1), "all", "omitnan");
+%     icemean(k) = mean(c3plot(lsimask == 0), "all", "omitnan");
 
     figure(1)
     hold off
@@ -179,13 +200,16 @@ for k = 1:size(gtd, 3)
     geoshow(c3plot, geoidrefvec, "DisplayType","texturemap");
     hold on
     geoshow(coastlat, coastlon, "Color","black");
+    %contourm(latmesh, lonmesh, mlatmesh, 50:70, "k"); % mlat contours
     
 %     set(gca,'ColorScale','log');
     crameri('-hawaii');
 %     caxis([0 1]);
 %     crameri('tokyo');%,'pivot',1); % requires "crameri" colormap toolbox
-    caxis([0 0.2]);
-    
+%     caxis([0 0.2]);
+    caxis([0 0.05]);
+
+
     nexttile
     %worldmap("World");
     worldmap([60 90],[-180 180])
@@ -200,7 +224,9 @@ for k = 1:size(gtd, 3)
     crameri('-hawaii');
 %     caxis([0 1]);
 %     crameri('tokyo');%,'pivot',1); % requires "crameri" colormap toolbox
-    caxis([0 0.2]);
+%     caxis([0 0.2]);
+    caxis([0 0.05]);
+
     
     nexttile
     worldmap([-90 -60],[-180 180])
@@ -215,7 +241,8 @@ for k = 1:size(gtd, 3)
     crameri('-hawaii');
 %     caxis([0 1]);
 %     crameri('tokyo'); % requires "crameri" colormap toolbox
-    caxis([0 0.2]);
+%     caxis([0 0.2]);
+    caxis([0 0.05]);
     cb = colorbar;
     cb.Layout.Tile = 'east';
     cb.Label.String = "rad^2 s^{-1} m^{-1}";
@@ -239,17 +266,17 @@ for k = 1:size(gtd, 3)
 
 end
 
-figure(2)
-hold off
-plot(datetime(times(2:end), "ConvertFrom", "datenum"), nightmean, '-o')
-hold on
-plot(datetime(times(2:end), "ConvertFrom", "datenum"), daymean, '-o')
-plot(datetime(times(2:end), "ConvertFrom", "datenum"), landmean, '-^', "Color", [0.5 0.5 0.2])
-plot(datetime(times(2:end), "ConvertFrom", "datenum"), seamean, '-^', "Color", [0.1 0.1 0.8])
-plot(datetime(times(2:end), "ConvertFrom", "datenum"), icemean, '-^', "Color", [0.2 0.2 0.2])
-legend("night", "day", "land", "sea", "ice")
-ylabel("c3/d (rad^2 s^{-1} m^{-1})")    
-title("Mean c3/d for night and day hemispheres and land/sea/ice")
+% figure(2)
+% hold off
+% plot(datetime(times(2:end), "ConvertFrom", "datenum"), nightmean, '-o')
+% hold on
+% plot(datetime(times(2:end), "ConvertFrom", "datenum"), daymean, '-o')
+% plot(datetime(times(2:end), "ConvertFrom", "datenum"), landmean, '-^', "Color", [0.5 0.5 0.2])
+% plot(datetime(times(2:end), "ConvertFrom", "datenum"), seamean, '-^', "Color", [0.1 0.1 0.8])
+% plot(datetime(times(2:end), "ConvertFrom", "datenum"), icemean, '-^', "Color", [0.2 0.2 0.2])
+% legend("night", "day", "land", "sea", "ice")
+% ylabel("c3/d (rad^2 s^{-1} m^{-1})")    
+% title("Mean c3/d for night and day hemispheres and land/sea/ice")
 
 
 %% plot average path crossings, perpendicularity, and path crossings weighted by perpendicularity

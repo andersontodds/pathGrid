@@ -12,21 +12,28 @@
 
 year = 2022;
 month = 11;
-day = 07;
+day = 03;
 
 % load quietavg gtd and gc
 gtd_quietavg = importdata("data/sferic_grouptimediff_10m_202211_quietavg.mat");
 gc_quietavg =  importdata("data/sferic_gridcrossings_10m_202211_quietavg.mat");
-
-gtd_quiet_sm5 = zeros(size(gtd_quietavg));
-gc_quiet_sm5 = zeros(size(gc_quietavg));
-for i = size(gtd_quiet_sm5,3)
-    gtd_quiet_sm5(:,:,i) = smooth2(gtd_quietavg(:,:,i), 5);
-    gc_quiet_sm5(:,:,i) = smooth2(gc_quietavg(:,:,i), 5);
-end
-
 gtd_quietavg_sm5 = importdata("data/sferic_grouptimediff_10m_202211_quietavg_sm5.mat");
 gc_quietavg_sm5 =  importdata("data/sferic_gridcrossings_10m_202211_quietavg_sm5.mat");
+
+% generated quietavg_sm5 if needed
+% gtd_quiet_sm5 = zeros(size(gtd_quietavg));
+% gc_quiet_sm5 = zeros(size(gc_quietavg));
+% for i = 1:size(gtd_quiet_sm5,3)
+%     gtd_quiet_sm5(:,:,i) = smooth2(gtd_quietavg(:,:,i), 5);
+%     gc_quiet_sm5(:,:,i) = smooth2(gc_quietavg(:,:,i), 5);
+% end
+
+% gtd_quietavg_sm5 = gtd_quiet_sm5;
+% gc_quietavg_sm5 = gc_quiet_sm5;
+% save("data/sferic_grouptimediff_10m_202211_quietavg_sm5.mat", "gtd_quietavg_sm5");
+% save("data/sferic_gridcrossings_10m_202211_quietavg_sm5.mat", "gc_quietavg_sm5");
+% gtd_quietavg_sm5 = importdata("data/sferic_grouptimediff_10m_202211_quietavg_sm5.mat");
+% gc_quietavg_sm5 =  importdata("data/sferic_gridcrossings_10m_202211_quietavg_sm5.mat");
 
 % for day = 1:28
 
@@ -69,9 +76,9 @@ gc_quietavg_sm5 =  importdata("data/sferic_gridcrossings_10m_202211_quietavg_sm5
         grid_in_bin = mlatmesh > mlat_bin_edges(i) & mlatmesh < mlat_bin_edges(i+1);
         for j = 1:size(gtd, 3)
             gtd_frame = gtd(:,:,j);
-            gtd_quietavg_frame = gtd_quietavg(:,:,j);
+            gtd_quietavg_frame = gtd_quietavg_sm5(:,:,j);
             gc_frame = gc(:,:,j);
-            gc_quietavg_frame = gc_quietavg(:,:,j);
+            gc_quietavg_frame = gc_quietavg_sm5(:,:,j);
             gcpw_above_threshold = gcpw(:,:,j) > gcpw_threshold;
             % mean gtd over mlat bin, accounting for different number of paths
             % crossing each grid location
@@ -85,8 +92,8 @@ gc_quietavg_sm5 =  importdata("data/sferic_gridcrossings_10m_202211_quietavg_sm5
         end
     
 %         plot(datetime(time_face, "ConvertFrom","datenum"), gtd_mean(:,i), '-', "Color", colors(i,:))
-        plot(datetime(time_face, "ConvertFrom","datenum"), gtd_quiet_mean(:,i), '-', "Color", colors(i,:))        
-%         plot(datetime(time_face, "ConvertFrom","datenum"), gtd_mean_qd(:,i), '-', "Color", colors(i,:))
+%         plot(datetime(time_face, "ConvertFrom","datenum"), gtd_quiet_mean(:,i), '-', "Color", colors(i,:))        
+        plot(datetime(time_face, "ConvertFrom","datenum"), gtd_mean_qd(:,i), '-', "Color", colors(i,:))
         hold on
     end
     
