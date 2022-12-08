@@ -84,6 +84,7 @@ for i = 1:length(stationname)
     %if all tar files were corrupted, sfile_day = []
     if isempty(sfile_day)
         fprintf("Sfiles from %s were corrupted, going to next station.\n", stationname(i))
+        continue;
     end
     % find entries in pathlist when strokes occurred that were detected by
     % station stationname(i)
