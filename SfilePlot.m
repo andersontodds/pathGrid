@@ -127,56 +127,77 @@ while 1==1,
     
     %mLinPhaseFit = (180/pi)*(ta(1)*w+ta(2));
     
-    figure(1)
-    
-    subplot(2,2,[1 3])
-
-%plot the measured and fitted phase 
-    deltaPhase = (180/pi)*(phase - fittedPhase);
-    rmsPhaseError = sqrt(sum(deltaPhase.*deltaPhase)/length(phase));
-    
-    
     kHzFreq=0.001*freq;
-    plot(kHzFreq,phase*180/pi,'k',kHzFreq,fittedPhase*180/pi,'b--',kHzFreq,cfitph*180/pi,'r*');
-    xlabel('Frequency (kHz)');
-    ylabel('Phase (degrees)');
-    legend('Measured phase','MATLAB fit','C++ fit')
-    title(sprintf('RMS phase error = %f',rmsPhaseError));
-    
-    %group travel time = -dphi/dw
+
+     %group travel time = -dphi/dw
     t0=-pa(1) + tOffset;
     tg= t0 + pa(3)./(w.*w);
-    subplot(2,2,2)
-    
-    plot([t1 t1],[kHzFreq(1) kHzFreq(end)],'b',dtoga*ones(size(kHzFreq(1:3:end))),kHzFreq(1:3:end),'r*', tg,kHzFreq,'k',[t0 t0],[kHzFreq(1) kHzFreq(end)],'k--');
-    xlabel('Time (s)');
-    ylabel('Frequency (kHz)');
 
-    legend('MATLAB TOGA','C++ TOGA')
-    title('Dispersion & TOGA (linear fit)');
-    v=axis;
-    v(1)=0e-3;
-    v(2)=1.2e-3;
-    axis(v);
-
-    subplot(2,2,4)
+    figure(1)
+    hold off
+    tiledlayout(2,2,"TileSpacing","compact","Padding","compact")
+    nexttile;
     
     %compute RMS amp
     mRMSAmp = sqrt(mean(s(N/4:end).^2))*32768;
     timeBase = (1:length(s))/Fs;
     
     %,[min(timeBase) max(timeBase)],[mRMSAmp mRMSAmp],'g--',[min(timeBase) max(timeBase)],[rmsAmp rmsAmp]/32768,'g*'
-    plot([t1 t1],[-1 1],'b',[dtoga dtoga dtoga dtoga dtoga dtoga],[-0.5 -0.3 -0.1 0.1 0.3 0.5 ],'r*',timeBase,s,'k',[-c1+0.25*N/Fs -c1+0.25*N/Fs],[-1 1],'k--');%,[t0 t0],[min(s) max(s)],'r--');
+%     plot([t1 t1],[-1 1],'b',[dtoga dtoga dtoga dtoga dtoga dtoga],[-0.5 -0.3 -0.1 0.1 0.3 0.5 ],'r*',timeBase,s,'k',[-c1+0.25*N/Fs -c1+0.25*N/Fs],[-1 1],'k--');%,[t0 t0],[min(s) max(s)],'r--');
+    plot([t1 t1],[-1 1],'b', "LineWidth", 1);
+    hold on
+    plot(timeBase,s,'k', "LineWidth", 1);
+    plot([-c1+0.25*N/Fs -c1+0.25*N/Fs],[-1 1],'k--', "LineWidth", 1);%,[t0 t0],[min(s) max(s)],'r--');
+    xlim([0e-3 1.2e-3])
+    ylim([-0.5 0.5])
     xlabel('Time (s)')
     ylabel('Amplitude');
-    legend('MATLAB TOGA','C++ TOGA')
-    title(sprintf('Sferic waveform & TOGA. RMS Amp = %f, %d',mRMSAmp,rmsAmp));
+    legend('TOGA')
+%     title(sprintf('Sferic waveform & TOGA. RMS Amp = %f, %d',mRMSAmp,rmsAmp));
+    title('Sferic waveform');
+%     v=axis;
+%     v(1)=0e-3;
+%     v(2)=1.2e-3;
+%     v(3)=-0.8;
+%     v(4)=0.8;
+%     axis(v);
+
+    nexttile(3);
+    
+%     plot([t1 t1],[kHzFreq(1) kHzFreq(end)],'b',dtoga*ones(size(kHzFreq(1:3:end))),kHzFreq(1:3:end),'r*', tg,kHzFreq,'k',[t0 t0],[kHzFreq(1) kHzFreq(end)],'k--');
+    plot([t1 t1],[kHzFreq(1) kHzFreq(end)],'b', "LineWidth", 1);
+    hold on
+    plot(tg,kHzFreq,'k', "LineWidth", 1);
+    plot([t0 t0],[kHzFreq(1) kHzFreq(end)],'k--', "LineWidth", 1);
+    xlabel('Time (s)');
+    ylabel('Frequency (kHz)');
+
+    legend('TOGA')
+%     title('Dispersion & TOGA (linear fit)');
+    title('Dispersion');
     v=axis;
     v(1)=0e-3;
     v(2)=1.2e-3;
-    v(3)=-0.8;
-    v(4)=0.8;
     axis(v);
+
+    nexttile([2 1])
+
+%plot the measured and fitted phase 
+    deltaPhase = (180/pi)*(phase - fittedPhase);
+    rmsPhaseError = sqrt(sum(deltaPhase.*deltaPhase)/length(phase));
+    
+    
+%     plot(kHzFreq,phase*180/pi,'k',kHzFreq,fittedPhase*180/pi,'b--',kHzFreq,cfitph*180/pi,'r*');
+    plot(kHzFreq,phase*180/pi,'k', "LineWidth", 1);
+    hold on
+    plot(kHzFreq,fittedPhase*180/pi,'b--', "LineWidth", 1);%,kHzFreq,cfitph*180/pi,'r*');
+    xlabel('Frequency (kHz)');
+    ylabel('Phase (degrees)');
+%     legend('Measured phase','MATLAB fit','C++ fit')
+    legend('Measured phase','Phase fit')
+    title("Phase")
+%     title(sprintf('RMS phase error = %f',rmsPhaseError));
+
     
     %c=299792458;
     %h=87e3;

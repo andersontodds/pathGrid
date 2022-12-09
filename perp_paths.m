@@ -47,8 +47,8 @@ gtd_pg = gtd.*pg;
 % requires grid_crossings_10 files for entire time range; either download
 % these from flashlight or prepend "/gridstats" to gcfile below and run
 % this part on flashlight
-run_start = datenum(2022, 03, 01);
-run_end = datenum(2022, 03, 31);
+run_start = datenum(2022, 11, 01);
+run_end = datenum(2022, 11, 29);
 run_days = run_start:run_end;
 run_days = run_days';
 %run_days = run_days(run_days ~= datenum(2022, 01, 15));
@@ -71,8 +71,8 @@ daystr = string(datestr(run_days, "yyyymmdd"));
 % WARNING: any NaNs in first day will be propagated throughout whole
 % average!
 % load first day, initialize gc_avg
-gcfile = sprintf("data/grid_crossings_10m_%s.mat", daystr(1));
-pgfile = sprintf("data/perp_gridcross_10m_%s.mat", daystr(1));
+gcfile = sprintf("data/sferic_gridcrossings_10m_%s.mat", daystr(1));
+pgfile = sprintf("data/sferic_perp_gridcross_10m_%s.mat", daystr(1));
 
 gc = importdata(gcfile);
 gc_cavg = gc;
@@ -85,8 +85,8 @@ gcp_cavg = gcp;
 
 % load subsequent days and calculate cumulative average
 for j = 2:length(daystr)
-    gcfile = sprintf("data/grid_crossings_10m_%s.mat", daystr(j));
-    pgfile = sprintf("data/perp_gridcross_10m_%s.mat", daystr(j));
+    gcfile = sprintf("data/sferic_gridcrossings_10m_%s.mat", daystr(j));
+    pgfile = sprintf("data/sferic_perp_gridcross_10m_%s.mat", daystr(j));
     
     gc = importdata(gcfile);
     pg = importdata(pgfile);
