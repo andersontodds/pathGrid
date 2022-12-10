@@ -47,8 +47,8 @@ gtd_pg = gtd.*pg;
 % requires grid_crossings_10 files for entire time range; either download
 % these from flashlight or prepend "/gridstats" to gcfile below and run
 % this part on flashlight
-run_start = datenum(2022, 11, 01);
-run_end = datenum(2022, 11, 29);
+run_start = datenum(2022, 3, 01);
+run_end = datenum(2022, 3, 31);
 run_days = run_start:run_end;
 run_days = run_days';
 %run_days = run_days(run_days ~= datenum(2022, 01, 15));
@@ -71,8 +71,8 @@ daystr = string(datestr(run_days, "yyyymmdd"));
 % WARNING: any NaNs in first day will be propagated throughout whole
 % average!
 % load first day, initialize gc_avg
-gcfile = sprintf("data/sferic_gridcrossings_10m_%s.mat", daystr(1));
-pgfile = sprintf("data/sferic_perp_gridcross_10m_%s.mat", daystr(1));
+gcfile = sprintf("data/grid_crossings_10m_%s.mat", daystr(1));
+pgfile = sprintf("data/perp_gridcross_10m_%s.mat", daystr(1));
 
 gc = importdata(gcfile);
 gc_cavg = gc;
@@ -85,8 +85,8 @@ gcp_cavg = gcp;
 
 % load subsequent days and calculate cumulative average
 for j = 2:length(daystr)
-    gcfile = sprintf("data/sferic_gridcrossings_10m_%s.mat", daystr(j));
-    pgfile = sprintf("data/sferic_perp_gridcross_10m_%s.mat", daystr(j));
+    gcfile = sprintf("data/grid_crossings_10m_%s.mat", daystr(j));
+    pgfile = sprintf("data/perp_gridcross_10m_%s.mat", daystr(j));
     
     gc = importdata(gcfile);
     pg = importdata(pgfile);
@@ -218,70 +218,80 @@ for k = 1:size(pg_cavg,3)
     geoidrefvec = [1,90,-180];
     
     figure(1)
+    set(gcf,'color','w');
     hold off
-    t = tiledlayout(3,1, "Padding", "compact"); % add "TileSpacing", "compact" if subtitles are not needed
+    t = tiledlayout(1,1, "Padding", "compact"); % add "TileSpacing", "compact" if subtitles are not needed
     
-    % path crossings
-    nexttile
-    worldmap("World")
-    geoshow(gcplot, geoidrefvec, "DisplayType","texturemap");
-    hold on
-    geoshow(coastlat, coastlon, "Color","black");
+%     % path crossings
+%     nexttile
+%     worldmap("World")
+%     geoshow(gcplot, geoidrefvec, "DisplayType","texturemap");
+%     hold on
+%     geoshow(coastlat, coastlon, "Color","black");
+%     
+%     set(gca,'ColorScale','log');
+%     crameri('-hawaii');
+%     caxis([0.01 1000]);
+%     cb = colorbar;
+%     cb.Layout.Tile = 'east';
+%     cb.FontSize = 20;
+%     cb.Label.String = "number of paths";
+%     cb.Label.FontSize = 20;
+%     titlestr = sprintf("average number of stroke-to-station path crossings\nNovember 2022 %s-%s", ...
+%         timestring(k), timestring(k+1));
+%     title(titlestr, "FontSize", 20);
     
-    set(gca,'ColorScale','log');
-    crameri('-hawaii');
-    caxis([0.01 1000]);
-    cb = colorbar;
-    cb.Layout.Tile = 'east';
-    titlestr = "average number of stroke-to-station path crossings";
-    title(titlestr);
-    
-    % perpendicularity
-    nexttile
-    worldmap("World");
-    geoshow(pgplot, geoidrefvec, "DisplayType","texturemap");
-    hold on
-    geoshow(coastlat, coastlon, "Color","black");
-    
-    xlabel("Latitude");
-    ylabel("Longitude");
-    title("");
-    crameri('tokyo');
-    caxis([0 1]);
-    cb = colorbar;
-    cb.Layout.Tile = 'east';
-
-    titlestr = "perpendicularity";
-    title(titlestr);
-    
+%     % perpendicularity
+%     nexttile
+%     worldmap("World");
+%     geoshow(pgplot, geoidrefvec, "DisplayType","texturemap");
+%     hold on
+%     geoshow(coastlat, coastlon, "Color","white");
+% 
+%     title("");
+%     crameri('tokyo');
+%     caxis([0 1]);
+%     cb = colorbar;
+%     cb.Layout.Tile = 'east';
+%     cb.FontSize = 20;
+%     cb.Label.String = "perpendicularity";
+%     cb.Label.FontSize = 20;
+% 
+%     titlestr = sprintf("path perpendicularity\nNovember 2022 %s-%s", ...
+%         timestring(k), timestring(k+1));
+%     title(titlestr, "FontSize", 20);
+%     
     % weighted path crossings
     nexttile
     worldmap('World')
     geoshow(pplot, geoidrefvec, "DisplayType","texturemap");
     hold on
-    geoshow(coastlat, coastlon, "Color","black");
+    geoshow(coastlat, coastlon, "Color", "black");
     
-    xlabel("Latitude");
-    ylabel("Longitude");
     title("");
     set(gca,'ColorScale','log');
-    crameri('-hawaii');
     caxis([0.01 1000]);
+    cmap = crameri('-roma', 256+2*64);
+    set(gca, 'Colormap',cmap(65:256+64, :))
     cb = colorbar;
     cb.Layout.Tile = 'east';
+    cb.FontSize = 15;
+    cb.Label.String = "number of paths";
+    cb.Label.FontSize = 15;
     
-    titlestr = "path crossings weighted by perpendicularity";
-    title(titlestr);
-
-    supertitlestr = sprintf("WWLLN stroke-to-station path statistics \n March 2022 %s-%s", ...
+    titlestr = sprintf("equivalent average perpendicular paths\nMarch 2022 %s-%s", ...
         timestring(k), timestring(k+1));
-    title(t, supertitlestr)     ;
+    title(titlestr, "FontSize", 20);
 
-    gifname = sprintf('average_paths_perp_weighted_202203.gif');
-    if k == 1
-        gif(gifname);
-    else
-        gif;
-    end
+%     supertitlestr = sprintf("WWLLN stroke-to-station path statistics \n November 2022 %s-%s", ...
+%         timestring(k), timestring(k+1));
+%     title(t, supertitlestr);
+
+%     gifname = sprintf('perp_weighted_paths_202203_medium.gif');
+%     if k == 1
+%         gif(gifname);
+%     else
+%         gif;
+%     end
 
 end
