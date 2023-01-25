@@ -182,8 +182,8 @@ for k = 1:size(gtd, 3)
     gtd_frame(~gcpw_above_threshold) = NaN;
     gtd_quietavg_sm5_frame(~gcpw_above_threshold) = NaN;
 %     c3plot = gtd_frame - gtd_quietavg_sm5_frame ;
-    c3plot = gtd_quietavg_sm5(:,:,k);
-    c3plot = gtd(:,:,k);
+    c3plot = gtd_quietavg(:,:,k);
+%     c3plot = gtd(:,:,k);
     
     % terminator test
     [sslat, sslon] = subsolar(times(k));
@@ -206,8 +206,8 @@ for k = 1:size(gtd, 3)
     geoshow(c3plot, geoidrefvec, "DisplayType","texturemap");
     hold on
     geoshow(coastlat, coastlon, "Color","white");
-%     contourm(latmesh, lonmesh, mlatmesh, 50:5:70, "g", "LineWidth", 1); % mlat contours
-%     contourm(latmesh, lonmesh, nightmesh, 0.5, "Color", [0.8 0.8 0.8], "LineWidth", 1.5); % terminator
+    contourm(latmesh, lonmesh, mlatmesh, 50:5:70, "g", "LineWidth", 1); % mlat contours
+    contourm(latmesh, lonmesh, nightmesh, 0.5, "Color", [0.8 0.8 0.8], "LineWidth", 1.5); % terminator
     
     
 %     set(gca,'ColorScale','log');
@@ -257,21 +257,21 @@ for k = 1:size(gtd, 3)
 %     
     
     
-    titlestr = sprintf("sferic dispersion\n %s %s-%s", ...
-        datestring, timestring(k), timestring(k+1));
-%     titlestr = sprintf("sferic dispersion\nNovember quiet days %s-%s", ...
-%        timestring(k), timestring(k+1));
+%     titlestr = sprintf("sferic dispersion\n %s %s-%s", ...
+%         datestring, timestring(k), timestring(k+1));
+    titlestr = sprintf("average sferic dispersion\nNovember quiet days %s-%s", ...
+       timestring(k), timestring(k+1));
     title(titlestr, "FontSize", 20);
 
     set(gcf,'color','w');
 
-    gifname = sprintf('animations/sferic_mean_gtd_%s_magma.gif', daystr);
-%     gifname = 'animations/sferic_gtd_20221101_magma.gif';
-    if k == 1
-        gif(gifname);
-    else
-        gif;
-    end
+%     gifname = sprintf('animations/sferic_mean_gtd_%s_magma.gif', daystr);
+%     gifname = 'animations/sferic_gtd_202211_nosm5_magma.gif';
+%     if k == 1
+%         gif(gifname);
+%     else
+%         gif;
+%     end
 
 end
 

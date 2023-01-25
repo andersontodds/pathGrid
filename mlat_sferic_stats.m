@@ -83,9 +83,9 @@ for day = 1
         grid_in_bin = mlatmesh > mlat_bin_edges(i) & mlatmesh < mlat_bin_edges(i+1);
         for j = 1:size(gtd, 3)
             gtd_frame = gtd(:,:,j);
-            gtd_quietavg_frame = gtd_quietavg_sm5(:,:,j);
+            gtd_quietavg_frame = gtd_quietavg(:,:,j);
             gc_frame = gc(:,:,j);
-            gc_quietavg_frame = gc_quietavg_sm5(:,:,j);
+            gc_quietavg_frame = gc_quietavg(:,:,j);
             gcpw_above_threshold = gcpw(:,:,j) > gcpw_threshold;
             % mean gtd over mlat bin, accounting for different number of paths
             % crossing each grid location

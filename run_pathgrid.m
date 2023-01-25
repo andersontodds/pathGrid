@@ -61,13 +61,20 @@ run_end_sep = datenum(2021, 09, 30);
 run_days_sep = run_start_sep:run_end_sep;
 run_days_sep = run_days_sep';
 
-% entire month of September 2022
+% entire month of November 2022
 run_start_nov = datenum(2022, 11, 01);
 run_end_nov = datenum(2022, 11, 30);
 run_days_nov = run_start_nov:run_end_nov;
 run_days_nov = run_days_nov';
 
-run_days = [run_days_nov];
+% the part of December 2022 for which we have data
+run_start_dec = datenum(2022, 12, 1);
+run_end_dec = datenum(2022, 12, 11);
+run_days_dec = run_start_dec:run_end_dec;
+run_days_dec = run_days_dec';
+
+run_days = [run_days_dec];
+
 
 % % the entire year of 2021
 % run_start = datenum(2021, 01, 01);
