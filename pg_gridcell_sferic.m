@@ -30,8 +30,9 @@ function [grid_cell_sferic] = pg_gridcell_sferic(pathlist_sferic)
 % OUTPUTS:
 %       grid_cell_sferic
 %           180 x 360 cell array of stroke-station path crossings on grid.
-%           Each cell is n x 3 matrix with format
-%           stroke index | time | azimuth to stroke | c1 | c2 | c3
+%           Each cell is n x 7 matrix with format
+%           stroke index | time | azimuth to stroke | c1 | c2 | c3 |
+%           distance
 %           
 %           grid_cell variables can be very large and computationally
 %           expensive; they should not be recalculated with subsequent
