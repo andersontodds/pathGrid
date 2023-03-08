@@ -188,7 +188,7 @@ while 1==1,
     
     
 %     plot(kHzFreq,phase*180/pi,'k',kHzFreq,fittedPhase*180/pi,'b--',kHzFreq,cfitph*180/pi,'r*');
-    plot(kHzFreq,phase*180/pi,'k', "LineWidth", 1);
+    plot(kHzFreq,phase*180/pi,'.k', "LineWidth", 1, "MarkerSize", 10);
     hold on
     plot(kHzFreq,fittedPhase*180/pi,'b--', "LineWidth", 1);%,kHzFreq,cfitph*180/pi,'r*');
     xlabel('Frequency (kHz)');

@@ -370,11 +370,11 @@ for k = 1:size(c3_cavg,3)
         timestring(k), timestring(k+1));
     title(t, supertitlestr)     ;
 
-    gifname = sprintf('average_paths_perp_weighted_202203.gif');
-    if k == 1
-        gif(gifname);
-    else
-        gif;
-    end
+%     gifname = sprintf('average_paths_perp_weighted_202203.gif');
+%     if k == 1
+%         gif(gifname);
+%     else
+%         gif;
+%     end
 
 end

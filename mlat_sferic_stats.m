@@ -8,6 +8,8 @@
 
 % TODO:
 % smaller regions
+%   filter by local time (LT) using solarhourangle
+%   magnetic local time filter requires B field model (i.e. project MLT at equator, L-shell to geodetic grid)
 % plot with POES in tiledlayout
 
 year = 2022;
@@ -35,7 +37,7 @@ gc_quietavg_sm5 =  importdata("data/sferic_gridcrossings_10m_202211_quietavg_sm5
 % gtd_quietavg_sm5 = importdata("data/sferic_grouptimediff_10m_202211_quietavg_sm5.mat");
 % gc_quietavg_sm5 =  importdata("data/sferic_gridcrossings_10m_202211_quietavg_sm5.mat");
 
-for day = 1
+for day = 3
 
     gtdfile = sprintf("data/sferic_grouptimediff_gridcross_10m_%04g%02g%02g.mat", year, month, day);
     perpfile = sprintf("data/sferic_perp_gridcross_10m_%04g%02g%02g.mat", year, month, day);
@@ -64,17 +66,17 @@ for day = 1
     
     mlatrange = [50 70];
     mlat_bin_width = 1;
-    mlat_bin_edges = mlatrange(1)-(mlat_bin_width/2):mlat_bin_width:mlatrange(2)+(mlat_bin_width/2);
+%     mlat_bin_edges = mlatrange(1)-(mlat_bin_width/2):mlat_bin_width:mlatrange(2)+(mlat_bin_width/2); % cell-registered bins
+    mlat_bin_edges = mlatrange(1):mlat_bin_width:mlatrange(2); % grid-registered bins
     
     colors = crameri('-lajolla', length(mlat_bin_edges)+1);
     colors = colors(2:end-1, :);
     
-%     figure(4)
     figure(6)
     hold off
-%     tiledlayout(1,1, "TileSpacing","compact","Padding","compact")
-%     h1 = nexttile;
-%     h2 = nexttile;
+    tiledlayout(2,1, "TileSpacing","compact","Padding","compact")
+    h1 = nexttile;
+    h2 = nexttile;
 
     gtd_mean = zeros(size(gtd, 3), length(mlatrange));
     gtd_quiet_mean = zeros(size(gtd, 3), length(mlatrange));
@@ -101,45 +103,50 @@ for day = 1
         poes_in_bin = poes.mag_lat_foot > mlat_bin_edges(i) & poes.mag_lat_foot < mlat_bin_edges(i+1);
 %         poes_in_bin = abs(poes.mag_lat_foot) > mlat_bin_edges(i) & abs(poes.mag_lat_foot) < mlat_bin_edges(i+1);
 
-%         axes(h1);
+        axes(h1);
 %         plot(datetime(time_face, "ConvertFrom","datenum"), gtd_mean(:,i), '-', "Color", colors(i,:))
-        plot(datetime(time_face, "ConvertFrom","datenum"), gtd_quiet_mean(:,i), '-', "Color", colors(i,:), "LineWidth", 1)        
-%         plot(datetime(time_face, "ConvertFrom","datenum"), gtd_mean_qd(:,i), '-', "LineWidth", 1)
+%         plot(datetime(time_face, "ConvertFrom","datenum"), gtd_quiet_mean(:,i), '-', "Color", colors(i,:), "LineWidth", 1)        
+        plot(datetime(time_face, "ConvertFrom","datenum"), gtd_mean_qd(:,i), '-', "LineWidth", 1)
         hold on
 
-%         axes(h2);
-%         semilogy(datetime(poes.time(poes_in_bin), "ConvertFrom","datenum"), poes.mep_ele_tel0_flux_e3(poes_in_bin), '.', "MarkerSize", 10);
-%         hold on
+        axes(h2);
+        semilogy(datetime(poes.time(poes_in_bin), "ConvertFrom","datenum"), poes.mep_ele_tel0_flux_e3(poes_in_bin), '.', "MarkerSize", 10);
+        hold on
     end
     
-%     axes(h1);
+    axes(h1);
     h1 = gca;
     h1.ColorOrder = colors;
     h1.FontSize = 12;
     y1 = ylabel("\omega_0^{ 2}/2c (rad^2 s^{-1} m^{-1})");
     y1.FontSize = 12;
-%     ylim([-0.01 0.05])
+    ylim([-0.05 0.05])
     xlim([datetime(year, month, day), datetime(year, month, day+1)])
-%     t1 = title("average difference of \omega_0^{ 2}/2c from quiet day baseline at different magnetic latitudes");
-    t1 = title("average \omega_0^{ 2}/2c of November quiet days at different magnetic latitudes");
+    t1 = title("average difference of \omega_0^{ 2}/2c from quiet day baseline at different magnetic latitudes");
+%     t1 = title("average \omega_0^{ 2}/2c of November quiet days at different magnetic latitudes");
     t1.FontSize = 15;
 
-%     axes(h2);
-%     h2.ColorOrder = colors;
-%     h2.FontSize = 12;
-%     ylim([1E2 1E7])
-%     xlim([datetime(year, month, day), datetime(year, month, day+1)])
-%     y2 = ylabel("electron flux (cm^{-2} sr^{-1} keV^{-1} s^{-1})");
-%     y2.FontSize = 12;
-%     t2 = title("0-degree E3 electron flux at different magnetic latitudes, all satellites");
-%     t2.FontSize = 15;
+    axes(h2);
+    h2.ColorOrder = colors;
+    h2.FontSize = 12;
+    ylim([1E2 1E7])
+    xlim([datetime(year, month, day), datetime(year, month, day+1)])
+    y2 = ylabel("electron flux (cm^{-2} sr^{-1} keV^{-1} s^{-1})");
+    y2.FontSize = 12;
+    t2 = title("0-degree E3 electron flux at different magnetic latitudes, all satellites");
+    t2.FontSize = 15;
 
     cb = colorbar;
+    cb.Colormap = colors;
     cb.Layout.Tile = 'east';
     cb.Label.String = "magnetic latitude (\circ)";
     tickspace = 5;
-    cb.Ticks = ((1:tickspace:mlatrange(2)+1-mlatrange(1))-0.5)./(mlatrange(2)+1-mlatrange(1));
+%     cb.Ticks =
+%     ((1:tickspace:mlatrange(2)+1-mlatrange(1))-0.5)./(mlatrange(2)+1-mlatrange(1));
+%     % cell-registered bins
+    cb.Ticks = ((mlatrange(1):tickspace:mlatrange(2))-mlatrange(1))./(mlatrange(2)-mlatrange(1)); % grid-registred bins
     cb.TickLabels = mlatrange(1):tickspace:mlatrange(2);
+
     cb.Label.FontSize = 15;
     cb.FontSize = 12;
     

@@ -32,6 +32,7 @@ datestring = string(datestr(run_start, "mmmm dd yyyy"));
 [lonmesh, latmesh] = meshgrid(-179.5:179.5,-89.5:89.5);
 % lsi = importdata("../landseaice/LSI_mask.mat");
 % lsimask = interp2(lsi.lon_mesh, lsi.lat_mesh, lsi.LSI, lonmesh, latmesh, "nearest");
+mlatmesh = importdata("mlatmesh.mat");
 
 coastlines = importdata('coastlines.mat');
 coastlat = coastlines.coastlat;
