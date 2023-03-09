@@ -1,4 +1,4 @@
-% read_sfile.m
+ % read_sfile.m
 % Todd Anderson
 % November 1 2022
 %

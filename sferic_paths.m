@@ -29,8 +29,11 @@
 % - average individual months in UT, to get an idea of seasonal differences
 
 %% 1. day
+% constants
+c = 299792458;
+
 % average each lat, lon element across 1 day
-run_start = datenum(2022, 11, 1);
+run_start = datenum(2022, 11, 25);
 daystr = string(datestr(run_start, "yyyymmdd"));
 % c3file = sprintf("data/sferic_c3_gridcross_10m_%s.mat", daystr);
 % plfile = sprintf("data/sferic_pathlength_gridcross_10m_%s.mat", daystr);
@@ -44,6 +47,9 @@ gtd = importdata(gtdfile);
 gtd_avg = mean(gtd, 3, "omitnan");
 
 %% 2. month
+% constants
+c = 299792458;
+
 % average each lat, lon, UT element across 1 month
 % requires grid_crossings_10 files for entire time range; either download
 % these from flashlight or prepend "/gridstats" to gcfile below and run
@@ -127,7 +133,7 @@ end
 
 %% 3. day - quiet mean
 % 
-run_start = datenum(2022, 11, 11);
+run_start = datenum(2022, 11, 25);
 daystr = string(datestr(run_start, "yyyymmdd"));
 gtdfile = sprintf("data/sferic_grouptimediff_gridcross_10m_%s.mat", daystr);
 perpfile = sprintf("data/sferic_perp_gridcross_10m_%s.mat", daystr);
@@ -182,8 +188,8 @@ for k = 1:size(gtd, 3)
     gtd_frame(~gcpw_above_threshold) = NaN;
     gtd_quietavg_sm5_frame(~gcpw_above_threshold) = NaN;
 %     c3plot = gtd_frame - gtd_quietavg_sm5_frame ;
-    c3plot = gtd_quietavg(:,:,k);
-%     c3plot = gtd(:,:,k);
+%     c3plot = gtd_quietavg(:,:,k);
+    c3plot = gtd(:,:,k);
     
     % terminator test
     [sslat, sslon] = subsolar(times(k));
@@ -196,6 +202,8 @@ for k = 1:size(gtd, 3)
     landmean(k) = mean(c3plot(lsimask == 1), "all", "omitnan");
     seamean(k) = mean(c3plot(lsimask == -1), "all", "omitnan");
     icemean(k) = mean(c3plot(lsimask == 0), "all", "omitnan");
+
+
 
     figure(1);
     hold off
@@ -217,7 +225,7 @@ for k = 1:size(gtd, 3)
 %     caxis([0 1]);
 %     crameri('tokyo');%,'pivot',1); % requires "crameri" colormap toolbox
     caxis([0 0.2]);
-%     caxis([0 0.05]);
+%     caxis([-0.1 0.1]);
 
 
 %     nexttile
@@ -275,19 +283,30 @@ for k = 1:size(gtd, 3)
 
 end
 
+%% convert dispersion param to f_c: 
+%   dp = (2*pi*f_c)^2/2c
+%   f_c = sqrt(2c*dp)/2*pi
+fc_daymean = sqrt(2*c*daymean)/(2*pi);
+fc_nightmean = sqrt(2*c*nightmean)/(2*pi);
+fc_landmean = sqrt(2*c*landmean)/(2*pi);
+fc_seamean = sqrt(2*c*seamean)/(2*pi);
+fc_icemean = sqrt(2*c*icemean)/(2*pi);
+
 figure(2)
 f2 = gca;
 hold off
-plot(datetime(times(2:end), "ConvertFrom", "datenum"), nightmean, '-o')
+plot(datetime(times(2:end), "ConvertFrom", "datenum"), fc_nightmean./1E3, '-o')
 hold on
-plot(datetime(times(2:end), "ConvertFrom", "datenum"), daymean, '-o')
-plot(datetime(times(2:end), "ConvertFrom", "datenum"), landmean, '-^', "Color", [0.5 0.5 0.2])
-plot(datetime(times(2:end), "ConvertFrom", "datenum"), seamean, '-^', "Color", [0.1 0.1 0.8])
-plot(datetime(times(2:end), "ConvertFrom", "datenum"), icemean, '-^', "Color", [0.2 0.2 0.2])
+plot(datetime(times(2:end), "ConvertFrom", "datenum"), fc_daymean./1E3, '-o')
+plot(datetime(times(2:end), "ConvertFrom", "datenum"), fc_landmean./1E3, '-^', "Color", [0.5 0.5 0.2])
+plot(datetime(times(2:end), "ConvertFrom", "datenum"), fc_seamean./1E3, '-^', "Color", [0.1 0.1 0.8])
+plot(datetime(times(2:end), "ConvertFrom", "datenum"), fc_icemean./1E3, '-^', "Color", [0.2 0.2 0.2])
 legend("night", "day", "land", "sea", "ice")
-ylabel("\omega_0^{ 2}/2c (rad^2 s^{-1} m^{-1})", "FontSize", 12);
+% ylabel("\omega_0^{ 2}/2c (rad^2 s^{-1} m^{-1})", "FontSize", 12);
+ylabel("f_c (kHz)", "FontSize", 12);
 f2.FontSize = 10;
-title("Mean \omega_0^{ 2}/2c for night and day hemispheres and land/sea/ice", "FontSize", 15);
+% title("Mean \omega_0^{ 2}/2c for night and day hemispheres and land/sea/ice", "FontSize", 15);
+title("Mean cutoff frequency for night and day hemispheres and land/sea/ice", "FontSize", 15);
 
 
 %% plot average path crossings, perpendicularity, and path crossings weighted by perpendicularity

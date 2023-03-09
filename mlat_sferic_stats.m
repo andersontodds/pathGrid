@@ -37,7 +37,7 @@ gc_quietavg_sm5 =  importdata("data/sferic_gridcrossings_10m_202211_quietavg_sm5
 % gtd_quietavg_sm5 = importdata("data/sferic_grouptimediff_10m_202211_quietavg_sm5.mat");
 % gc_quietavg_sm5 =  importdata("data/sferic_gridcrossings_10m_202211_quietavg_sm5.mat");
 
-for day = 3
+for day = 11
 
     gtdfile = sprintf("data/sferic_grouptimediff_gridcross_10m_%04g%02g%02g.mat", year, month, day);
     perpfile = sprintf("data/sferic_perp_gridcross_10m_%04g%02g%02g.mat", year, month, day);
@@ -65,7 +65,7 @@ for day = 3
     time_face = time_edge(2:end) - (time_edge(2) - time_edge(1));
     
     mlatrange = [50 70];
-    mlat_bin_width = 1;
+    mlat_bin_width = 5;
 %     mlat_bin_edges = mlatrange(1)-(mlat_bin_width/2):mlat_bin_width:mlatrange(2)+(mlat_bin_width/2); % cell-registered bins
     mlat_bin_edges = mlatrange(1):mlat_bin_width:mlatrange(2); % grid-registered bins
     
