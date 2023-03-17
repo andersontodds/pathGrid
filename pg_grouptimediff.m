@@ -1,4 +1,4 @@
-function [gc_mean_grouptimediff, gc_median_grouptimediff] = pg_grouptimediff(grid_cell_sferic)
+function [gc_mean_grouptimediff, gc_median_grouptimediff, gc_std_grouptimediff] = pg_grouptimediff(grid_cell_sferic)
 % pg_grouptime.m
 % 14 November 2022
 % 
@@ -58,18 +58,22 @@ function [gc_mean_grouptimediff, gc_median_grouptimediff] = pg_grouptimediff(gri
 
 gc_mean_grouptimediff = zeros(180,360);
 gc_median_grouptimediff = zeros(180,360);
+gc_std_grouptimediff = zeros(180,360);
 
 for lat = 1:180
     for lon = 1:360
          
         if size(grid_cell_sferic{lat,lon},1) == 0
             gc_mean_grouptimediff(lat,lon) = NaN;
+            gc_median_grouptimediff(lat,lon) = NaN;
+            gc_std_grouptimediff(lat,lon) = NaN;
             
         else
             % grid_cell_sferic{lat,lon}(:,6): c3
             % grid_cell_sferic{lat,lon}(:,7): propagation distance
             gc_mean_grouptimediff(lat,lon) = mean(grid_cell_sferic{lat,lon}(:,6)./grid_cell_sferic{lat,lon}(:,7), 'omitnan');
             gc_median_grouptimediff(lat,lon) = median(grid_cell_sferic{lat,lon}(:,6)./grid_cell_sferic{lat,lon}(:,7), 'omitnan');
+            gc_std_grouptimediff(lat,lon) = std(grid_cell_sferic{lat,lon}(:,6)./grid_cell_sferic{lat,lon}(:,7), 'omitnan');
             
             
         end

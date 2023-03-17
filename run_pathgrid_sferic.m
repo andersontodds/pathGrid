@@ -69,11 +69,11 @@ run_days_nov = run_days_nov';
 
 % the part of December 2022 for which we have data
 run_start_dec = datenum(2022, 12, 1);
-run_end_dec = datenum(2022, 12, 11);
+run_end_dec = datenum(2022, 12, 9);
 run_days_dec = run_start_dec:run_end_dec;
 run_days_dec = run_days_dec';
 
-run_days = [run_days_dec];
+run_days = [run_days_nov; run_days_dec];
 
 % % the entire year of 2021
 % run_start = datenum(2021, 01, 01);
@@ -107,7 +107,7 @@ run_days = [run_days_dec];
     
         
         %stationNameStr = sprintf("_%s",stationName);
-        filename_gtd = sprintf("gridstats/sferic_median_grouptimediff_gridcross_10m_%s.mat",daystring);%,stationNameStr); % add second "%s" if using individual station option 
+        filename_gtd = sprintf("gridstats/sferic_std_grouptimediff_gridcross_10m_%s.mat",daystring);%,stationNameStr); % add second "%s" if using individual station option 
         filename_pls = sprintf("pathlist/pathlist_sferic_%s.mat", daystring);
         if overwrite == 0 && isfile(filename_gtd)
             fprintf('%s already exists and overwrite is disabled, proceeding to next day \n', filename_gtd);

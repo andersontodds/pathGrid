@@ -139,15 +139,16 @@ minute_bin_edges = linspace(starttime,stoptime,frames+1);
 
 grid_crossings = zeros(180,360,frames);
 perp_gridcross = zeros(180,360,frames);
-sferic_c1_gridcross = zeros(180,360,frames);
-sferic_c2_gricdross = zeros(180,360,frames);
-sferic_c3_gricrdoss = zeros(180,360,frames);
-sferic_var_c1_gridcross = zeros(180,360,frames);
-sferic_var_c2_gridcross = zeros(180,360,frames);
-sferic_var_c3_gridcross = zeros(180,360,frames);
-sferic_pathlength_gridcross = zeros(180,360,frames);
+% sferic_c1_gridcross = zeros(180,360,frames);
+% sferic_c2_gricdross = zeros(180,360,frames);
+% sferic_c3_gricrdoss = zeros(180,360,frames);
+% sferic_var_c1_gridcross = zeros(180,360,frames);
+% sferic_var_c2_gridcross = zeros(180,360,frames);
+% sferic_var_c3_gridcross = zeros(180,360,frames);
+% sferic_pathlength_gridcross = zeros(180,360,frames);
 sferic_mean_grouptimediff = zeros(180,360,frames);
 sferic_median_grouptimediff = zeros(180,360,frames);
+sferic_std_grouptimediff = zeros(180,360,frames);
 
 %gc_variance = zeros(180,360,frames);
 %gc_kurtosis = zeros(180,360,frames);
@@ -182,23 +183,24 @@ for m = 1:frames
         gridcell = pg_gridcell_sferic(pathlist_frame); % for 180x360xN pathlist, i.e. directly from getpaths or from multi-frame file
         gridcross = pg_gridcross(gridcell);
         gc_perp = pg_perpendicularity(gridcell);
-        gc_dist = pg_distance(gridcell);
-        [gc_c1, gc_c2, gc_c3, gc_var_c1, gc_var_c2, gc_var_c3] = pg_dispersion(gridcell);
-        [gc_mean_tgdiff, gc_median_tgdiff] = pg_grouptimediff(gridcell);
+%         gc_dist = pg_distance(gridcell);
+%         [gc_c1, gc_c2, gc_c3, gc_var_c1, gc_var_c2, gc_var_c3] = pg_dispersion(gridcell);
+        [gc_mean_gtdiff, gc_median_gtdiff, gc_std_gtdiff] = pg_grouptimediff(gridcell);
         msg = sprintf('Completed run %s',filestr);
     end
 
     grid_crossings(:,:,m) = gridcross;
     perp_gridcross(:,:,m) = gc_perp;
-    sferic_c1_gridcross(:,:,m) = gc_c1;
-    sferic_c2_gricdross(:,:,m) = gc_c2;
-    sferic_c3_gricrdoss(:,:,m) = gc_c3;
-    sferic_var_c1_gridcross(:,:,m) = gc_var_c1;
-    sferic_var_c2_gridcross(:,:,m) = gc_var_c2;
-    sferic_var_c3_gridcross(:,:,m) = gc_var_c3;
-    sferic_pathlength_gridcross(:,:,m) = gc_dist;
-    sferic_mean_grouptimediff(:,:,m) = gc_mean_tgdiff;
-    sferic_median_grouptimediff(:,:,m) = gc_median_tgdiff;
+%     sferic_c1_gridcross(:,:,m) = gc_c1;
+%     sferic_c2_gricdross(:,:,m) = gc_c2;
+%     sferic_c3_gricrdoss(:,:,m) = gc_c3;
+%     sferic_var_c1_gridcross(:,:,m) = gc_var_c1;
+%     sferic_var_c2_gridcross(:,:,m) = gc_var_c2;
+%     sferic_var_c3_gridcross(:,:,m) = gc_var_c3;
+%     sferic_pathlength_gridcross(:,:,m) = gc_dist;
+    sferic_mean_grouptimediff(:,:,m) = gc_mean_gtdiff;
+    sferic_median_grouptimediff(:,:,m) = gc_median_gtdiff;
+    sferic_std_grouptimediff(:,:,m) = gc_std_gtdiff;
     
 %     [gc_var, ~] = pg_variance(gridcell);
 %     gc_variance(:,:,m) = gc_var;
@@ -246,31 +248,35 @@ save(savefile_gc,'grid_crossings');
 savefile_perp = sprintf('gridstats/sferic_perp_gridcross_10m_%s%s.mat',daystr,stationName);
 save(savefile_perp, 'perp_gridcross');
 
-savefile_c1 = sprintf("gridstats/sferic_c1_gridcross_10m_%s%s.mat", daystr, stationName);
-save(savefile_c1, "sferic_c1_gridcross");
-
-savefile_c2 = sprintf("gridstats/sferic_c2_gridcross_10m_%s%s.mat", daystr, stationName);
-save(savefile_c2, "sferic_c2_gricdross");
-
-savefile_c3 = sprintf("gridstats/sferic_c3_gridcross_10m_%s%s.mat", daystr, stationName);
-save(savefile_c3, "sferic_c3_gricrdoss");
-
-savefile_vc1 = sprintf("gridstats/sferic_var_c1_gridcross_10m_%s%s.mat", daystr, stationName);
-save(savefile_vc1, "sferic_var_c1_gridcross");
-
-savefile_vc2 = sprintf("gridstats/sferic_var_c2_gridcross_10m_%s%s.mat", daystr, stationName);
-save(savefile_vc2, "sferic_var_c2_gridcross");
-
-savefile_vc3 = sprintf("gridstats/sferic_var_c3_gridcross_10m_%s%s.mat", daystr, stationName);
-save(savefile_vc3, "sferic_var_c3_gridcross");
-
-savefile_vc3 = sprintf("gridstats/sferic_pathlength_gridcross_10m_%s%s.mat", daystr, stationName);
-save(savefile_vc3, "sferic_pathlength_gridcross");
+% savefile_c1 = sprintf("gridstats/sferic_c1_gridcross_10m_%s%s.mat", daystr, stationName);
+% save(savefile_c1, "sferic_c1_gridcross");
+% 
+% savefile_c2 = sprintf("gridstats/sferic_c2_gridcross_10m_%s%s.mat", daystr, stationName);
+% save(savefile_c2, "sferic_c2_gricdross");
+% 
+% savefile_c3 = sprintf("gridstats/sferic_c3_gridcross_10m_%s%s.mat", daystr, stationName);
+% save(savefile_c3, "sferic_c3_gricrdoss");
+% 
+% savefile_vc1 = sprintf("gridstats/sferic_var_c1_gridcross_10m_%s%s.mat", daystr, stationName);
+% save(savefile_vc1, "sferic_var_c1_gridcross");
+% 
+% savefile_vc2 = sprintf("gridstats/sferic_var_c2_gridcross_10m_%s%s.mat", daystr, stationName);
+% save(savefile_vc2, "sferic_var_c2_gridcross");
+% 
+% savefile_vc3 = sprintf("gridstats/sferic_var_c3_gridcross_10m_%s%s.mat", daystr, stationName);
+% save(savefile_vc3, "sferic_var_c3_gridcross");
+% 
+% savefile_vc3 = sprintf("gridstats/sferic_pathlength_gridcross_10m_%s%s.mat", daystr, stationName);
+% save(savefile_vc3, "sferic_pathlength_gridcross");
 
 savefile_mean_gtd = sprintf("gridstats/sferic_grouptimediff_gridcross_10m_%s%s.mat", daystr, stationName);
 save(savefile_mean_gtd, "sferic_mean_grouptimediff");
 
 savefile_median_gtd = sprintf("gridstats/sferic_median_grouptimediff_gridcross_10m_%s%s.mat", daystr, stationName);
 save(savefile_median_gtd, "sferic_median_grouptimediff");
+
+savefile_std_gtd = sprintf("gridstats/sferic_std_grouptimediff_gridcross_10m_%s%s.mat", daystr, stationName);
+save(savefile_std_gtd, "sferic_std_grouptimediff");
+
 
 end
