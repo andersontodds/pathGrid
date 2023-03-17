@@ -10,7 +10,8 @@
 % smaller regions
 %   filter by local time (LT) using solarhourangle
 %   magnetic local time filter requires B field model (i.e. project MLT at equator, L-shell to geodetic grid)
-% plot with POES in tiledlayout
+
+% quiet days: November [6, 10, 12, 14, 15, 16, 17, 19, 21, 22, 23, 24]
 
 year = 2022;
 month = 11;
@@ -37,7 +38,7 @@ gc_quietavg_sm5 =  importdata("data/sferic_gridcrossings_10m_202211_quietavg_sm5
 % gtd_quietavg_sm5 = importdata("data/sferic_grouptimediff_10m_202211_quietavg_sm5.mat");
 % gc_quietavg_sm5 =  importdata("data/sferic_gridcrossings_10m_202211_quietavg_sm5.mat");
 
-for day = 11
+for day = 3
 
     gtdfile = sprintf("data/sferic_grouptimediff_gridcross_10m_%04g%02g%02g.mat", year, month, day);
     perpfile = sprintf("data/sferic_perp_gridcross_10m_%04g%02g%02g.mat", year, month, day);
@@ -54,7 +55,19 @@ for day = 11
 
     mlatmesh = importdata("mlatmesh.mat");
     lsi = importdata("../landseaice/LSI_maskonly.mat");
-%     [lonmesh, latmesh] = meshgrid(-179.5:179.5, -89.5:89.5);
+    [lonmesh, latmesh] = meshgrid(-179.5:179.5, -89.5:89.5);
+    LTlims = [21 3];
+    lonlims = [-50 0];
+
+    % longitude filter
+    if lonlims(1) < lonlims(2)
+        grid_in_lon = lonmesh > lonlims(1) & lonmesh < lonlims(2);
+    elseif lonlims(1) > lonlims(2)
+        grid_in_lon = lonmesh > lonlims(1) | lonmesh < lonlims(2);
+    else
+        error("check lonlims!");
+    end
+
     % region filters
     % North America
     %na_lat = [45 85];
@@ -82,19 +95,37 @@ for day = 11
     gtd_quiet_mean = zeros(size(gtd, 3), length(mlatrange));
     gtd_mean_qd = zeros(size(gtd, 3), length(mlatrange));
     for i = 1:length(mlat_bin_edges)-1
-        grid_in_bin = mlatmesh > mlat_bin_edges(i) & mlatmesh < mlat_bin_edges(i+1);
+        % filter mlat and other meshgrid parameters
+        grid_in_mlat = mlatmesh > mlat_bin_edges(i) & mlatmesh < mlat_bin_edges(i+1);
         for j = 1:size(gtd, 3)
+
+            % local time filter
+            LTmesh = localsolartime(time_face(j), lonmesh, 0);
+            %LTmesh(LTmesh < 0) = LTmesh(LTmesh < 0) + 24;
+            LTmesh = mod(LTmesh, 24);
+            if LTlims(1) < LTlims(2)
+                grid_in_LT = LTmesh > LTlims(1) & LTmesh < LTlims(2);
+            elseif LTlims(1) > LTlims(2)
+                grid_in_LT = LTmesh > LTlims(1) | LTmesh < LTlims(2);
+            else
+                error("check LTlims!");
+            end
+
             gtd_frame = gtd(:,:,j);
             gtd_quietavg_frame = gtd_quietavg(:,:,j);
             gc_frame = gc(:,:,j);
             gc_quietavg_frame = gc_quietavg(:,:,j);
             gcpw_above_threshold = gcpw(:,:,j) > gcpw_threshold;
+
+            % combine grid filters
+            grid_in_bin = grid_in_mlat & grid_in_LT & gcpw_above_threshold;
+
             % mean gtd over mlat bin, accounting for different number of paths
             % crossing each grid location
-            totalgc = sum(gc_frame(grid_in_bin & gcpw_above_threshold));
-            totalgc_quiet = sum(gc_quietavg_frame(grid_in_bin & gcpw_above_threshold));
-            gtd_mean(j,i) = sum(gtd_frame(grid_in_bin & gcpw_above_threshold).*gc_frame(grid_in_bin & gcpw_above_threshold)/totalgc, "omitnan");
-            gtd_quiet_mean(j,i) = sum(gtd_quietavg_frame(grid_in_bin & gcpw_above_threshold).*gc_quietavg_frame(grid_in_bin & gcpw_above_threshold)/totalgc_quiet, "omitnan");
+            totalgc = sum(gc_frame(grid_in_bin));
+            totalgc_quiet = sum(gc_quietavg_frame(grid_in_bin));
+            gtd_mean(j,i) = sum(gtd_frame(grid_in_bin).*gc_frame(grid_in_bin)/totalgc, "omitnan");
+            gtd_quiet_mean(j,i) = sum(gtd_quietavg_frame(grid_in_bin).*gc_quietavg_frame(grid_in_bin)/totalgc_quiet, "omitnan");
             gtd_mean_qd(j,i) = gtd_mean(j,i) - gtd_quiet_mean(j,i);
             % mean of grid locations in mlat bin, not accounting for number of paths crossing each location    
     %         gtd_mean(j,i) = mean(gtd_frame(grid_in_bin & gcpw_above_threshold), "omitnan"); 
@@ -105,7 +136,7 @@ for day = 11
 
         axes(h1);
 %         plot(datetime(time_face, "ConvertFrom","datenum"), gtd_mean(:,i), '-', "Color", colors(i,:))
-%         plot(datetime(time_face, "ConvertFrom","datenum"), gtd_quiet_mean(:,i), '-', "Color", colors(i,:), "LineWidth", 1)        
+%         plot(datetime(time_face, "ConvertFrom","datenum"), gtd_quiet_mean(:,i), ':', "Color", colors(i,:), "LineWidth", 1)        
         plot(datetime(time_face, "ConvertFrom","datenum"), gtd_mean_qd(:,i), '-', "LineWidth", 1)
         hold on
 
