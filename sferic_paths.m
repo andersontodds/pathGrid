@@ -54,10 +54,10 @@ c = 299792458;
 % requires grid_crossings_10 files for entire time range; either download
 % these from flashlight or prepend "/gridstats" to gcfile below and run
 % this part on flashlight
-run_start = datenum(2022, 11, 01);
-run_end = datenum(2022, 11, 30);
-run_days = run_start:run_end;
-% run_days = datenum(2022, 11, [6, 10, 12, 14, 15, 16, 17, 19, 21, 22, 23, 24]);
+% run_start = datenum(2022, 11, 01);
+% run_end = datenum(2022, 11, 30);
+% run_days = run_start:run_end;
+run_days = datenum(2022, 11, [6, 10, 12, 14, 15, 16, 17, 19, 21, 22, 23, 24]);
 run_days = run_days';
 %run_days = run_days(run_days ~= datenum(2022, 01, 15));
 
@@ -79,39 +79,83 @@ daystr = string(datestr(run_days, "yyyymmdd"));
 % WARNING: any NaNs in first day will be propagated throughout whole
 % average!
 % load first day, initialize gc_avg
+
+% gtdfile = sprintf("data/sferic_grouptimediff_gridcross_10m_%s.mat", daystr(1));
+% gtd = importdata(gtdfile);
+% gtd_cavg = gtd;
+% 
+% gcfile = sprintf("data/sferic_gridcrossings_10m_%s.mat", daystr(1));
+% gc = importdata(gcfile);
+% gc_cavg = gc;
+% 
+% perpfile = sprintf("data/sferic_perp_gridcross_10m_%s.mat", daystr(1));
+% perp = importdata(perpfile);
+% perp_cavg = perp;
+% 
+% % load subsequent days and calculate cumulative average
+% for j = 2:length(daystr)
+%     gtdfile = sprintf("data/sferic_grouptimediff_gridcross_10m_%s.mat", daystr(j));
+%     gtd = importdata(gtdfile);
+% 
+%     gcfile = sprintf("data/sferic_gridcrossings_10m_%s.mat", daystr(j));
+%     gc = importdata(gcfile);
+% 
+%     perpfile = sprintf("data/sferic_perp_gridcross_10m_%s.mat", daystr(j));
+%     perp = importdata(perpfile);
+% 
+%     gtd_big = cat(4, gtd_cavg, gtd);
+%     gtd_cavg = mean(gtd_big, 4, "omitnan");
+% 
+%     gc_big = cat(4, gc_cavg, gc);
+%     gc_cavg = mean(gc_big, 4, "omitnan");
+% 
+%     perp_big = cat(4, perp_cavg, perp);
+%     perp_cavg = mean(perp_big, 4, "omitnan");
+% 
+% end
+
+% calculate quiet day compound standard deviation
+% initialize 4D matrices
 gtdfile = sprintf("data/sferic_grouptimediff_gridcross_10m_%s.mat", daystr(1));
 gtd = importdata(gtdfile);
-gtd_cavg = gtd;
-
+gtd_big = gtd;
 gcfile = sprintf("data/sferic_gridcrossings_10m_%s.mat", daystr(1));
 gc = importdata(gcfile);
-gc_cavg = gc;
+gc_big = gc;
+stdfile = sprintf("data/sferic_std_grouptimediff_gridcross_10m_%s.mat", daystr(1));
+std = importdata(stdfile);
+std_big = std;
 
-perpfile = sprintf("data/sferic_perp_gridcross_10m_%s.mat", daystr(1));
-perp = importdata(perpfile);
-perp_cavg = perp;
-
-% load subsequent days and calculate cumulative average
-for j = 2:length(daystr)
-    gtdfile = sprintf("data/sferic_grouptimediff_gridcross_10m_%s.mat", daystr(j));
+% build 4D matrices
+for m = 2:length(daystr)
+    gtdfile = sprintf("data/sferic_grouptimediff_gridcross_10m_%s.mat", daystr(m));
     gtd = importdata(gtdfile);
-
-    gcfile = sprintf("data/sferic_gridcrossings_10m_%s.mat", daystr(j));
+    gcfile = sprintf("data/sferic_gridcrossings_10m_%s.mat", daystr(m));
     gc = importdata(gcfile);
+    stdfile = sprintf("data/sferic_std_grouptimediff_gridcross_10m_%s.mat", daystr(m));
+    std = importdata(stdfile);
 
-    perpfile = sprintf("data/sferic_perp_gridcross_10m_%s.mat", daystr(j));
-    perp = importdata(perpfile);
-
-    gtd_big = cat(4, gtd_cavg, gtd);
-    gtd_cavg = mean(gtd_big, 4, "omitnan");
-
-    gc_big = cat(4, gc_cavg, gc);
-    gc_cavg = mean(gc_big, 4, "omitnan");
-
-    perp_big = cat(4, perp_cavg, perp);
-    perp_cavg = mean(perp_big, 4, "omitnan");
-
+    gtd_big = cat(4, gtd_big, gtd);
+    gc_big = cat(4, gc_big, gc);
+    std_big = cat(4, std_big, std);
+    
 end
+
+gc_quiet = zeros(size(gtd));
+gtdavg_quiet = zeros(size(gtd));
+std_quiet = zeros(size(gtd));
+
+for i = 1:size(gtd, 1)
+    for j = 1:size(gtd, 2)
+        for k = 1:size(gtd, 3)
+            [gc_quiet(i,j,k), gtdavg_quiet(i,j,k), std_quiet(i,j,k)] = overallmeanstd(gc_big(i,j,k,:), gtd_big(i,j,k,:), std_big(i,j,k,:));
+        end
+    end
+end
+
+save("data/sferic_total_gridcrossings_10m_202211_quietavg.mat", "gc_quiet");
+% save("data/sferic_grouptimediff_10m_202211_quietavg.mat", "gtd_quietavg");
+save("data/sferic_std_grouptimediff_10m_202211_quietavg.mat", "std_quiet");
 
 % gtd_cavg_file = "data/sferic_grouptimediff_10m_202211_quietavg.mat";
 % save(gtd_cavg_file, "gtd_cavg");
@@ -141,7 +185,7 @@ gcfile = sprintf("data/sferic_gridcrossings_10m_%s.mat", daystr);
 gtd = importdata(gtdfile);
 perp = importdata(perpfile);
 gc = importdata(gcfile);
-gtd_quietavg = importdata("data/sferic_grouptimediff_10m_202211_quietavg.mat");
+gtdavg_quiet = importdata("data/sferic_grouptimediff_10m_202211_quietavg.mat");
 gtd_quietavg_sm5 = importdata("data/sferic_grouptimediff_10m_202211_quietavg_sm5.mat");
 
 gcpw = gc.*perp;
