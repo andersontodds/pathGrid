@@ -47,8 +47,8 @@ gtd_pg = gtd.*pg;
 % requires grid_crossings_10 files for entire time range; either download
 % these from flashlight or prepend "/gridstats" to gcfile below and run
 % this part on flashlight
-run_start = datenum(2022, 3, 01);
-run_end = datenum(2022, 3, 31);
+run_start = datenum(2022, 1, 01);
+run_end = datenum(2022, 1, 31);
 run_days = run_start:run_end;
 run_days = run_days';
 %run_days = run_days(run_days ~= datenum(2022, 01, 15));
@@ -72,36 +72,36 @@ daystr = string(datestr(run_days, "yyyymmdd"));
 % average!
 % load first day, initialize gc_avg
 gcfile = sprintf("data/grid_crossings_10m_%s.mat", daystr(1));
-pgfile = sprintf("data/perp_gridcross_10m_%s.mat", daystr(1));
+% pgfile = sprintf("data/perp_gridcross_10m_%s.mat", daystr(1));
 
 gc = importdata(gcfile);
 gc_cavg = gc;
 
-pg = importdata(pgfile);
-pg_cavg = pg;
+% pg = importdata(pgfile);
+% pg_cavg = pg;
 
-gcp = gc.*pg;
-gcp_cavg = gcp;
+% gcp = gc.*pg;
+% gcp_cavg = gcp;
 
 % load subsequent days and calculate cumulative average
 for j = 2:length(daystr)
     gcfile = sprintf("data/grid_crossings_10m_%s.mat", daystr(j));
-    pgfile = sprintf("data/perp_gridcross_10m_%s.mat", daystr(j));
+%     pgfile = sprintf("data/perp_gridcross_10m_%s.mat", daystr(j));
     
     gc = importdata(gcfile);
-    pg = importdata(pgfile);
+%     pg = importdata(pgfile);
 
-    gcp = gc.*pg;
+%     gcp = gc.*pg;
 
     % NaN handling: set all NaNs in gc to current gc_cavg values for those
     % array elements.
-    gcp_nans = find(isnan(gcp));
-    gcp(gcp_nans) = gcp_cavg(gcp_nans);
-    gcp_cavg  = (gcp_cavg.*(j-1) + gcp)./j;
-
-    pg_nans = find(isnan(pg));
-    pg(pg_nans) = pg_cavg(pg_nans);
-    pg_cavg  = (pg_cavg.*(j-1) + pg)./j;
+%     gcp_nans = find(isnan(gcp));
+%     gcp(gcp_nans) = gcp_cavg(gcp_nans);
+%     gcp_cavg  = (gcp_cavg.*(j-1) + gcp)./j;
+% 
+%     pg_nans = find(isnan(pg));
+%     pg(pg_nans) = pg_cavg(pg_nans);
+%     pg_cavg  = (pg_cavg.*(j-1) + pg)./j;
 
     gc_nans = find(isnan(gc));
     gc(gc_nans) = gc_cavg(gc_nans);
@@ -115,11 +115,11 @@ end
 % month average: plot gc_cavg(:,:,k); manually input desired frame k or
 % loop over k
 % for k = 1:size(pg_cavg,3)
-for k = 1:size(pg, 3)    
+for k = 1:size(gc_cavg, 3)    
 % for k = 1
 %     pplot = gcp_cavg(:,:,k);
 %     pplot = pg_cavg(:,:,k);
-    pplot = gtd_pg(:,:,k);
+    pplot = gc_cavg(:,:,k);
 
     times = linspace(run_start, run_start+1, 145);
     timestring = string(datestr(times, "HH:MM:SS"));
@@ -130,70 +130,79 @@ for k = 1:size(pg, 3)
     coastlon = coastlines.coastlon;
     geoidrefvec = [1,90,-180];
     
-    figure(1)
+    h = figure(1);
+    h.Position = [-1000 -200 980 600];
     hold off
-    t = tiledlayout(2,2, "TileSpacing","compact", "Padding", "compact");
+%     t = tiledlayout(2,2, "TileSpacing","compact", "Padding", "compact");
     
-    nexttile([1,2])
+%     nexttile([1,2])
     worldmap("World")
     geoshow(pplot, geoidrefvec, "DisplayType","texturemap");
     hold on
     geoshow(coastlat, coastlon, "Color","black");
     
-%     set(gca,'ColorScale','log');
-    crameri('-hawaii');
-    caxis([0 0.2]);
-%     crameri('tokyo');%,'pivot',1); % requires "crameri" colormap toolbox
-%     caxis([0 1]);
-    
-    nexttile
-    %worldmap("World");
-    worldmap([60 90],[-180 180])
-    geoshow(pplot, geoidrefvec, "DisplayType","texturemap");
-    hold on
-    geoshow(coastlat, coastlon, "Color","black");
-    
-    xlabel("Latitude");
-    ylabel("Longitude");
-    title("");
     set(gca,'ColorScale','log');
     crameri('-hawaii');
-    caxis([0 0.2]);
+    caxis([1E-2 1E3]);
+    cb = colorbar("eastoutside");
+%     cb.Layout.Tile = 'east';
+%     cb.Label.String = "\omega_0^{ 2}/2c (rad^2 s^{-1} m^{-1})";
+    cb.Label.String = "number of paths";
+    cb.Label.FontSize = 15;
+    cb.FontSize = 15;
 %     crameri('tokyo');%,'pivot',1); % requires "crameri" colormap toolbox
 %     caxis([0 1]);
     
-    nexttile
-    worldmap([-90 -60],[-180 180])
-    geoshow(pplot, geoidrefvec, "DisplayType","texturemap");
-    hold on
-    geoshow(coastlat, coastlon, "Color","black");
-    
-    xlabel("Latitude");
-    ylabel("Longitude");
-    title("");
+%     nexttile
+%     %worldmap("World");
+%     worldmap([60 90],[-180 180])
+%     geoshow(pplot, geoidrefvec, "DisplayType","texturemap");
+%     hold on
+%     geoshow(coastlat, coastlon, "Color","black");
+%     
+%     xlabel("Latitude");
+%     ylabel("Longitude");
+%     title("");
 %     set(gca,'ColorScale','log');
-    crameri('-hawaii');
-    caxis([0 0.2]);
-%     crameri('tokyo'); % requires "crameri" colormap toolbox
-%     caxis([0 1]);
-    cb = colorbar;
-    cb.Layout.Tile = 'east';
+%     crameri('-hawaii');
+%     caxis([0 0.2]);
+% %     crameri('tokyo');%,'pivot',1); % requires "crameri" colormap toolbox
+% %     caxis([0 1]);
+%     
+%     nexttile
+%     worldmap([-90 -60],[-180 180])
+%     geoshow(pplot, geoidrefvec, "DisplayType","texturemap");
+%     hold on
+%     geoshow(coastlat, coastlon, "Color","black");
+%     
+%     xlabel("Latitude");
+%     ylabel("Longitude");
+%     title("");
+% %     set(gca,'ColorScale','log');
+%     crameri('-hawaii');
+%     caxis([0 0.2]);
+% %     crameri('tokyo'); % requires "crameri" colormap toolbox
+% %     caxis([0 1]);
+%     cb = colorbar;
+%     cb.Layout.Tile = 'east';
     
     
-    
-    titlestr = sprintf("Average stroke-to-station paths weighted by perpendicularity \n November %s %s-%s", ...
-        daystring(k), timestring(k), timestring(k+1));
+    titlestr = sprintf("average number of WWLLN propagation path traversals\n %s %s-%s", ...
+        datestring, timestring(k), timestring(k+1));
+%     titlestr = sprintf("Average stroke-to-station paths weighted by perpendicularity \n November %s %s-%s", ...
+%         daystring(k), timestring(k), timestring(k+1));
 %     titlestr = sprintf("WWLLN stroke-to-station path perpendicularity \n March 01 2022 %s-%s", ...
 %         timestring(k), timestring(k+1));
-    title(t, titlestr);
+    title(titlestr, FontSize=20);
+    set(gcf,'color','w');
     %title(t, "Average number of WWLLN stroke-to-station path crossings in a 10 minute period, March 30, 2022");
 
-%     gifname = sprintf('average_paths_perp_202203.gif');
-%     if k == 1
-%         gif(gifname);
-%     else
-%         gif;
-%     end
+    gifname = 'animations/average_paths_202201_lanl.gif';
+    if k == 1
+        gif(gifname);
+    else
+        gif;
+    end
 
 end
 
