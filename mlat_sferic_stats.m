@@ -41,7 +41,7 @@ std_quiet = importdata("data/sferic_std_grouptimediff_10m_202211_quietavg.mat");
 % gtd_quietavg_sm5 = importdata("data/sferic_grouptimediff_10m_202211_quietavg_sm5.mat");
 % gc_quietavg_sm5 =  importdata("data/sferic_gridcrossings_10m_202211_quietavg_sm5.mat");
 
-for day = 11
+for day = 22
 
     gtdfile = sprintf("data/sferic_grouptimediff_gridcross_10m_%04g%02g%02g.mat", year, month, day);
     perpfile = sprintf("data/sferic_perp_gridcross_10m_%04g%02g%02g.mat", year, month, day);
@@ -178,22 +178,23 @@ for day = 11
 
         axes(h1);
         hold on
-        plot(datetime(time_face, "ConvertFrom","datenum"), gtd_mean(:,i), '-', "Color", colors(i,:), "LineWidth", 1)
-        plot(datetime(time_face, "ConvertFrom","datenum"), gtd_mean(:,i) + gtd_std_bin(:,i), ':', "Color", colors(i,:), "LineWidth", 1)
-        plot(datetime(time_face, "ConvertFrom","datenum"), gtd_mean(:,i) - gtd_std_bin(:,i), ':', "Color", colors(i,:), "LineWidth", 1)
+%         plot(datetime(time_face, "ConvertFrom","datenum"), gtd_mean(:,i), '-', "Color", colors(i,:), "LineWidth", 2)
+%         plot(datetime(time_face, "ConvertFrom","datenum"), gtd_mean(:,i) + gtd_std_bin(:,i), ':', "Color", colors(i,:), "LineWidth", 1)
+%         plot(datetime(time_face, "ConvertFrom","datenum"), gtd_mean(:,i) - gtd_std_bin(:,i), ':', "Color", colors(i,:), "LineWidth", 1)
 %         plot(datetime(time_face, "ConvertFrom","datenum"), gtd_quiet_mean(:,i), '-', "Color", colors(i,:), "LineWidth", 1)
-%         plot(datetime(time_face, "ConvertFrom","datenum"), gtd_quiet_mean(:,i) + gtd_std_quiet_bin(:,i), ':', "Color", colors(i,:), "LineWidth", 1)
-%         plot(datetime(time_face, "ConvertFrom","datenum"), gtd_quiet_mean(:,i) - gtd_std_quiet_bin(:,i), ':', "Color", colors(i,:), "LineWidth", 1)
+%         plot(datetime(time_face, "ConvertFrom","datenum"), gtd_quiet_mean(:,i) + gtd_std_quiet_bin(:,i), ':', "Color", colors(i,:), "LineWidth", 2)
+%         plot(datetime(time_face, "ConvertFrom","datenum"), gtd_quiet_mean(:,i) - gtd_std_quiet_bin(:,i), ':', "Color", colors(i,:), "LineWidth", 2)
 %         plot(datetime(time_face, "ConvertFrom","datenum"), gtd_mean_qd(:,i), '-', "LineWidth", 1)
 
 %         plot(datetime(time_face, "ConvertFrom","datenum"), wo_mean(:,i)./(2*pi*1E3), '-', "LineWidth", 1)
 %         plot(datetime(time_face, "ConvertFrom","datenum"), wo_mean(:,i)./(2*pi*1E3) + wo_std_bin(:,i)./(2*pi*1E3), ':', "Color", colors(i,:))
 %         plot(datetime(time_face, "ConvertFrom","datenum"), wo_mean(:,i)./(2*pi*1E3) - wo_std_bin(:,i)./(2*pi*1E3), ':', "Color", colors(i,:))
 
+%         plot(datetime(time_face, "ConvertFrom","datenum"), h_mean(:,i)./1E3, '-', "Color", colors(i,:), "LineWidth", 1)
 %         plot(datetime(time_face, "ConvertFrom","datenum"), h_mean_qd(:,i)./1E3, '-', "Color", colors(i,:), "LineWidth", 1)
 %         plot(datetime(time_face, "ConvertFrom","datenum"), h_mean_qd(:,i)./1E3 + h_std_bin(:,i)./1E3, ':', "Color", colors(i,:), "LineWidth", 1)
 %         plot(datetime(time_face, "ConvertFrom","datenum"), h_mean_qd(:,i)./1E3 - h_std_bin(:,i)./1E3, ':', "Color", colors(i,:), "LineWidth", 1)
-%         plot(datetime(time_face, "ConvertFrom","datenum"), h_quiet_mean(:,i)./1E3, '-', "LineWidth", 1)
+        plot(datetime(time_face, "ConvertFrom","datenum"), h_quiet_mean(:,i)./1E3, '-', "LineWidth", 1)
 
         
 
@@ -207,13 +208,16 @@ for day = 11
     h1 = gca;
     h1.ColorOrder = colors;
     h1.FontSize = 12;
-%     y1 = ylabel("\omega_0^{ 2}/2c (rad^2 s^{-1} m^{-1})");
-    y1 = ylabel("\Deltah_i (km)");
+    y1 = ylabel("\omega_0^{ 2}/2c (rad^2 s^{-1} m^{-1})");
+%     y1 = ylabel("\Deltah_i (km)");
     y1.FontSize = 12;
+%     ylim([-0.02 0.02])
 %     ylim([-30 30])
+ylim([120 150])
     xlim([datetime(year, month, day), datetime(year, month, day+1)])
-%     t1 = title("average difference of \omega_0^{ 2}/2c from quiet day baseline at different magnetic latitudes");
-    t1 = title("difference of nightside ionosphere height from quiet day baseline");
+%     t1 = title("difference of nightside \omega_0^{ 2}/2c from quiet day baseline");
+%     t1 = title("difference of nightside ionosphere height from quiet day baseline");
+    t1 = title("nightside ionosphere height");
 %     t1 = title("average \omega_0^{ 2}/2c of November quiet days at different magnetic latitudes");
     t1.FontSize = 15;
 
@@ -242,7 +246,7 @@ for day = 11
     cb.FontSize = 12;
     
     % save
-%     figname = sprintf("figures/lanl/ionoh_poes_mlat_%04g%02g%02g_smaller.jpg", year, month, day);
+%     figname = sprintf("figures/lanl/iono_h_quietavg_poes_mlat_%04g%02g%02g_smaller.jpg", year, month, day);
 %     exportgraphics(h, figname, Resolution=300);
 
 end
