@@ -31,6 +31,9 @@ perpfile = sprintf("data/sferic_perp_gridcross_10m_%s.mat", daystr(1));
 perp = importdata(perpfile);
 perp_cavg = perp;
 
+% TODO: recompute quiet-day mean, and smoothed quiet-day mean, using this
+% cumulative average!
+
 gc_nancount = zeros(size(gc_cavg)) + isnan(gc);
 perp_nancount = zeros(size(perp_cavg)) + isnan(perp);
 %% load subsequent days and calculate cumulative average
