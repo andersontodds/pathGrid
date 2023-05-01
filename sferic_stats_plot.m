@@ -61,82 +61,42 @@ switch plotvar
         titlestr = sprintf("average WWLLN path perpendicularity\n %s %s-%s", ...
             datestring, timestring(k), timestring(k+1));
         savestr = "figures/average_perp_example10m_202211.jpg";
+
+    case "gcpw"
+        error("TODO!");
 end
 
 geoshow(plotslice, geoidrefvec, "DisplayType","texturemap");
 hold on
 geoshow(coastlat, coastlon, "Color",coastcolor);
-%     contourm(latmesh, lonmesh, mlatmesh, 50:5:70, "g", "LineWidth", 1); % mlat contours
-%     contourm(latmesh, lonmesh, nightmesh, 0.5, "Color", [0.8 0.8 0.8], "LineWidth", 1.5); % terminator
-
-% % gc plot options:
-% set(gca,'ColorScale','log');
-% crameri('-hawaii');
-% caxis([0.01 1E3]);
-% cb.Label.String = "number of paths";
-% titlestr = sprintf("average number of WWLLN propagation path traversals\n %s %s-%s", ...
-%     datestring, timestring(k), timestring(k+1));
-% 
-% % perp plot options:
-% crameri('tokyo');
-% caxis([0 1]);
-% cb.Label.String = "perpendicularity";
-% titlestr = sprintf("average WWLLN path perpendicularity\n %s %s-%s", ...
-%     datestring, timestring(k), timestring(k+1));
-
-
-
-
-%     cmap = crameri('-batlow', 256+64);
-%     cmap = magma(256);
-%     set(gca, 'Colormap', cmap)
-%     caxis([0 1]);
-%     crameri('tokyo');%,'pivot',1); % requires "crameri" colormap toolbox
-%     caxis([0 0.2]);
-%     caxis([-0.1 0.1]);
-
-
-%     nexttile
-%     %worldmap("World");
-%     worldmap([60 90],[-180 180])
-%     geoshow(c3plot, geoidrefvec, "DisplayType","texturemap");
-%     hold on
-%     geoshow(coastlat, coastlon, "Color","black");
-%     
-%     title("");
-% %     set(gca,'ColorScale','log');
-%     crameri('-hawaii');
-% %     caxis([0 1]);
-% %     crameri('tokyo');%,'pivot',1); % requires "crameri" colormap toolbox
-%     caxis([0 0.2]);
-% %     caxis([0 0.05]);
-% 
-%     
-%     nexttile
-%     worldmap([-90 -60],[-180 180])
-%     geoshow(c3plot, geoidrefvec, "DisplayType","texturemap");
-%     hold on
-%     geoshow(coastlat, coastlon, "Color","black");
-%     
-%     title("");
-% %     set(gca,'ColorScale','log');
-%     crameri('-hawaii');
-% %     caxis([0 1]);
-% %     crameri('tokyo'); % requires "crameri" colormap toolbox
-%     caxis([0 0.2]);
-% %     caxis([0 0.05]);
-
-%     cb.Layout.Tile = 'east';
-%     cb.Label.String = "\omega_0^{ 2}/2c (rad^2 s^{-1} m^{-1})";
-
-%     
-
-
 
 title(titlestr, "FontSize", 20);
 
 set(gcf,'color','w');
 
 % save
-exportgraphics(h, savestr, "Resolution", 300)
+% exportgraphics(h, savestr, "Resolution", 300)
 
+%% 3. calculate and plot statistics of gc, perp and gcpw
+% want average gc, perp, gcpw in: time, localtime, lat, lon
+% 1. time
+% calculate average over entire time slice, for all slices
+
+gc_mean = zeros(size(gc,3),1);
+perp_mean = zeros(size(gc_mean));
+for i = 1:size(gc,3)
+    gc_mean(i) = mean(gc(:,:,i), "all", "omitnan");
+    perp_mean(i) = mean(perp(:,:,i), "all", "omitnan");
+end
+
+h = figure(2);
+hold off
+t = tiledlayout(2,1,"TileSpacing","compact","Padding","compact");
+nexttile
+plot(datetime(times(2:end), "ConvertFrom", "datenum"), gc_mean);
+nexttile
+plot(datetime(times(2:end), "ConvertFrom", "datenum"), perp_mean);
+
+% 2. local time
+% see filtering techniques in mlat_sferic_stats.m
+% use solar angle tools
