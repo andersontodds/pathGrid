@@ -26,7 +26,7 @@ datestring = string(datestr(run_start, "mmmm yyyy"));
 %% 2. plot sample time bin of sferic paths, perpendicularity, and perp-weighted paths
 
 k = 1;
-plotvar = "perp";
+plotvar = "gcpw";
 
 h = figure(1);
 h.Position = [-1000 -200 980 600];
@@ -63,7 +63,16 @@ switch plotvar
         savestr = "figures/average_perp_example10m_202211.jpg";
 
     case "gcpw"
-        error("TODO!");
+        plotslice = gcpw(:,:,k)./2;
+        % gcpw plot options:
+        coastcolor = "black";
+        set(gca,'ColorScale','log');
+        crameri('-roma');
+        caxis([1E-2 1E3]);
+        cb.Label.String = "number of perpendicular pairs";
+        titlestr = sprintf("average equivalent perpendicular path pairs\n %s %s-%s", ...
+            datestring, timestring(k), timestring(k+1));
+        savestr = "figures/average_perp_weighted_paths_example10m_202211.jpg";
 end
 
 geoshow(plotslice, geoidrefvec, "DisplayType","texturemap");

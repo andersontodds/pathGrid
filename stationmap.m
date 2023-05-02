@@ -142,6 +142,9 @@ for i = 1:length(stationlist)
     
 end
 
+% generate table of stations; nice for copy and pasting text if needed
+sferic_stations = table(stationlist, lat, lon);
+
 % clat = zeros(size(carllist));
 % clon = zeros(size(carllist));
 % 
@@ -152,6 +155,7 @@ end
 %     clon(j) = stations{station_ind,2};
 % end
 
+%%
 figure(1)
 hold off
 worldmap("World");
