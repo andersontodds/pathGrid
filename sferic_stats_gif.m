@@ -1,9 +1,10 @@
-% sferic_stats_plot.m
+% sferic_stats_gif.m
 % Todd Anderson
-% 30 April 2023
+% 2 May 2023
 %
 % Plot statisics of sferic path crossings, perpendicularity, and
-% perp-weighted path crossings as a function of several variables.
+% perp-weighted path crossings as a function of several variables.  Same as
+% sferic_stats_plot.m, but generates gif animations.
 %
 %% 1. Load average day of path crossings, perpendicularity, and perp-weighted path crossings for month of November 2022
 
@@ -29,9 +30,9 @@ datestring = string(datestr(run_start, "mmmm yyyy"));
 mlatmesh = importdata("mlatmesh.mat");
 %% 2. plot sample time bin of sferic paths, perpendicularity, and perp-weighted paths
 
-chooseplot = "d_quiet";
+chooseplot = "d_quiet_sm5";
 
-k = 1;
+for k = 1:size(gc,3)%;
 
 h = figure(1);
 h.Position = [-1000 -200 980 600];
@@ -54,7 +55,7 @@ switch chooseplot
         cb.Label.String = "number of paths";
         titlestr = sprintf("average number of WWLLN propagation path traversals\n %s %s-%s", ...
             datestring, timestring(k), timestring(k+1));
-        savestr = "figures/average_paths_example10m_202211.jpg";
+        savestr = 'animations/average_paths_10m_202211.gif';
 
     case "perp"
         plotslice = perp(:,:,k);
@@ -65,7 +66,7 @@ switch chooseplot
         cb.Label.String = "perpendicularity";
         titlestr = sprintf("average WWLLN path perpendicularity\n %s %s-%s", ...
             datestring, timestring(k), timestring(k+1));
-        savestr = "figures/average_perp_example10m_202211.jpg";
+        savestr = 'animations/average_perp_10m_202211.gif';
 
     case "gcpw"
         plotslice = gcpw(:,:,k)./2;
@@ -77,10 +78,11 @@ switch chooseplot
         cb.Label.String = "number of perpendicular pairs";
         titlestr = sprintf("average equivalent perpendicular path pairs\n %s %s-%s", ...
             datestring, timestring(k), timestring(k+1));
-        savestr = "figures/average_perp_weighted_paths_example10m_202211.jpg";
+        savestr = 'animations/average_perp_weighted_paths_10m_202211.gif';
 
     case {"d_quiet", "d_quiet_sm5"}
 
+        
         % terminator test
         [sslat, sslon] = subsolar(times(k));
         night = distance(sslat, sslon, latmesh, lonmesh, 'degrees') > 90;
@@ -93,12 +95,12 @@ switch chooseplot
             plotslice = d_quiet(:,:,k);
             titlestr = sprintf("average quiet-day sferic dispersion\n %s %s-%s", ...
                 datestring, timestring(k), timestring(k+1));
-            savestr = "figures/dispersion_quietavg_example10m_202211.jpg";
+            savestr = 'animations/dispersion_quietavg_10m_202211.gif';
         elseif chooseplot == "d_quiet_sm5"
             plotslice = d_quiet_sm5(:,:,k);
             titlestr = sprintf("average quiet-day sferic dispersion with 5 degree smoothing\n %s %s-%s", ...
                 datestring, timestring(k), timestring(k+1));
-            savestr = "figures/dispersion_quietavg_sm5_example10m_202211.jpg";
+            savestr = 'animations/dispersion_quietavg_sm5_10m_202211.gif';
         else
             error("Could not determine variable to plot!");
         end
@@ -128,29 +130,10 @@ title(titlestr, "FontSize", 20);
 
 set(gcf,'color','w');
 
-% save
-% exportgraphics(h, savestr, "Resolution", 300)
-
-%% 3. calculate and plot statistics of gc, perp and gcpw
-% want average gc, perp, gcpw in: time, localtime, lat, lon
-% 1. time
-% calculate average over entire time slice, for all slices
-
-gc_mean = zeros(size(gc,3),1);
-perp_mean = zeros(size(gc_mean));
-for i = 1:size(gc,3)
-    gc_mean(i) = mean(gc(:,:,i), "all", "omitnan");
-    perp_mean(i) = mean(perp(:,:,i), "all", "omitnan");
+if k == 1
+    gif(savestr);
+else
+    gif;
 end
 
-h = figure(2);
-hold off
-t = tiledlayout(2,1,"TileSpacing","compact","Padding","compact");
-nexttile
-plot(datetime(times(2:end), "ConvertFrom", "datenum"), gc_mean);
-nexttile
-plot(datetime(times(2:end), "ConvertFrom", "datenum"), perp_mean);
-
-% 2. local time
-% see filtering techniques in mlat_sferic_stats.m
-% use solar angle tools
+end
