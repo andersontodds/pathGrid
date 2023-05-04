@@ -12,6 +12,7 @@ gc = importdata("data/sferic_gridcross_10m_202211.mat");
 perp = importdata("data/sferic_perp_10m_202211.mat");
 gcpw = importdata("data/sferic_gcpw_10m_202211.mat");
 d_quiet = importdata("data/sferic_dispersion_10m_202211_quietavg.mat");
+% d_quiet_old = importdata("data/sferic_grouptimediff_10m_202211_quietavg.mat");
 d_quiet_sm5 = importdata("data/sferic_dispersion_10m_202211_quietavg_sm5.mat");
 load coastlines;
 geoidrefvec = [1,90,-180];
@@ -30,7 +31,12 @@ datestring = string(datestr(run_start, "mmmm yyyy"));
 mlatmesh = importdata("mlatmesh.mat");
 %% 2. plot sample time bin of sferic paths, perpendicularity, and perp-weighted paths
 
-chooseplot = "d_quiet_sm5";
+chooseplot = "dispersion";
+% single-day options
+day = 1;
+datestring = string(datestr(datenum(2022,11,day), "mmmm dd yyyy"));
+dispersion_filename = sprintf("data/sferic_grouptimediff_gridcross_10m_202211%02d.mat", day);
+dispersion = importdata(dispersion_filename);
 
 for k = 1:size(gc,3)%;
 
@@ -80,8 +86,7 @@ switch chooseplot
             datestring, timestring(k), timestring(k+1));
         savestr = 'animations/average_perp_weighted_paths_10m_202211.gif';
 
-    case {"d_quiet", "d_quiet_sm5"}
-
+    case {"d_quiet", "d_quiet_sm5", "d_qadiff", "dispersion"}
         
         % terminator test
         [sslat, sslon] = subsolar(times(k));
@@ -96,18 +101,32 @@ switch chooseplot
             titlestr = sprintf("average quiet-day sferic dispersion\n %s %s-%s", ...
                 datestring, timestring(k), timestring(k+1));
             savestr = 'animations/dispersion_quietavg_10m_202211.gif';
+            caxis([0 0.2]);
         elseif chooseplot == "d_quiet_sm5"
             plotslice = d_quiet_sm5(:,:,k);
             titlestr = sprintf("average quiet-day sferic dispersion with 5 degree smoothing\n %s %s-%s", ...
                 datestring, timestring(k), timestring(k+1));
             savestr = 'animations/dispersion_quietavg_sm5_10m_202211.gif';
+            caxis([0 0.2]);
+        elseif chooseplot == "d_qadiff"
+            % TODO: use diverging colormap!
+            plotslice = dispersion(:,:,k) - d_quiet(:,:,k);
+            titlestr = sprintf("sferic dispersion: difference from quiet-day mean\n %s %s-%s", ...
+                datestring, timestring(k), timestring(k+1));
+            savestr = 'animations/dispersion_qadiff_10m_202211.gif';
+            caxis([-0.2 0.2]);
+        elseif chooseplot == "dispersion"
+            plotslice = dispersion(:,:,k);
+            titlestr = sprintf("sferic dispersion\n %s %s-%s", ...
+                datestring, timestring(k), timestring(k+1));
+            savestr = 'animations/dispersion_10m_20221101.gif';
+            caxis([0 0.2]);
         else
             error("Could not determine variable to plot!");
         end
-        % perp plot options:
+        % dispersion plot options:
         coastcolor = "white";
         colormap('magma');
-        caxis([0 0.2]);
         cb.Label.String = "a_3/r";
 
 end
