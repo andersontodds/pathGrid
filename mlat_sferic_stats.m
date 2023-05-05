@@ -41,7 +41,7 @@ std_quiet = importdata("data/sferic_std_grouptimediff_10m_202211_quietavg.mat");
 % gtd_quietavg_sm5 = importdata("data/sferic_grouptimediff_10m_202211_quietavg_sm5.mat");
 % gc_quietavg_sm5 =  importdata("data/sferic_gridcrossings_10m_202211_quietavg_sm5.mat");
 
-for day = 22
+for day = 15
 
     gtdfile = sprintf("data/sferic_grouptimediff_gridcross_10m_%04g%02g%02g.mat", year, month, day);
     perpfile = sprintf("data/sferic_perp_gridcross_10m_%04g%02g%02g.mat", year, month, day);
@@ -62,6 +62,9 @@ for day = 22
     lsi = importdata("../landseaice/LSI_maskonly.mat");
     [lonmesh, latmesh] = meshgrid(-179.5:179.5, -89.5:89.5);
     LTlims = [19 5];
+%     LTlims = [22 2];    % no POES coverage
+%     LTlims = [20 22];   % MetOp descending coverage
+%     LTlims = [2 3];     % N19 descending coverage
     lonlims = [-50 0];
 
     % longitude filter

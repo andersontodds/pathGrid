@@ -169,7 +169,7 @@ title(titlestr, "FontSize", 20);
 set(gcf,'color','w');
 
 % save
-exportgraphics(h, savestr, "Resolution", 300)
+% exportgraphics(h, savestr, "Resolution", 300)
 
 %% 3. calculate and plot statistics of gc, perp and gcpw
 % want average gc, perp, gcpw in: time, localtime, lat, lon

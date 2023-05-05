@@ -13,6 +13,7 @@ day = 15;
 
 night_LTlims = [19 5];
 day_LTlims = [7 17];
+all_LTlims = [0 24];
 
 combined_LTlims = cat(1, night_LTlims, day_LTlims);
 
@@ -22,20 +23,43 @@ time_face = time_edge(2:end) - (time_edge(2) - time_edge(1));
 
 d_night = bininLT(d_quiet, time_face, lonmesh, night_LTlims);
 d_day = bininLT(d_quiet, time_face, lonmesh, day_LTlims);
+d_all = bininLT(d_quiet, time_face, lonmesh, all_LTlims);
 
-figure(2)
+night_med = median(d_night, "omitnan");
+day_med = median(d_day, "omitnan");
+all_med = median(d_all, "omitnan");
+
+%%
+
+h = figure(2);
+delete(findall(gcf,"Tag", "anno"));
+h.Position = [-1000 -200 980 600];
 hold off
-histogram(d_night, 0:0.005:0.2)
+histogram(d_night, 0:0.005:0.2, "FaceColor", [0.6 0.2 0.6])
 hold on
-histogram(d_day, 0:0.005:0.2)
+histogram(d_day, 0:0.005:0.2, "FaceColor", [1 0.8 0.6])
+histogram(d_all, 0:0.005:0.2, "DisplayStyle", "stairs", "EdgeColor","black", "LineWidth", 1)
 
-% TODO: make pretty, calculate median + std range
-% d_night_med = median(d_night, "all","omitnan");
-% d_day_med = median(d_day, "all","omitnan");
-% d_night_std = std(d_night, "all","omitnan");
-% d_day_std = std(d_day, "all","omitnan");
+xline(night_med, 'Color', [0.6 0.2 0.6], "LineWidth",2);
+xline(day_med, 'Color', [0.8 0.5 0.3], "LineWidth",2);
+xlim([0 0.2]);
 
+dim = [.723 .48 .3 .3];
+annotation('textbox', dim, "EdgeColor", "none", 'String',{sprintf("night median: %0.1g", night_med),sprintf("day median: %0.1g", day_med)}, "FontSize", 12, "FitBoxToText","on", "Tag", "anno");
 
+xlabel("dispersion (a_3/r)")
+ylabel("counts")
+
+l = legend("night: LT 19 to 5", "day: LT 7 to 17", "all LT");
+l.FontSize = 12;
+
+t = title("Quiet-day mean dispersion in night and day hemispheres");
+t.FontSize = 20;
+set(gca, "FontSize", 15)
+
+% save
+savestr = "figures/dispersion_hist_quietavg.jpg";
+exportgraphics(h, savestr, "Resolution", 300)
 
 %% define functions
 
